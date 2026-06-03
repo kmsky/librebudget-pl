@@ -2,13 +2,12 @@ import { formatCurrency } from '../../utils/calculations'
 
 interface QuickStatsProps {
   totalIncome: number
-  totalExpenses: number
+  spendingExpenses: number
   savedThisMonth: number
   effectiveBudget: number
 }
 
-export function QuickStats({ totalIncome, totalExpenses, savedThisMonth, effectiveBudget }: QuickStatsProps) {
-  const spendingExpenses = totalExpenses - savedThisMonth
+export function QuickStats({ totalIncome, spendingExpenses, savedThisMonth, effectiveBudget }: QuickStatsProps) {
   const remaining = effectiveBudget - spendingExpenses
 
   const stats = [

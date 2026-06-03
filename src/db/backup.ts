@@ -1,6 +1,6 @@
 import { db } from './database'
 import type { Category, CategoryGroup, CooldownDuration, CreditScoreEntry, Debt, ImpulseInterrogationAnswers, ImpulseItem, ImpulseStatus, RecurrenceInterval, SavingsGoal, SavingsGoalType, TransactionType } from './database'
-import { sanitizeAmount, sanitizeString } from '../utils/sanitize'
+import { sanitizeAmount, sanitizeSignedAmount, sanitizeString } from '../utils/sanitize'
 
 const VALID_GROUPS: CategoryGroup[] = ['needs', 'wants', 'savings', 'income']
 const VALID_INTERVALS: RecurrenceInterval[] = ['daily', 'weekly', 'biweekly', 'monthly', 'yearly']
@@ -137,7 +137,7 @@ export async function hydrateDatabase(data: BackupPayload): Promise<void> {
       }
 
       if (data.transactions?.length) {
-        const validTypes: TransactionType[] = ['income', 'expense']
+        const validTypes: TransactionType[] = ['income', 'expense', 'savings_withdrawal']
         const sanitized = (data.transactions as Record<string, unknown>[]).map((t) => {
           const { id: _id, ...rest } = t
           const type = validTypes.includes(rest.type as TransactionType) ? (rest.type as TransactionType) : 'expense'
@@ -189,7 +189,7 @@ export async function hydrateDatabase(data: BackupPayload): Promise<void> {
         await db.settings.bulkAdd(sanitized)
       }
       if (data.recurringTransactions?.length) {
-        const validTypes: TransactionType[] = ['income', 'expense']
+        const validTypes: TransactionType[] = ['income', 'expense', 'savings_withdrawal']
         const sanitized = (data.recurringTransactions as Record<string, unknown>[]).map((r) => {
           const { id: _id, ...rest } = r
           const type = validTypes.includes(rest.type as TransactionType) ? (rest.type as TransactionType) : 'expense'
@@ -223,7 +223,7 @@ export async function hydrateDatabase(data: BackupPayload): Promise<void> {
             icon: sanitizeString(String(rest.icon ?? ''), 20),
             type,
             targetAmount: sanitizeAmount(Number(rest.targetAmount) || 0),
-            currentAmount: sanitizeAmount(Number(rest.currentAmount) || 0),
+            currentAmount: sanitizeSignedAmount(Number(rest.currentAmount) || 0),
             deadline,
             createdAt,
           }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseLocaleAmount, sanitizeAmount } from '../sanitize'
+import { parseLocaleAmount, sanitizeAmount, sanitizeSignedAmount } from '../sanitize'
 import { formatCurrency } from '../calculations'
 
 describe('parseLocaleAmount (Polish locale input)', () => {
@@ -35,6 +35,29 @@ describe('parseLocaleAmount (Polish locale input)', () => {
   it('composes with sanitizeAmount to coerce invalid input to 0', () => {
     expect(sanitizeAmount(parseLocaleAmount('') || 0)).toBe(0)
     expect(sanitizeAmount(parseLocaleAmount('2500,50'))).toBe(2500.5)
+  })
+})
+
+describe('sanitizeSignedAmount (savings balances may go negative)', () => {
+  it('preserves negative values (overdrawn savings balance)', () => {
+    expect(sanitizeSignedAmount(-200)).toBe(-200)
+    expect(sanitizeSignedAmount(-49.99)).toBe(-49.99)
+  })
+
+  it('keeps positive values like sanitizeAmount', () => {
+    expect(sanitizeSignedAmount(1000)).toBe(1000)
+    expect(sanitizeSignedAmount(12.5)).toBe(12.5)
+  })
+
+  it('rounds to 2 decimals and coerces non-finite to 0', () => {
+    expect(sanitizeSignedAmount(-1.005)).toBe(-1.0) // banker-free round
+    expect(sanitizeSignedAmount(NaN)).toBe(0)
+    expect(sanitizeSignedAmount(Infinity)).toBe(0)
+  })
+
+  it('clamps to the [-MAX, MAX] range', () => {
+    expect(sanitizeSignedAmount(-1e15)).toBe(-999_999_999.99)
+    expect(sanitizeSignedAmount(1e15)).toBe(999_999_999.99)
   })
 })
 

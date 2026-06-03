@@ -32,6 +32,7 @@ export default function Transactions() {
   const [editAmount, setEditAmount] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [editNote, setEditNote] = useState('')
+  const [editDate, setEditDate] = useState('')
   const [editCategoryId, setEditCategoryId] = useState<number | null>(null)
   const [expandedTx, setExpandedTx] = useState<number | null>(null)
   const groupsRef = useRef<HTMLDivElement>(null)
@@ -80,15 +81,17 @@ export default function Transactions() {
     setEditAmount(tx.amount.toString())
     setEditDescription(tx.description)
     setEditNote(tx.note || '')
+    setEditDate(tx.date)
     setEditCategoryId(tx.categoryId)
   }
 
   const saveEdit = async () => {
-    if (!editingTx?.id || editCategoryId == null) return
+    if (!editingTx?.id || editCategoryId == null || !editDate) return
     await updateTransaction(editingTx.id, {
       amount: parseLocaleAmount(editAmount),
       description: editDescription,
       note: editNote,
+      date: editDate,
       categoryId: editCategoryId,
     })
     setEditingTx(null)
@@ -285,7 +288,7 @@ export default function Transactions() {
 
                     {/* Amount + chevron */}
                     <div className="flex shrink-0 flex-col items-end gap-1">
-                      <span className={`text-sm font-semibold tabular-nums ${tx.type === 'income' ? 'text-green-400' : 'text-slate-200'}`}>
+                      <span className={`text-sm font-semibold tabular-nums ${tx.type === 'income' ? 'text-green-400' : tx.type === 'savings_withdrawal' ? 'text-blue-400' : 'text-slate-200'}`}>
                         {tx.type === 'income' ? '+' : '−'}{formatCurrency(tx.amount)}
                       </span>
                       <ChevronDown
@@ -392,9 +395,15 @@ export default function Transactions() {
               className="w-full resize-none rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
           </div>
 
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-400">Data</label>
+            <input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)}
+              className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
+          </div>
+
           <div className="flex gap-3">
             <Button variant="secondary" onClick={() => setEditingTx(null)} className="flex-1">Anuluj</Button>
-            <Button onClick={saveEdit} className="flex-1" disabled={editCategoryId == null}>Zapisz</Button>
+            <Button onClick={saveEdit} className="flex-1" disabled={editCategoryId == null || !editDate}>Zapisz</Button>
           </div>
         </div>
       </Modal>

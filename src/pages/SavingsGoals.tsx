@@ -18,11 +18,13 @@ function SavingsCard({
   item,
   showProgress,
   onAddFunds,
+  onWithdraw,
   onDelete,
 }: {
   item: SavingsGoal
   showProgress: boolean
   onAddFunds: () => void
+  onWithdraw: () => void
   onDelete: () => void
 }) {
   const progress = showProgress && item.targetAmount > 0
@@ -66,7 +68,8 @@ function SavingsCard({
       )}
 
       <div className="flex gap-2">
-        <Button size="sm" onClick={onAddFunds} className="flex-1">+ Wpłać środki</Button>
+        <Button size="sm" onClick={onAddFunds} className="flex-1">+ Wpłać</Button>
+        <Button size="sm" variant="secondary" onClick={onWithdraw} className="flex-1">− Wypłać</Button>
         <Button size="sm" variant="danger" onClick={onDelete}>Usuń</Button>
       </div>
     </Card>
@@ -78,10 +81,11 @@ function SavingsCard({
 // ---------------------------------------------------------------------------
 
 export default function SavingsGoals() {
-  const { goalsOnly, savingsAccounts, emergencyFunds, addGoal, addSavings, deleteGoal, addFunds } = useSavingsGoals()
+  const { goalsOnly, savingsAccounts, emergencyFunds, addGoal, addSavings, deleteGoal, addFunds, withdrawFunds } = useSavingsGoals()
 
   const [showModal, setShowModal] = useState<'goal' | 'savings_account' | 'emergency_fund' | null>(null)
   const [showFundModal, setShowFundModal] = useState<number | null>(null)
+  const [showWithdrawModal, setShowWithdrawModal] = useState<number | null>(null)
 
   // Shared form state
   const [name, setName] = useState('')
@@ -94,6 +98,10 @@ export default function SavingsGoals() {
   // Add funds state
   const [fundAmount, setFundAmount] = useState('')
   const [affectsBudgetFund, setAffectsBudgetFund] = useState(true)
+
+  // Withdraw funds state
+  const [withdrawAmount, setWithdrawAmount] = useState('')
+  const [affectsBudgetWithdraw, setAffectsBudgetWithdraw] = useState(true)
 
   const resetForm = () => {
     setName(''); setIcon('Target'); setTarget('')
@@ -123,6 +131,12 @@ export default function SavingsGoals() {
     if (!fundAmount || !showFundModal) return
     await addFunds(showFundModal, parseLocaleAmount(fundAmount), affectsBudgetFund)
     setShowFundModal(null); setFundAmount(''); setAffectsBudgetFund(true)
+  }
+
+  const handleWithdraw = async () => {
+    if (!withdrawAmount || !showWithdrawModal) return
+    await withdrawFunds(showWithdrawModal, parseLocaleAmount(withdrawAmount), affectsBudgetWithdraw)
+    setShowWithdrawModal(null); setWithdrawAmount(''); setAffectsBudgetWithdraw(true)
   }
 
   // Totals
@@ -190,6 +204,7 @@ export default function SavingsGoals() {
               <SavingsCard
                 key={item.id} item={item} showProgress={false}
                 onAddFunds={() => { setShowFundModal(item.id!); setFundAmount(''); setAffectsBudgetFund(true) }}
+                onWithdraw={() => { setShowWithdrawModal(item.id!); setWithdrawAmount(''); setAffectsBudgetWithdraw(true) }}
                 onDelete={() => item.id && deleteGoal(item.id)}
               />
             ))}
@@ -209,6 +224,7 @@ export default function SavingsGoals() {
               <SavingsCard
                 key={item.id} item={item} showProgress={false}
                 onAddFunds={() => { setShowFundModal(item.id!); setFundAmount(''); setAffectsBudgetFund(true) }}
+                onWithdraw={() => { setShowWithdrawModal(item.id!); setWithdrawAmount(''); setAffectsBudgetWithdraw(true) }}
                 onDelete={() => item.id && deleteGoal(item.id)}
               />
             ))}
@@ -263,9 +279,12 @@ export default function SavingsGoals() {
                   <div className="flex gap-2">
                     {!completed && (
                       <Button size="sm" onClick={() => { setShowFundModal(goal.id!); setFundAmount(''); setAffectsBudgetFund(true) }} className="flex-1">
-                        + Wpłać środki
+                        + Wpłać
                       </Button>
                     )}
+                    <Button size="sm" variant="secondary" onClick={() => { setShowWithdrawModal(goal.id!); setWithdrawAmount(''); setAffectsBudgetWithdraw(true) }} className="flex-1">
+                      − Wypłać
+                    </Button>
                     <Button size="sm" variant="danger" onClick={() => goal.id && deleteGoal(goal.id)}>Usuń</Button>
                   </div>
                 </Card>
@@ -297,6 +316,31 @@ export default function SavingsGoals() {
             hint="Wyłącz, jeśli te pieniądze już wcześniej istniały i tylko je tu zapisujesz."
           />
           <Button onClick={handleFund} className="w-full" disabled={!fundAmount}>Wpłać środki</Button>
+        </div>
+      </Modal>
+
+      {/* Withdraw Funds Modal */}
+      <Modal open={!!showWithdrawModal} onClose={() => setShowWithdrawModal(null)} title="Wypłać środki">
+        <div className="space-y-4">
+          <div>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Kwota</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
+              <input
+                inputMode="decimal" value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                placeholder="0.00" autoFocus
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
+              />
+            </div>
+          </div>
+          <BudgetToggle
+            value={affectsBudgetWithdraw}
+            onChange={setAffectsBudgetWithdraw}
+            label="Odejmij od tegomiesięcznych oszczędności"
+            hint="Wyłącz, jeśli to tylko korekta salda pieniędzy, które już wcześniej istniały — wypłata nie zostanie odjęta od tegomiesięcznego śledzenia oszczędności."
+          />
+          <Button onClick={handleWithdraw} className="w-full" disabled={!withdrawAmount}>Wypłać środki</Button>
         </div>
       </Modal>
 

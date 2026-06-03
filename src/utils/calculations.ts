@@ -72,7 +72,8 @@ export async function groupByCategoryGroup(
   for (const t of transactions) {
     const cat = catMap.get(t.categoryId)
     if (cat) {
-      grouped[cat.group] += t.amount
+      // Savings withdrawals reduce the net amount set aside this month
+      grouped[cat.group] += t.type === 'savings_withdrawal' ? -t.amount : t.amount
     }
   }
 

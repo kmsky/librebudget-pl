@@ -26,6 +26,16 @@ export function sanitizeAmount(value: number): number {
 }
 
 /**
+ * Sanitize a balance that may legitimately be negative (e.g. a savings account
+ * overdrawn by a withdrawal): finite, 2 decimals, clamped to [-MAX, MAX].
+ */
+export function sanitizeSignedAmount(value: number): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return 0
+  const rounded = Math.round(value * Math.pow(10, AMOUNT_DECIMALS)) / Math.pow(10, AMOUNT_DECIMALS)
+  return Math.max(-MAX_AMOUNT, Math.min(rounded, MAX_AMOUNT))
+}
+
+/**
  * Parse a user-typed amount in Polish locale (e.g. "1 234,56" or "12,50 zł")
  * into a number. Strips whitespace (incl. non-breaking spaces used as thousands
  * separators) and the zł symbol, and treats comma as the decimal separator.

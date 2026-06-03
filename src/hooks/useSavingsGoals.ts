@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type SavingsGoal, type SavingsGoalType } from '../db/database'
-import { sanitizeString, sanitizeAmount } from '../utils/sanitize'
+import { sanitizeString, sanitizeAmount, sanitizeSignedAmount } from '../utils/sanitize'
 
 export function useSavingsGoals() {
   const goals = useLiveQuery(() => db.savingsGoals.toArray()) ?? []
@@ -63,7 +63,7 @@ export function useSavingsGoals() {
     if (changes.name !== undefined) sanitized.name = sanitizeString(changes.name, 100)
     if (changes.icon !== undefined) sanitized.icon = sanitizeString(changes.icon, 20)
     if (changes.targetAmount !== undefined) sanitized.targetAmount = sanitizeAmount(changes.targetAmount)
-    if (changes.currentAmount !== undefined) sanitized.currentAmount = sanitizeAmount(changes.currentAmount)
+    if (changes.currentAmount !== undefined) sanitized.currentAmount = sanitizeSignedAmount(changes.currentAmount)
     return db.savingsGoals.update(id, sanitized)
   }
 
@@ -105,6 +105,41 @@ export function useSavingsGoals() {
     }
   }
 
+  const withdrawFunds = async (
+    id: number,
+    amount: number,
+    affectsBudget = true,
+    opts?: { date?: string; description?: string },
+  ) => {
+    const goal = await db.savingsGoals.get(id)
+    if (goal) {
+      const sanitizedAmount = sanitizeAmount(amount)
+      // Balance may go negative (e.g. overdrawn account) — sign-aware clamp only.
+      await db.savingsGoals.update(id, {
+        currentAmount: sanitizeSignedAmount(goal.currentAmount - sanitizedAmount),
+      })
+
+      if (affectsBudget) {
+        const catName = goal.type === 'emergency_fund' ? 'Fundusz awaryjny' : 'Oszczędności'
+        const savingsCat = await db.categories.where('name').equals(catName).first()
+          ?? (await db.categories.where('group').equals('savings').first())
+        if (savingsCat?.id) {
+          const date = opts?.date ?? new Date().toISOString().slice(0, 10)
+          const description = opts?.description ?? `Wypłata: ${goal.name}`
+          await db.transactions.add({
+            amount: sanitizedAmount,
+            type: 'savings_withdrawal',
+            categoryId: savingsCat.id,
+            description,
+            note: '',
+            date,
+            createdAt: new Date().toISOString(),
+          })
+        }
+      }
+    }
+  }
+
   return {
     goals,
     goalsOnly,
@@ -115,5 +150,6 @@ export function useSavingsGoals() {
     updateGoal,
     deleteGoal,
     addFunds,
+    withdrawFunds,
   }
 }

@@ -5,7 +5,7 @@ export type CategoryGroup = 'needs' | 'wants' | 'savings' | 'income'
 export const EXPENSE_GROUPS: CategoryGroup[] = ['needs', 'wants']
 export const BUDGET_GROUPS: CategoryGroup[] = ['needs', 'wants', 'savings']
 export const ALL_GROUPS: CategoryGroup[] = ['needs', 'wants', 'savings', 'income']
-export type TransactionType = 'income' | 'expense'
+export type TransactionType = 'income' | 'expense' | 'savings_withdrawal'
 export type TrackingPeriod = 'weekly' | 'monthly'
 export type RecurrenceInterval = 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'yearly'
 
@@ -251,6 +251,45 @@ export class LibreBudgetDB extends Dexie {
           cat.name = RENAME_MAP[cat.name]
         }
       })
+    })
+
+    // v8: de-duplicate categories sharing a name. One-off self-heal: the v7
+    // rename could collide with a seedDatabase top-up that had already inserted
+    // "Opłaty" next to the to-be-renamed "Fees", leaving two identical names.
+    // Keep the lowest-id category per name (it holds the transaction history),
+    // repoint every reference to it, then delete the rest.
+    this.version(8).stores({}).upgrade(async (tx) => {
+      const categories = await tx.table('categories').toArray()
+      const byName = new Map<string, { id: number }[]>()
+      for (const cat of categories) {
+        const list = byName.get(cat.name) ?? []
+        list.push(cat)
+        byName.set(cat.name, list)
+      }
+
+      const remap = new Map<number, number>() // duplicate id -> kept id
+      const toDelete: number[] = []
+      for (const list of byName.values()) {
+        if (list.length < 2) continue
+        list.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
+        const keepId = list[0].id
+        for (const dup of list.slice(1)) {
+          remap.set(dup.id, keepId)
+          toDelete.push(dup.id)
+        }
+      }
+      if (remap.size === 0) return
+
+      const repoint = (row: { categoryId?: number | null }) => {
+        if (row.categoryId == null) return
+        const k = remap.get(row.categoryId)
+        if (k !== undefined) row.categoryId = k
+      }
+      await tx.table('transactions').toCollection().modify(repoint)
+      await tx.table('budgetGoals').toCollection().modify(repoint)
+      await tx.table('recurringTransactions').toCollection().modify(repoint)
+      await tx.table('impulseItems').toCollection().modify(repoint)
+      await tx.table('categories').bulkDelete(toDelete)
     })
   }
 }

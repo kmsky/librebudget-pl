@@ -49,7 +49,6 @@ export default function Dashboard() {
   })
 
   const totalIncome = sumByType(transactions, 'income')
-  const totalExpenses = sumByType(transactions, 'expense')
 
   const savedThisMonth = groupBreakdown.savings
   const spendingExpenses = groupBreakdown.needs + groupBreakdown.wants
@@ -103,7 +102,7 @@ export default function Dashboard() {
 
       <QuickStats
         totalIncome={totalIncome}
-        totalExpenses={totalExpenses}
+        spendingExpenses={spendingExpenses}
         savedThisMonth={savedThisMonth}
         effectiveBudget={effectiveBudget}
       />
@@ -168,7 +167,7 @@ export default function Dashboard() {
                       )}
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className={`text-sm font-semibold tabular-nums ${tx.type === 'income' ? 'text-green-400' : 'text-slate-200'}`}>
+                      <p className={`text-sm font-semibold tabular-nums ${tx.type === 'income' ? 'text-green-400' : tx.type === 'savings_withdrawal' ? 'text-blue-400' : 'text-slate-200'}`}>
                         {tx.type === 'income' ? '+' : '−'}{formatCurrency(tx.amount)}
                       </p>
                       <p className="text-xs text-slate-500">{format(new Date(tx.date), 'd MMM', { locale: pl })}</p>

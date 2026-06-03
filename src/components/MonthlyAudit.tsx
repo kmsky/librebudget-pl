@@ -483,7 +483,7 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
       if (t.type === 'expense') {
         totalSpent += t.amount
         categoryTotals.set(t.categoryId, (categoryTotals.get(t.categoryId) ?? 0) + t.amount)
-      } else {
+      } else if (t.type === 'income') {
         totalIncome += t.amount
       }
     }

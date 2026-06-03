@@ -43,7 +43,7 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
       >
         <div className="flex items-center gap-2">
           <Icon name="Target" size={20} className="text-amber-400" />
-          <h3 className="text-sm font-medium text-slate-200">High Interest Payoff Plan</h3>
+          <h3 className="text-sm font-medium text-slate-200">Plan spłaty wysokooprocentowanych długów</h3>
         </div>
         <span className="text-slate-500 text-sm">
           {expanded ? '▼' : '▶'}
@@ -54,7 +54,7 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
         <div className="mt-4 space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="mb-1 block text-xs text-slate-500">Interest threshold (% APR)</label>
+              <label className="mb-1 block text-xs text-slate-500">Próg oprocentowania (% RRSO)</label>
               <input
                 inputMode="decimal"
                 value={rateThreshold}
@@ -65,7 +65,7 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-slate-500">Extra monthly payment</label>
+              <label className="mb-1 block text-xs text-slate-500">Dodatkowa miesięczna nadpłata</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
                 <input
@@ -79,7 +79,7 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs text-slate-500">Strategy</label>
+              <label className="mb-1 block text-xs text-slate-500">Strategia</label>
               <div className="flex gap-1 rounded-xl bg-slate-800 p-1" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={() => setStrategy('avalanche')}
@@ -87,7 +87,7 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
                     strategy === 'avalanche' ? 'bg-slate-700 text-slate-100' : 'text-slate-400 hover:text-slate-300'
                   }`}
                 >
-                  Avalanche
+                  Lawina
                 </button>
                 <button
                   onClick={() => setStrategy('snowball')}
@@ -95,7 +95,7 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
                     strategy === 'snowball' ? 'bg-slate-700 text-slate-100' : 'text-slate-400 hover:text-slate-300'
                   }`}
                 >
-                  Snowball
+                  Kula śnieżna
                 </button>
               </div>
             </div>
@@ -103,31 +103,31 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
 
           {plan.steps.length === 0 ? (
             <p className="rounded-xl bg-slate-800/50 p-4 text-center text-sm text-slate-400">
-              No debts at {thresholdNum}%+ APR. Adjust the threshold or add high-interest debts.
+              Brak długów o oprocentowaniu {thresholdNum}%+ RRSO. Zmień próg lub dodaj wysokooprocentowane długi.
             </p>
           ) : (
             <>
               <div className="flex flex-wrap gap-4 rounded-xl bg-slate-800/50 p-4">
                 <div>
-                  <p className="text-xs text-slate-500">High-interest total</p>
+                  <p className="text-xs text-slate-500">Suma wysokooprocentowanych</p>
                   <p className="text-lg font-semibold text-amber-400">{formatCurrency(highInterestTotal)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Months to clear</p>
+                  <p className="text-xs text-slate-500">Miesięcy do spłaty</p>
                   <p className="text-lg font-semibold text-slate-200">{plan.totalMonths}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Est. interest cost</p>
+                  <p className="text-xs text-slate-500">Szac. koszt odsetek</p>
                   <p className="text-lg font-semibold text-orange-400">{formatCurrency(plan.totalInterest)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Projected done</p>
+                  <p className="text-xs text-slate-500">Przewidywany koniec</p>
                   <p className="text-lg font-semibold text-green-400">{plan.completionDate}</p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs text-slate-500 font-medium">Payoff order</p>
+                <p className="text-xs text-slate-500 font-medium">Kolejność spłaty</p>
                 {plan.steps.map((step, i) => (
                   <div
                     key={step.debtId ?? i}
@@ -138,14 +138,14 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
                         {i + 1}
                       </span>
                       <span className="font-medium text-slate-200">{step.name}</span>
-                      <span className="text-xs text-slate-500">{step.interestRate}% APR</span>
+                      <span className="text-xs text-slate-500">{step.interestRate}% RRSO</span>
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                       <span className="text-slate-400">{formatCurrency(step.balance)}</span>
                       <span className="text-slate-500">
-                        {step.monthsToPayoff} mo · {formatCurrency(step.monthlyPayment)}/mo
+                        {step.monthsToPayoff} mies. · {formatCurrency(step.monthlyPayment)}/mies.
                       </span>
-                      <span className="text-orange-400">{formatCurrency(step.interestCost)} interest</span>
+                      <span className="text-orange-400">{formatCurrency(step.interestCost)} odsetek</span>
                     </div>
                   </div>
                 ))}

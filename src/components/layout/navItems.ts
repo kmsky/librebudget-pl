@@ -11,44 +11,44 @@ export interface NavGroup {
 
 export const navGroups: NavGroup[] = [
   {
-    label: 'Overview',
+    label: 'Przegląd',
     items: [
-      { path: '/', icon: 'LayoutDashboard', label: 'Dashboard' },
-      { path: '/add', icon: 'Plus', label: 'Add Transaction' },
+      { path: '/', icon: 'LayoutDashboard', label: 'Pulpit' },
+      { path: '/add', icon: 'Plus', label: 'Dodaj transakcję' },
     ],
   },
   {
-    label: 'Spending',
+    label: 'Wydatki',
     items: [
-      { path: '/goals', icon: 'DollarSign', label: 'Budget' },
-      { path: '/transactions', icon: 'List', label: 'Transactions' },
-      { path: '/debts', icon: 'TrendingDown', label: 'Debts' },
-      { path: '/recurring', icon: 'Repeat', label: 'Recurring' },
-      { path: '/impulse', icon: 'Timer', label: 'Impulse Control' },
+      { path: '/goals', icon: 'DollarSign', label: 'Budżet' },
+      { path: '/transactions', icon: 'List', label: 'Transakcje' },
+      { path: '/debts', icon: 'TrendingDown', label: 'Długi' },
+      { path: '/recurring', icon: 'Repeat', label: 'Cykliczne' },
+      { path: '/impulse', icon: 'Timer', label: 'Kontrola impulsów' },
     ],
   },
   {
-    label: 'Wealth',
+    label: 'Majątek',
     items: [
-      { path: '/savings', icon: 'Building2', label: 'Savings' },
-      { path: '/calculator', icon: 'BarChart3', label: 'Calculators' },
-      { path: '/roadmap', icon: 'Map', label: 'Roadmap' },
+      { path: '/savings', icon: 'Building2', label: 'Oszczędności' },
+      { path: '/calculator', icon: 'BarChart3', label: 'Kalkulatory' },
+      { path: '/roadmap', icon: 'Map', label: 'Plan działania' },
     ],
   },
   {
-    label: 'Insights',
+    label: 'Analizy',
     items: [
-      { path: '/trends', icon: 'TrendingUp', label: 'Trends' },
-      { path: '/review', icon: 'Calendar', label: 'Monthly Review' },
-      { path: '/year-review', icon: 'Trophy', label: 'Year Review' },
-      { path: '/resources', icon: 'BookOpen', label: 'Resources' },
+      { path: '/trends', icon: 'TrendingUp', label: 'Trendy' },
+      { path: '/review', icon: 'Calendar', label: 'Przegląd miesiąca' },
+      { path: '/year-review', icon: 'Trophy', label: 'Podsumowanie roku' },
+      { path: '/resources', icon: 'BookOpen', label: 'Materiały' },
     ],
   },
   {
-    label: 'Account',
+    label: 'Konto',
     items: [
-      { path: '/settings', icon: 'Settings', label: 'Settings' },
-      { path: '/account', icon: 'User', label: 'Account' },
+      { path: '/settings', icon: 'Settings', label: 'Ustawienia' },
+      { path: '/account', icon: 'User', label: 'Konto' },
     ],
   },
 ]

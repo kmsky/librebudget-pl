@@ -20,41 +20,41 @@ import { GuidedTour, type TourStep } from '../components/ui/GuidedTour'
 const STANDARD_TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="compound-interest"]',
-    title: 'Compound Interest',
-    content: 'Enter your starting balance, regular contributions, and expected rate of return. Set the contribution frequency to monthly or yearly, and use the annual raise field to model increasing contributions over time.',
+    title: 'Procent składany',
+    content: 'Wpisz saldo początkowe, regularne wpłaty oraz oczekiwaną stopę zwrotu. Ustaw częstotliwość wpłat na miesięczną lub roczną i użyj pola rocznej podwyżki, aby uwzględnić rosnące w czasie wpłaty.',
   },
 ]
 
 const RETIREMENT_TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="compound-interest"]',
-    title: 'Your Starting Point',
-    content: 'Enter your current savings balance, how much you contribute, and your expected rate of return. The annual raise field models salary growth increasing your contributions over time.',
+    title: 'Twój punkt wyjścia',
+    content: 'Wpisz aktualne saldo oszczędności, ile wpłacasz oraz oczekiwaną stopę zwrotu. Pole rocznej podwyżki uwzględnia wzrost wynagrodzenia zwiększający Twoje wpłaty w czasie.',
   },
   {
     target: '[data-tour="retirement-timeline"]',
-    title: 'Retirement Timeline',
-    content: 'Set your current age and target retirement age. The visual timeline shows your accumulation phase (green) and retirement phase. Years to grow is calculated automatically.',
+    title: 'Oś czasu emerytury',
+    content: 'Ustaw swój obecny wiek oraz docelowy wiek przejścia na emeryturę. Wizualna oś czasu pokazuje fazę akumulacji (zielona) oraz fazę emerytury. Liczba lat wzrostu jest obliczana automatycznie.',
     optional: true,
   },
   {
     target: '[data-tour="know-your-number"]',
-    title: 'Know Your Number',
+    title: 'Poznaj swoją kwotę',
     content: (
       <>
-        <p>Choose how to plan withdrawals: <strong className="text-slate-200">By Rate</strong> uses a percentage of your portfolio (like the 4% rule), or <strong className="text-slate-200">By Income</strong> lets you set a specific annual income target.</p>
-        <p className="mt-2">The projected portfolio box shows what your savings could grow to by retirement.</p>
+        <p>Wybierz, jak planować wypłaty: <strong className="text-slate-200">Według stopy</strong> wykorzystuje procent Twojego portfela (jak reguła 4%), a <strong className="text-slate-200">Według dochodu</strong> pozwala ustawić konkretny docelowy dochód roczny.</p>
+        <p className="mt-2">Pole prognozowanego portfela pokazuje, do jakiej wartości mogą urosnąć Twoje oszczędności do emerytury.</p>
       </>
     ),
     optional: true,
   },
   {
     target: '[data-tour="monte-carlo"]',
-    title: 'Monte Carlo Simulation',
+    title: 'Symulacja Monte Carlo',
     content: (
       <>
-        <p>Stress-test your plan across thousands of randomized scenarios. Configure market volatility, inflation, fees, and simulation count.</p>
-        <p className="mt-2">Toggle <strong className="text-slate-200">Variable longevity</strong> to model lifespan uncertainty, and <strong className="text-slate-200">Sequence-of-returns risk</strong> to model realistic market crash clustering.</p>
+        <p>Przetestuj swój plan w tysiącach losowych scenariuszy. Skonfiguruj zmienność rynku, inflację, opłaty oraz liczbę symulacji.</p>
+        <p className="mt-2">Włącz <strong className="text-slate-200">Zmienną długość życia</strong>, aby uwzględnić niepewność długości życia, oraz <strong className="text-slate-200">Ryzyko sekwencji stóp zwrotu</strong>, aby uwzględnić realistyczne nawarstwianie się krachów rynkowych.</p>
       </>
     ),
     optional: true,
@@ -64,24 +64,24 @@ const RETIREMENT_TOUR_STEPS: TourStep[] = [
 const AUTO_TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="auto-inputs"]',
-    title: 'Auto Loan Details',
-    content: 'Enter the car price, your monthly income, down payment, interest rate, and loan term. Your monthly income may be pre-filled from your budget settings.',
+    title: 'Szczegóły kredytu samochodowego',
+    content: 'Wpisz cenę samochodu, swój miesięczny dochód, wkład własny, oprocentowanie oraz okres kredytu. Twój miesięczny dochód może być wstępnie uzupełniony z ustawień budżetu.',
   },
   {
     target: '[data-tour="auto-results"]',
-    title: 'Loan Analysis',
+    title: 'Analiza kredytu',
     content: (
       <>
-        <p>See your estimated monthly payment and how it stacks up against the <strong className="text-slate-200">20/3/8 rule</strong>:</p>
-        <p className="mt-1.5"><strong className="text-slate-200">20%</strong> down payment, <strong className="text-slate-200">3</strong>-year (36 month) max term, and payment under <strong className="text-slate-200">8%</strong> of monthly income.</p>
+        <p>Zobacz szacowaną ratę miesięczną oraz jak wypada ona na tle <strong className="text-slate-200">reguły 20/3/8</strong>:</p>
+        <p className="mt-1.5"><strong className="text-slate-200">20%</strong> wkładu własnego, maksymalny okres <strong className="text-slate-200">3</strong> lata (36 miesięcy) oraz rata poniżej <strong className="text-slate-200">8%</strong> miesięcznego dochodu.</p>
       </>
     ),
     optional: true,
   },
   {
     target: '[data-tour="auto-table"]',
-    title: 'Max Affordable Estimates',
-    content: 'This table shows the most expensive car you can afford at various interest rates while staying within the 8% income rule. It factors in your down payment and loan term.',
+    title: 'Szacunki maksymalnej zdolności',
+    content: 'Ta tabela pokazuje najdroższy samochód, na jaki możesz sobie pozwolić przy różnych oprocentowaniach, pozostając w granicach reguły 8% dochodu. Uwzględnia ona Twój wkład własny oraz okres kredytu.',
     optional: true,
   },
 ]
@@ -89,18 +89,18 @@ const AUTO_TOUR_STEPS: TourStep[] = [
 const HOME_OWN_TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="home-income"]',
-    title: 'Income & Loan',
-    content: 'Enter your annual net income, down payment, mortgage interest rate, and loan term. The calculator uses the 28% front-end DTI rule to determine how much housing you can afford.',
+    title: 'Dochód i kredyt',
+    content: 'Wpisz swój roczny dochód netto, wkład własny, oprocentowanie kredytu hipotecznego oraz okres kredytu. Kalkulator stosuje regułę DTI front-end na poziomie 28%, aby określić, na jaką nieruchomość Cię stać.',
   },
   {
     target: '[data-tour="home-costs"]',
-    title: 'Recurring Costs',
-    content: 'Add homeowners insurance and HOA dues. These reduce your borrowing capacity since they count toward the 28% housing limit.',
+    title: 'Koszty stałe',
+    content: 'Dodaj ubezpieczenie nieruchomości oraz czynsz administracyjny. Obniżają one Twoją zdolność kredytową, ponieważ wliczają się do limitu 28% kosztów mieszkaniowych.',
   },
   {
     target: '[data-tour="home-result"]',
-    title: 'Affordability Result',
-    content: 'See the maximum home price you can afford, plus a full monthly breakdown of principal & interest, insurance, and HOA.',
+    title: 'Wynik zdolności zakupu',
+    content: 'Zobacz maksymalną cenę nieruchomości, na jaką możesz sobie pozwolić, wraz z pełnym miesięcznym podziałem na kapitał i odsetki, ubezpieczenie oraz czynsz administracyjny.',
     optional: true,
   },
 ]
@@ -108,13 +108,13 @@ const HOME_OWN_TOUR_STEPS: TourStep[] = [
 const HOME_RENT_TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="rent-input"]',
-    title: 'Your Income',
-    content: 'Enter your annual net income. It may be pre-filled from your monthly budget settings. The calculator applies the 30% DTI rule to determine your max affordable rent.',
+    title: 'Twój dochód',
+    content: 'Wpisz swój roczny dochód netto. Może być wstępnie uzupełniony z ustawień miesięcznego budżetu. Kalkulator stosuje regułę DTI 30%, aby określić maksymalny czynsz, na jaki Cię stać.',
   },
   {
     target: '[data-tour="rent-result"]',
-    title: 'Max Affordable Rent',
-    content: 'This shows the maximum monthly rent you should pay based on the 30% rule — meaning no more than 30% of your net monthly income goes toward rent.',
+    title: 'Maksymalny czynsz w zasięgu',
+    content: 'Pokazuje to maksymalny miesięczny czynsz, jaki powinieneś płacić zgodnie z regułą 30% — czyli nie więcej niż 30% Twojego miesięcznego dochodu netto przeznaczone na czynsz.',
     optional: true,
   },
 ]
@@ -285,23 +285,23 @@ export default function Calculator() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Calculators</h1>
+          <h1 className="text-2xl font-bold">Kalkulatory</h1>
           <p className="text-sm text-slate-400">
-            {mode === 'autoLoan' ? 'Auto evaluation (20/3/8 rule)'
+            {mode === 'autoLoan' ? 'Ocena kredytu samochodowego (reguła 20/3/8)'
               : mode === 'houseAffordability'
-                ? housingType === 'renting' ? 'Max affordable rent (30% rule)' : 'Max affordable home price (28% DTI)'
-                : mode === 'goalSeeker' ? 'Retirement planning & Monte Carlo analysis' : 'Compound interest calculator'}
+                ? housingType === 'renting' ? 'Maksymalny czynsz w zasięgu (reguła 30%)' : 'Maksymalna cena nieruchomości (DTI 28%)'
+                : mode === 'goalSeeker' ? 'Planowanie emerytury i analiza Monte Carlo' : 'Kalkulator procentu składanego'}
           </p>
         </div>
         <div className="flex items-center gap-2 self-end sm:self-auto">
           <button type="button" onClick={() => { if (mode === 'goalSeeker') setMcsOpen(true); setTourActive(true) }}
             className="flex items-center gap-1.5 rounded-2xl border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-400 hover:border-slate-700 hover:bg-slate-800 hover:text-slate-200 transition-colors">
             <HelpCircle size={15} />
-            Guide
+            Przewodnik
           </button>
           <button type="button" onClick={handleReset}
             className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 hover:border-slate-700 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-            Reset Calculator
+            Resetuj kalkulator
           </button>
         </div>
       </div>
@@ -309,10 +309,10 @@ export default function Calculator() {
       {/* Mode toggle */}
       <div data-tour="mode-toggle" className="flex gap-2 rounded-xl bg-slate-900 border border-slate-800 p-1">
         {[
-          { key: 'standard' as const, label: 'Standard' },
-          { key: 'goalSeeker' as const, label: 'Retirement' },
-          { key: 'autoLoan' as const, label: 'Auto' },
-          { key: 'houseAffordability' as const, label: 'Home' },
+          { key: 'standard' as const, label: 'Standardowy' },
+          { key: 'goalSeeker' as const, label: 'Emerytura' },
+          { key: 'autoLoan' as const, label: 'Samochód' },
+          { key: 'houseAffordability' as const, label: 'Mieszkanie' },
         ].map((t) => (
           <button key={t.key} type="button" onClick={() => updateState({ mode: t.key })}
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${mode === t.key ? 'bg-slate-700 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
@@ -327,7 +327,7 @@ export default function Calculator() {
           {(['owning', 'renting'] as const).map((h) => (
             <button key={h} type="button" onClick={() => setHousingType(h)}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${housingType === h ? 'bg-slate-700 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
-              {h === 'owning' ? 'Owning' : 'Renting'}
+              {h === 'owning' ? 'Zakup' : 'Wynajem'}
             </button>
           ))}
         </div>
@@ -344,33 +344,33 @@ export default function Calculator() {
       <Card data-tour="compound-interest">
         <SectionHeader
           icon={TrendingUp}
-          title="Compound Interest"
-          subtitle={mode === 'goalSeeker' ? 'Your starting point and growth assumptions' : 'Calculate future value with regular contributions'}
+          title="Procent składany"
+          subtitle={mode === 'goalSeeker' ? 'Twój punkt wyjścia oraz założenia dotyczące wzrostu' : 'Oblicz wartość przyszłą przy regularnych wpłatach'}
         />
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Initial balance (zł)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Saldo początkowe (zł)</label>
               <input inputMode="decimal" value={initialBalance}
                 onChange={(e) => updateState({ initialBalance: e.target.value })}
                 onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.initialBalance) updateState({ initialBalance: String(CAPS.initialBalance) }) }}
                 placeholder="0" className={INPUT} />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Contributions (zł)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Wpłaty (zł)</label>
               <input inputMode="decimal" value={contribution}
                 onChange={(e) => updateState({ contribution: e.target.value })}
                 onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > contributionMax) updateState({ contribution: String(contributionMax) }) }}
                 placeholder="0" className={INPUT} />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Frequency</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Częstotliwość</label>
               <div className="flex gap-2 rounded-xl bg-slate-800 p-1">
                 {(['monthly', 'yearly'] as const).map((f) => (
                   <button key={f} type="button" onClick={() => updateState({ contributionFrequency: f })}
                     className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${contributionFrequency === f ? 'bg-slate-600 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
-                    {f === 'monthly' ? 'Monthly' : 'Yearly'}
+                    {f === 'monthly' ? 'Miesięcznie' : 'Rocznie'}
                   </button>
                 ))}
               </div>
@@ -380,13 +380,13 @@ export default function Calculator() {
           <div className={`grid grid-cols-1 ${mode === 'standard' ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-4`}>
             <div>
               <label className="mb-1.5 flex items-center gap-2 text-sm text-slate-400">
-                Annual raise (%)
+                Roczna podwyżka (%)
                 <InfoTip>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    Annual increase to your contributions, modeling salary raises or increased savings over time.
+                    Roczny wzrost Twoich wpłat, odwzorowujący podwyżki wynagrodzenia lub zwiększone oszczędności w czasie.
                   </p>
                   <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                    At 2%, a 1 000 zł/mo contribution becomes ~1 020 zł/mo next year. Average wage growth is 3-4% nominal. Set to 0% if your contributions are fixed.
+                    Przy 2% wpłata 1 000 zł/mies. w przyszłym roku wzrośnie do ~1 020 zł/mies. Średni wzrost płac wynosi 3-4% nominalnie. Ustaw 0%, jeśli Twoje wpłaty są stałe.
                   </p>
                 </InfoTip>
               </label>
@@ -397,14 +397,14 @@ export default function Calculator() {
             </div>
             <div>
               <label className="mb-1.5 flex items-center gap-2 text-sm text-slate-400">
-                Rate of return (%)
+                Stopa zwrotu (%)
                 {mode === 'goalSeeker' && (
                   <InfoTip>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Expected average annual return before inflation. This is used both for the deterministic target calculation and as the mean return in Monte Carlo simulations.
+                      Oczekiwana średnia roczna stopa zwrotu przed inflacją. Jest używana zarówno do deterministycznego obliczenia celu, jak i jako średnia stopa zwrotu w symulacjach Monte Carlo.
                     </p>
                     <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                      S&P 500 historical average: ~10% nominal, ~7% real (after inflation). A balanced portfolio (60/40 stocks/bonds) historically returns ~7-8% nominal.
+                      Historyczna średnia S&P 500: ~10% nominalnie, ~7% realnie (po inflacji). Zrównoważony portfel (60/40 akcje/obligacje) historycznie daje ~7-8% nominalnie.
                     </p>
                   </InfoTip>
                 )}
@@ -416,7 +416,7 @@ export default function Calculator() {
             </div>
             {mode === 'standard' && (
               <div>
-                <label className="mb-1.5 block text-sm text-slate-400">Years to grow</label>
+                <label className="mb-1.5 block text-sm text-slate-400">Lata wzrostu</label>
                 <input type="number" step="1" min="0" max={CAPS.years} value={years}
                   onChange={(e) => updateState({ years: e.target.value })}
                   onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.years) updateState({ years: String(CAPS.years) }) }}
@@ -428,7 +428,7 @@ export default function Calculator() {
           {/* Standard result */}
           {mode === 'standard' && futureBalance !== null && (
             <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-4 mt-2">
-              <p className="text-xs text-slate-400 mb-1">Final future balance</p>
+              <p className="text-xs text-slate-400 mb-1">Końcowe saldo przyszłe</p>
               <p className="text-2xl font-bold text-green-400">{formatCurrency(futureBalance)}</p>
             </div>
           )}
@@ -442,20 +442,20 @@ export default function Calculator() {
         <Card data-tour="retirement-timeline">
           <SectionHeader
             icon={Calendar}
-            title="Retirement Timeline"
-            subtitle="Set your current age and when you want to retire"
+            title="Oś czasu emerytury"
+            subtitle="Ustaw swój obecny wiek oraz kiedy chcesz przejść na emeryturę"
           />
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm text-slate-400">Current age</label>
+                <label className="mb-1.5 block text-sm text-slate-400">Obecny wiek</label>
                 <input type="number" step="1" min="0" max={CAPS.currentAge} value={currentAge}
                   onChange={(e) => updateState({ currentAge: e.target.value })}
                   onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.currentAge) updateState({ currentAge: String(CAPS.currentAge) }) }}
                   placeholder="35" className={INPUT} />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm text-slate-400">Retire at</label>
+                <label className="mb-1.5 block text-sm text-slate-400">Emerytura w wieku</label>
                 <select value={targetRetirementAge} onChange={(e) => updateState({ targetRetirementAge: parseFloat(e.target.value) })}
                   className={INPUT}>
                   {TARGET_RETIREMENT_AGES.map((age) => (
@@ -466,7 +466,7 @@ export default function Calculator() {
             </div>
 
             {goalSeekerInvalid && (
-              <p className="text-sm text-red-400">Target age must be after current age.</p>
+              <p className="text-sm text-red-400">Wiek docelowy musi być wyższy niż obecny wiek.</p>
             )}
 
             {/* Visual timeline bar */}
@@ -479,11 +479,11 @@ export default function Calculator() {
                     style={{ left: `${retirePct}%`, right: 0 }} />
                 </div>
                 <div className="flex justify-between mt-2 text-xs text-slate-500">
-                  <span>Age {currentAgeNum}</span>
+                  <span>Wiek {currentAgeNum}</span>
                   <span className="text-green-400 font-medium">
-                    Retire at {targetRetirementAge} ({yearsToGrow} yrs)
+                    Emerytura w wieku {targetRetirementAge} ({yearsToGrow} lat)
                   </span>
-                  <span>Age {endAgeNum}</span>
+                  <span>Wiek {endAgeNum}</span>
                 </div>
               </div>
             )}
@@ -494,7 +494,7 @@ export default function Calculator() {
                 <div className="flex items-center gap-2">
                   <Clock size={14} className="text-slate-500" />
                   <span className="text-sm text-slate-400">
-                    <span className="text-slate-200 font-medium">{yearsToGrow} years</span> of growth (age {currentAgeNum} to {targetRetirementAge})
+                    <span className="text-slate-200 font-medium">{yearsToGrow} lat</span> wzrostu (od wieku {currentAgeNum} do {targetRetirementAge})
                   </span>
                 </div>
               </div>
@@ -506,18 +506,18 @@ export default function Calculator() {
         <Card data-tour="know-your-number">
           <SectionHeader
             icon={Target}
-            title="Know Your Number"
-            subtitle="Choose how to plan your retirement withdrawals"
+            title="Poznaj swoją kwotę"
+            subtitle="Wybierz, jak planować wypłaty na emeryturze"
           />
           <div className="space-y-4">
             {/* Withdrawal mode toggle */}
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Withdrawal strategy</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Strategia wypłat</label>
               <div className="flex gap-2 rounded-xl bg-slate-800 p-1">
                 {(['rate', 'income'] as const).map((m) => (
                   <button key={m} type="button" onClick={() => updateState({ withdrawalMode: m })}
                     className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${withdrawalMode === m ? 'bg-slate-600 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
-                    {m === 'rate' ? 'By Rate (%)' : 'By Income (zł)'}
+                    {m === 'rate' ? 'Według stopy (%)' : 'Według dochodu (zł)'}
                   </button>
                 ))}
               </div>
@@ -527,13 +527,13 @@ export default function Calculator() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-1.5 flex items-center gap-2 text-sm text-slate-400">
-                  Withdrawal rate (%)
+                  Stopa wypłat (%)
                   <InfoTip>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      The percentage of your portfolio you withdraw each year in retirement. The 4% rule is a classic guideline based on the Trinity Study.
+                      Procent Twojego portfela, który wypłacasz co roku na emeryturze. Reguła 4% to klasyczna wytyczna oparta na badaniu Trinity Study.
                     </p>
                     <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                      Use 3-3.5% for a more conservative plan, or 2-2.5% if you expect a 30+ year retirement.
+                      Użyj 3-3,5% dla bardziej ostrożnego planu lub 2-2,5%, jeśli spodziewasz się emerytury trwającej ponad 30 lat.
                     </p>
                   </InfoTip>
                 </label>
@@ -548,16 +548,16 @@ export default function Calculator() {
                 </select>
                 {withdrawalMode === 'income' && futureBalance !== null && futureBalance > 0 && desiredIncomeNum > 0 && (
                   <p className="text-xs text-slate-500 mt-1.5">
-                    Effective rate: {((desiredIncomeNum / futureBalance) * 100).toFixed(1)}% of projected portfolio
+                    Efektywna stopa: {((desiredIncomeNum / futureBalance) * 100).toFixed(1)}% prognozowanego portfela
                   </p>
                 )}
               </div>
               <div>
                 <label className="mb-1.5 flex items-center gap-2 text-sm text-slate-400">
-                  Desired annual income (zł)
+                  Pożądany dochód roczny (zł)
                   <InfoTip>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      The annual income you want to withdraw starting at retirement. This exact amount is withdrawn in year one, then adjusted for inflation each subsequent year.
+                      Roczny dochód, jaki chcesz wypłacać począwszy od emerytury. Dokładnie ta kwota jest wypłacana w pierwszym roku, a następnie korygowana o inflację w każdym kolejnym roku.
                     </p>
                   </InfoTip>
                 </label>
@@ -573,7 +573,7 @@ export default function Calculator() {
                 )}
                 {withdrawalMode === 'rate' && projectedAnnualIncome > 0 && (
                   <p className="text-xs text-slate-500 mt-1.5">
-                    {formatCurrency(projectedAnnualIncome / 12)} / mo at retirement
+                    {formatCurrency(projectedAnnualIncome / 12)} / mies. na emeryturze
                   </p>
                 )}
               </div>
@@ -584,10 +584,10 @@ export default function Calculator() {
               <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <Target size={14} className="text-blue-400" />
-                  <p className="text-xs text-slate-400">Projected portfolio at {targetRetirementAge}</p>
+                  <p className="text-xs text-slate-400">Prognozowany portfel w wieku {targetRetirementAge}</p>
                 </div>
                 <p className="text-xl font-bold text-blue-400">{formatCurrency(futureBalance)}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Based on your current savings plan</p>
+                <p className="text-xs text-slate-500 mt-0.5">Na podstawie Twojego obecnego planu oszczędzania</p>
               </div>
             )}
           </div>
@@ -602,9 +602,9 @@ export default function Calculator() {
                 <Shuffle size={20} className="text-purple-400" />
               </div>
               <div className="text-left min-w-0">
-                <h2 className="text-base font-semibold text-slate-200 flex items-center">Monte Carlo Simulation <span className="ml-1.5 inline-flex items-center rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-purple-400">Beta</span></h2>
+                <h2 className="text-base font-semibold text-slate-200 flex items-center">Symulacja Monte Carlo <span className="ml-1.5 inline-flex items-center rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-purple-400">Beta</span></h2>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Stress-test your plan across thousands of randomized market scenarios
+                  Przetestuj swój plan w tysiącach losowych scenariuszy rynkowych
                 </p>
               </div>
             </div>
@@ -618,21 +618,21 @@ export default function Calculator() {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Percent size={14} className="text-slate-500" />
-                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Market Assumptions</p>
+                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Założenia rynkowe</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
-                      Return volatility (%)
+                      Zmienność stopy zwrotu (%)
                       <InfoTip>
                         <p className="text-xs text-slate-300 leading-relaxed">
-                          Standard deviation of annual log-returns. Controls how much your portfolio's yearly return varies around the mean.
+                          Odchylenie standardowe rocznych logarytmicznych stóp zwrotu. Określa, jak bardzo roczna stopa zwrotu Twojego portfela waha się wokół średniej.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          S&P 500 historical volatility is roughly 15-16%. A higher value models more uncertainty. At 0%, every year returns exactly the mean rate (no randomness).
+                          Historyczna zmienność S&P 500 wynosi około 15-16%. Wyższa wartość oznacza większą niepewność. Przy 0% każdy rok daje dokładnie średnią stopę (bez losowości).
                         </p>
                         <p className="text-xs text-slate-500 leading-relaxed mt-1.5">
-                          Uses Geometric Brownian Motion (GBM) with drift adjustment so the expected return matches your rate of return input, while the median return is slightly lower due to volatility drag.
+                          Wykorzystuje geometryczny ruch Browna (GBM) z korektą dryfu, tak aby oczekiwana stopa zwrotu odpowiadała wprowadzonej stopie zwrotu, podczas gdy mediana stopy zwrotu jest nieco niższa z powodu dryfu zmienności.
                         </p>
                       </InfoTip>
                     </label>
@@ -642,13 +642,13 @@ export default function Calculator() {
                   </div>
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
-                      Annual fees (%)
+                      Roczne opłaty (%)
                       <InfoTip>
                         <p className="text-xs text-slate-300 leading-relaxed">
-                          Total annual expense ratio deducted from your portfolio each year (fund fees, advisor fees, etc.).
+                          Całkowity roczny wskaźnik kosztów potrącany z Twojego portfela co roku (opłaty funduszowe, opłaty doradcze itp.).
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          Index funds typically charge 0.03-0.20%. Actively managed funds can charge 0.5-1.5%. Financial advisors often add 0.5-1.0%. The fee compounds over decades and can significantly reduce your ending balance.
+                          Fundusze indeksowe zwykle pobierają 0,03-0,20%. Fundusze aktywnie zarządzane mogą pobierać 0,5-1,5%. Doradcy finansowi często dodają 0,5-1,0%. Opłata kumuluje się przez dekady i może znacząco obniżyć Twoje saldo końcowe.
                         </p>
                       </InfoTip>
                     </label>
@@ -658,13 +658,13 @@ export default function Calculator() {
                   </div>
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
-                      Inflation mean (%)
+                      Średnia inflacja (%)
                       <InfoTip>
                         <p className="text-xs text-slate-300 leading-relaxed">
-                          Expected average annual inflation rate. Your contributions grow with inflation during accumulation, and your withdrawals increase with inflation during retirement to maintain purchasing power.
+                          Oczekiwana średnia roczna stopa inflacji. Twoje wpłaty rosną wraz z inflacją w fazie akumulacji, a wypłaty rosną wraz z inflacją na emeryturze, aby zachować siłę nabywczą.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          Poland's NBP targets 2.5%, but realized inflation has run higher and more volatile. Use 3.5-5% for a conservative estimate.
+                          Cel inflacyjny NBP wynosi 2,5%, ale faktyczna inflacja była wyższa i bardziej zmienna. Użyj 3,5-5% dla ostrożnego szacunku.
                         </p>
                       </InfoTip>
                     </label>
@@ -674,13 +674,13 @@ export default function Calculator() {
                   </div>
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
-                      Inflation volatility (%)
+                      Zmienność inflacji (%)
                       <InfoTip>
                         <p className="text-xs text-slate-300 leading-relaxed">
-                          How much inflation varies year-to-year. At 0%, inflation is fixed at the mean each year. Higher values model uncertainty in future inflation.
+                          Jak bardzo inflacja zmienia się z roku na rok. Przy 0% inflacja jest co roku ustalona na poziomie średniej. Wyższe wartości uwzględniają niepewność przyszłej inflacji.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          Polish inflation has been more volatile than the US — swings of several percentage points. Floored at -2% per year to prevent unrealistic deflation spirals.
+                          Polska inflacja była bardziej zmienna niż amerykańska — z wahaniami o kilka punktów procentowych. Ograniczona do -2% rocznie, aby zapobiec nierealistycznym spiralom deflacyjnym.
                         </p>
                       </InfoTip>
                     </label>
@@ -690,7 +690,7 @@ export default function Calculator() {
                   </div>
                 </div>
                 <p className="mt-3 text-xs text-slate-500 leading-relaxed">
-                  Note: this simulation does not model tax. In Poland, investment gains outside IKE/IKZE are subject to the 19% capital-gains (Belka) tax, so your real after-tax outcome in a regular brokerage account will be lower.
+                  Uwaga: ta symulacja nie uwzględnia podatku. W Polsce zyski kapitałowe poza IKE/IKZE podlegają 19% podatkowi od zysków kapitałowych (podatek Belki), więc Twój rzeczywisty wynik po opodatkowaniu na zwykłym rachunku maklerskim będzie niższy.
                 </p>
               </div>
 
@@ -698,18 +698,18 @@ export default function Calculator() {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Shuffle size={14} className="text-slate-500" />
-                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Simulation Config</p>
+                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Konfiguracja symulacji</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
-                      Plan through age
+                      Plan do wieku
                       <InfoTip>
                         <p className="text-xs text-slate-300 leading-relaxed">
-                          The age your portfolio needs to last until. The simulation checks whether your money survives from retirement to this age.
+                          Wiek, do którego Twój portfel ma wystarczyć. Symulacja sprawdza, czy Twoje pieniądze przetrwają od emerytury do tego wieku.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          Average Polish life expectancy is about 78, but planning to 90-95 provides a safety margin. If you enable variable longevity below, each simulation samples a realistic death age instead.
+                          Średnia długość życia w Polsce wynosi około 78 lat, ale planowanie do 90-95 lat zapewnia margines bezpieczeństwa. Jeśli włączysz poniżej zmienną długość życia, każda symulacja zamiast tego losuje realistyczny wiek zgonu.
                         </p>
                       </InfoTip>
                     </label>
@@ -719,13 +719,13 @@ export default function Calculator() {
                   </div>
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
-                      Simulations <span className="text-slate-600">(max 100k)</span>
+                      Symulacje <span className="text-slate-600">(maks. 100 tys.)</span>
                       <InfoTip>
                         <p className="text-xs text-slate-300 leading-relaxed">
-                          Number of independent random scenarios to run. Each trial generates a unique sequence of market returns, inflation rates, and (optionally) lifespan.
+                          Liczba niezależnych losowych scenariuszy do uruchomienia. Każda próba generuje unikalną sekwencję stóp zwrotu z rynku, stóp inflacji oraz (opcjonalnie) długości życia.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          1,000 gives quick rough estimates. 10,000 (default) gives stable results. 50,000-100,000 gives very smooth percentile curves but takes a moment. Max 100,000.
+                          1 000 daje szybkie, zgrubne szacunki. 10 000 (domyślnie) daje stabilne wyniki. 50 000-100 000 daje bardzo gładkie krzywe percentyli, ale zajmuje chwilę. Maks. 100 000.
                         </p>
                       </InfoTip>
                     </label>
@@ -740,14 +740,14 @@ export default function Calculator() {
                       <input type="checkbox" checked={useVariableLongevity}
                         onChange={(e) => updateState({ useVariableLongevity: e.target.checked })}
                         className="rounded border-slate-600 bg-slate-800 text-green-500 focus:ring-green-500 focus:ring-offset-0 h-4 w-4" />
-                      Variable longevity
+                      Zmienna długość życia
                     </label>
                     <InfoTip>
                       <p className="text-xs text-slate-300 leading-relaxed">
-                        When enabled, each simulation samples a realistic death age from SSA actuarial life tables instead of using the fixed "plan through age."
+                        Po włączeniu każda symulacja losuje realistyczny wiek zgonu z aktuarialnych tablic trwania życia, zamiast korzystać ze stałego „planu do wieku”.
                       </p>
                       <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                        This models longevity risk — the chance you live longer (or shorter) than expected. Some trials will need money until age 95+, while others end at 75. The success rate accounts for this variation.
+                        Uwzględnia to ryzyko długowieczności — szansę, że dożyjesz dłużej (lub krócej) niż oczekiwano. Niektóre próby będą potrzebowały pieniędzy do wieku 95+ lat, inne zakończą się w wieku 75 lat. Wskaźnik powodzenia uwzględnia tę zmienność.
                       </p>
                     </InfoTip>
                   </div>
@@ -756,17 +756,17 @@ export default function Calculator() {
                       <input type="checkbox" checked={useRegimeSwitching}
                         onChange={(e) => updateState({ useRegimeSwitching: e.target.checked })}
                         className="rounded border-slate-600 bg-slate-800 text-green-500 focus:ring-green-500 focus:ring-offset-0 h-4 w-4" />
-                      Sequence-of-returns risk
+                      Ryzyko sekwencji stóp zwrotu
                     </label>
                     <InfoTip>
                       <p className="text-xs text-slate-300 leading-relaxed">
-                        Models realistic market crash clustering using a two-state regime-switching model. The market randomly enters bear periods with consecutive bad years, instead of each year being independent.
+                        Uwzględnia realistyczne nawarstwianie się krachów rynkowych za pomocą dwustanowego modelu przełączania reżimów. Rynek losowo wchodzi w okresy bessy z kolejnymi złymi latami, zamiast traktować każdy rok jako niezależny.
                       </p>
                       <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                        In a bear regime, expected returns drop sharply (-15 pp) and volatility increases by 60%. Bear markets persist with ~60% probability each year, producing multi-year downturns roughly once every 8 years on average.
+                        W reżimie bessy oczekiwane stopy zwrotu gwałtownie spadają (-15 pp), a zmienność rośnie o 60%. Bessa utrzymuje się z prawdopodobieństwem ~60% w każdym roku, powodując wieloletnie spadki średnio mniej więcej raz na 8 lat.
                       </p>
                       <p className="text-xs text-slate-500 leading-relaxed mt-1.5">
-                        Consecutive large losses early in retirement can permanently deplete a portfolio even if long-run average returns are healthy. This is the core risk the standard IID model underestimates. Expect lower success rates when enabled.
+                        Kolejne duże straty na początku emerytury mogą trwale wyczerpać portfel, nawet jeśli długoterminowe średnie stopy zwrotu są zdrowe. To kluczowe ryzyko, które standardowy model IID niedoszacowuje. Po włączeniu spodziewaj się niższych wskaźników powodzenia.
                       </p>
                     </InfoTip>
                   </div>
@@ -779,17 +779,17 @@ export default function Calculator() {
                 {mcsRunning ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Running {numTrialsNum.toLocaleString()} simulations...
+                    Trwa {numTrialsNum.toLocaleString()} symulacji...
                   </span>
                 ) : (
-                  `Run ${numTrialsNum.toLocaleString()} Simulations`
+                  `Uruchom ${numTrialsNum.toLocaleString()} symulacji`
                 )}
               </button>
               {!canRunMCS && (
                 <p className="text-xs text-slate-600 text-center">
                   {withdrawalMode === 'income' && desiredIncomeNum <= 0
-                    ? 'Enter your desired annual income in the Know Your Number section.'
-                    : 'Fill in current age, retirement age, and rate of return above.'}
+                    ? 'Wpisz pożądany dochód roczny w sekcji „Poznaj swoją kwotę”.'
+                    : 'Uzupełnij powyżej obecny wiek, wiek emerytalny oraz stopę zwrotu.'}
                 </p>
               )}
             </div>

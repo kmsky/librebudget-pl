@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { format, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { Card } from '../components/ui/Card'
 import { db, type CategoryGroup } from '../db/database'
 import { sumByType, groupByCategoryGroup, formatCurrency } from '../utils/calculations'
@@ -7,8 +8,9 @@ import { GROUP_COLORS, getCategoryIconClassName } from '../utils/colors'
 import { Icon } from '../components/ui/Icon'
 
 interface MonthlyEntry {
-  label: string      // full month name e.g. "January"
-  shortLabel: string // e.g. "Jan"
+  monthIndex: number // 0-11, used for logic/comparisons
+  label: string      // full month name e.g. "styczeń"
+  shortLabel: string // e.g. "sty"
   income: number
   spending: number
   saved: number
@@ -40,6 +42,32 @@ interface YearData {
   monthly: MonthlyEntry[]
   monthCount: number
   transactionCount: number
+}
+
+// Polish display labels for category groups (display only; enum values stay as-is)
+const GROUP_DISPLAY: Record<CategoryGroup, string> = {
+  needs: 'Potrzeby',
+  wants: 'Zachcianki',
+  savings: 'Oszczędności',
+  income: 'Przychód',
+}
+
+// Polish plural form for "transakcja"
+function pluralizeTransakcje(n: number): string {
+  if (n === 1) return 'transakcja'
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return 'transakcje'
+  return 'transakcji'
+}
+
+// Polish plural form for "miesiąc"
+function pluralizeMiesiace(n: number): string {
+  if (n === 1) return 'miesiąc'
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return 'miesiące'
+  return 'miesięcy'
 }
 
 export default function YearReview() {
@@ -84,15 +112,16 @@ export default function YearReview() {
       if (mtxs.length === 0) continue
       const mg = await groupByCategoryGroup(mtxs)
       monthly.push({
-        label: format(d, 'MMMM'),
-        shortLabel: format(d, 'MMM'),
+        monthIndex: m,
+        label: format(d, 'LLLL', { locale: pl }),
+        shortLabel: format(d, 'LLL', { locale: pl }),
         income: sumByType(mtxs, 'income'),
         spending: mg.needs + mg.wants,
         saved: mg.savings,
       })
     }
 
-    const fallback = { label: '-', shortLabel: '-', saved: 0, spending: 0, income: 0 }
+    const fallback = { monthIndex: -1, label: '-', shortLabel: '-', saved: 0, spending: 0, income: 0 }
     const bestSavingsMonth = monthly.reduce((best, m) => m.saved > best.saved ? m : best, monthly[0] ?? fallback)
     const highestSpendingMonth = monthly.reduce((w, m) => m.spending > w.spending ? m : w, monthly[0] ?? fallback)
     const spendingMonths = monthly.filter((m) => m.spending > 0)
@@ -141,7 +170,7 @@ export default function YearReview() {
     // Longest savings streak (consecutive months with saved > 0)
     let streak = 0, maxStreak = 0, cur = 0
     for (let m = 0; m < 12; m++) {
-      const entry = monthly.find((e) => e.label === format(new Date(year, m, 1), 'MMMM'))
+      const entry = monthly.find((e) => e.monthIndex === m)
       if (entry && entry.saved > 0) {
         cur++
         maxStreak = Math.max(maxStreak, cur)
@@ -152,21 +181,15 @@ export default function YearReview() {
     streak = maxStreak
 
     // Income trend: H1 vs H2 (only if both halves have data)
-    const h1 = monthly.filter((_, i) => {
-      const idx = ['January','February','March','April','May','June'].indexOf(monthly[i]?.label)
-      return idx !== -1
-    })
     const h1Income = monthly
-      .filter((m) => ['January','February','March','April','May','June'].includes(m.label))
+      .filter((m) => m.monthIndex <= 5)
       .reduce((s, m) => s + m.income, 0)
     const h2Income = monthly
-      .filter((m) => ['July','August','September','October','November','December'].includes(m.label))
+      .filter((m) => m.monthIndex >= 6)
       .reduce((s, m) => s + m.income, 0)
     const incomeTrend = h1Income > 0 && h2Income > 0
       ? ((h2Income - h1Income) / h1Income) * 100
       : null
-
-    void h1
 
     setData({
       totalIncome,
@@ -183,7 +206,7 @@ export default function YearReview() {
         ? { name: topSavingsCat.name, icon: topSavingsCat.icon, total: Number(topSavingsEntry![1]), group: topSavingsCat.group }
         : null,
       biggestSingleExpense: bigTx
-        ? { description: bigTx.description || bigTxCat?.name || 'Unknown', amount: bigTx.amount, date: bigTx.date, categoryName: bigTxCat?.name ?? '' }
+        ? { description: bigTx.description || bigTxCat?.name || 'Nieznane', amount: bigTx.amount, date: bigTx.date, categoryName: bigTxCat?.name ?? '' }
         : null,
       needsTotal: groupTotals.needs,
       wantsTotal: groupTotals.wants,
@@ -201,7 +224,7 @@ export default function YearReview() {
   }
 
   if (loading) {
-    return <div className="flex h-64 items-center justify-center"><p className="text-slate-400">Loading...</p></div>
+    return <div className="flex h-64 items-center justify-center"><p className="text-slate-400">Ładowanie...</p></div>
   }
 
   return (
@@ -209,8 +232,8 @@ export default function YearReview() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Year in Review</h1>
-          <p className="text-sm text-slate-400">Your {year} financial summary</p>
+          <h1 className="text-2xl font-bold">Podsumowanie roku</h1>
+          <p className="text-sm text-slate-400">Twoje finanse w roku {year}</p>
         </div>
         <div className="flex gap-1">
           <button onClick={() => setYear((y) => y - 1)}
@@ -223,48 +246,48 @@ export default function YearReview() {
       </div>
 
       {!data ? (
-        <Card className="text-center"><p className="text-slate-400 py-8">No transactions found for {year}.</p></Card>
+        <Card className="text-center"><p className="text-slate-400 py-8">Brak transakcji w roku {year}.</p></Card>
       ) : (
         <>
           {/* Hero */}
           {data.totalSaved > 0 && (
             <div className="rounded-2xl border border-blue-800 bg-blue-900/20 p-6 text-center">
-              <p className="text-lg text-blue-300 mb-1">You put away</p>
+              <p className="text-lg text-blue-300 mb-1">Odłożyłeś</p>
               <p className="text-4xl font-bold text-blue-400">{formatCurrency(data.totalSaved)}</p>
-              <p className="text-sm text-blue-300/70 mt-1">into savings in {year} — great work!</p>
+              <p className="text-sm text-blue-300/70 mt-1">na oszczędności w {year} roku — świetna robota!</p>
             </div>
           )}
 
           {/* Key stats */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
-              <p className="text-xs text-slate-500">Total Income</p>
+              <p className="text-xs text-slate-500">Łączny przychód</p>
               <p className="text-2xl font-bold text-green-400">{formatCurrency(data.totalIncome)}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{data.transactionCount} transactions</p>
+              <p className="text-xs text-slate-500 mt-0.5">{data.transactionCount} {pluralizeTransakcje(data.transactionCount)}</p>
             </Card>
             <Card>
-              <p className="text-xs text-slate-500">Total Spending</p>
+              <p className="text-xs text-slate-500">Łączne wydatki</p>
               <p className="text-2xl font-bold text-slate-200">{formatCurrency(data.totalSpending)}</p>
-              <p className="text-xs text-slate-500 mt-0.5">needs + wants only</p>
+              <p className="text-xs text-slate-500 mt-0.5">tylko potrzeby + zachcianki</p>
             </Card>
             <Card>
-              <p className="text-xs text-slate-500">Total Saved</p>
+              <p className="text-xs text-slate-500">Łącznie odłożone</p>
               <p className="text-2xl font-bold text-blue-400">{formatCurrency(data.totalSaved)}</p>
-              <p className="text-xs text-slate-500 mt-0.5">savings contributions</p>
+              <p className="text-xs text-slate-500 mt-0.5">wpłaty na oszczędności</p>
             </Card>
             <Card>
-              <p className="text-xs text-slate-500">Savings Rate</p>
+              <p className="text-xs text-slate-500">Stopa oszczędności</p>
               <p className={`text-2xl font-bold ${data.savingsRate >= 20 ? 'text-green-400' : data.savingsRate >= 10 ? 'text-blue-400' : 'text-slate-200'}`}>
                 {data.savingsRate.toFixed(1)}%
               </p>
-              <p className="text-xs text-slate-500 mt-0.5">of income saved</p>
+              <p className="text-xs text-slate-500 mt-0.5">przychodu odłożone</p>
             </Card>
           </div>
 
           {/* Month-by-month horizontal chart */}
           {data.monthly.length > 0 && (
             <Card>
-              <h3 className="text-sm font-medium text-slate-400 mb-4">Month by Month</h3>
+              <h3 className="text-sm font-medium text-slate-400 mb-4">Miesiąc po miesiącu</h3>
               <div className="space-y-2">
                 {data.monthly.map((m) => {
                   const maxVal = Math.max(...data.monthly.map((x) => x.spending + x.saved), 1)
@@ -278,7 +301,7 @@ export default function YearReview() {
                           <div
                             className="h-full transition-all duration-500 rounded-l-full"
                             style={{ width: `${spendPct}%`, backgroundColor: '#64748b' }}
-                            title={`Spending: ${formatCurrency(m.spending)}`}
+                            title={`Wydatki: ${formatCurrency(m.spending)}`}
                           />
                         )}
                         {m.saved > 0 && (
@@ -289,7 +312,7 @@ export default function YearReview() {
                               backgroundColor: '#3b82f6',
                               borderRadius: m.spending === 0 ? '9999px' : '0 9999px 9999px 0',
                             }}
-                            title={`Saved: ${formatCurrency(m.saved)}`}
+                            title={`Odłożone: ${formatCurrency(m.saved)}`}
                           />
                         )}
                       </div>
@@ -302,10 +325,10 @@ export default function YearReview() {
               </div>
               <div className="flex items-center gap-4 mt-3 pt-3 border-t border-slate-800">
                 <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                  <span className="h-2.5 w-2.5 rounded-sm bg-slate-500 inline-block" /> Spending
+                  <span className="h-2.5 w-2.5 rounded-sm bg-slate-500 inline-block" /> Wydatki
                 </span>
                 <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                  <span className="h-2.5 w-2.5 rounded-sm bg-blue-500 inline-block" /> Savings
+                  <span className="h-2.5 w-2.5 rounded-sm bg-blue-500 inline-block" /> Oszczędności
                 </span>
               </div>
             </Card>
@@ -314,58 +337,58 @@ export default function YearReview() {
           {/* Monthly highlights */}
           <div className="grid gap-4 sm:grid-cols-3">
             <Card>
-              <p className="text-xs text-slate-500 mb-1">Best Savings Month</p>
+              <p className="text-xs text-slate-500 mb-1">Najlepszy miesiąc oszczędzania</p>
               <p className="font-medium text-blue-400">{data.bestSavingsMonth.label}</p>
               <p className="text-sm text-slate-400">
                 {data.bestSavingsMonth.saved > 0
-                  ? `Saved ${formatCurrency(data.bestSavingsMonth.saved)}`
-                  : 'No savings recorded'}
+                  ? `Odłożone ${formatCurrency(data.bestSavingsMonth.saved)}`
+                  : 'Brak oszczędności'}
               </p>
             </Card>
             <Card>
-              <p className="text-xs text-slate-500 mb-1">Highest Spending Month</p>
+              <p className="text-xs text-slate-500 mb-1">Miesiąc największych wydatków</p>
               <p className="font-medium text-orange-400">{data.highestSpendingMonth.label}</p>
-              <p className="text-sm text-slate-400">Spent {formatCurrency(data.highestSpendingMonth.spending)}</p>
+              <p className="text-sm text-slate-400">Wydane {formatCurrency(data.highestSpendingMonth.spending)}</p>
             </Card>
             <Card>
-              <p className="text-xs text-slate-500 mb-1">Lowest Spending Month</p>
+              <p className="text-xs text-slate-500 mb-1">Miesiąc najmniejszych wydatków</p>
               <p className="font-medium text-green-400">{data.lowestSpendingMonth.label}</p>
               <p className="text-sm text-slate-400">
                 {data.lowestSpendingMonth.spending > 0
-                  ? `Spent ${formatCurrency(data.lowestSpendingMonth.spending)}`
-                  : 'No spending'}
+                  ? `Wydane ${formatCurrency(data.lowestSpendingMonth.spending)}`
+                  : 'Brak wydatków'}
               </p>
             </Card>
           </div>
 
           {/* Insights: By the Numbers */}
           <Card>
-            <h3 className="text-sm font-medium text-slate-400 mb-4">By the Numbers</h3>
+            <h3 className="text-sm font-medium text-slate-400 mb-4">W liczbach</h3>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <Stat label="Avg. Monthly Spending" value={formatCurrency(data.avgMonthlySpending)} />
-              <Stat label="Avg. Monthly Savings" value={formatCurrency(data.avgMonthlySaved)} color="text-blue-400" />
+              <Stat label="Śr. miesięczne wydatki" value={formatCurrency(data.avgMonthlySpending)} />
+              <Stat label="Śr. miesięczne oszczędności" value={formatCurrency(data.avgMonthlySaved)} color="text-blue-400" />
               <Stat
-                label="Months with Savings"
-                value={`${data.monthsWithSavings} of ${data.monthCount}`}
+                label="Miesiące z oszczędnościami"
+                value={`${data.monthsWithSavings} z ${data.monthCount}`}
                 color={data.monthsWithSavings === data.monthCount ? 'text-green-400' : 'text-slate-200'}
               />
               {data.savingsStreak > 1 && (
                 <Stat
-                  label="Longest Savings Streak"
-                  value={`${data.savingsStreak} month${data.savingsStreak !== 1 ? 's' : ''}`}
+                  label="Najdłuższa seria oszczędzania"
+                  value={`${data.savingsStreak} ${pluralizeMiesiace(data.savingsStreak)}`}
                   color="text-blue-400"
                 />
               )}
               {data.biggestExpenseCategory && (
                 <Stat
-                  label="Top Expense Category"
+                  label="Główna kategoria wydatków"
                   value={data.biggestExpenseCategory.name}
                   sub={formatCurrency(data.biggestExpenseCategory.total)}
                 />
               )}
               {data.biggestSavingsCategory && (
                 <Stat
-                  label="Top Savings Category"
+                  label="Główna kategoria oszczędności"
                   value={data.biggestSavingsCategory.name}
                   sub={formatCurrency(data.biggestSavingsCategory.total)}
                   color="text-blue-400"
@@ -373,18 +396,18 @@ export default function YearReview() {
               )}
               {data.biggestSingleExpense && (
                 <Stat
-                  label="Biggest Single Expense"
+                  label="Największy pojedynczy wydatek"
                   value={formatCurrency(data.biggestSingleExpense.amount)}
-                  sub={`${data.biggestSingleExpense.description} · ${format(new Date(data.biggestSingleExpense.date), 'MMM d')}`}
+                  sub={`${data.biggestSingleExpense.description} · ${format(new Date(data.biggestSingleExpense.date), 'd MMM', { locale: pl })}`}
                   color="text-orange-400"
                 />
               )}
               {data.incomeTrend !== null && (
                 <Stat
-                  label="Income Trend (H1 → H2)"
+                  label="Trend przychodu (I poł. → II poł.)"
                   value={`${data.incomeTrend >= 0 ? '+' : ''}${data.incomeTrend.toFixed(1)}%`}
                   color={data.incomeTrend >= 0 ? 'text-green-400' : 'text-red-400'}
-                  sub="second half vs first half"
+                  sub="druga połowa vs pierwsza połowa"
                 />
               )}
             </div>
@@ -393,14 +416,14 @@ export default function YearReview() {
           {/* Spending + Savings breakdown */}
           <div className="grid gap-4 sm:grid-cols-2">
             <Card>
-              <h3 className="text-sm font-medium text-slate-400 mb-4">Spending Breakdown</h3>
+              <h3 className="text-sm font-medium text-slate-400 mb-4">Podział wydatków</h3>
               <div className="space-y-3">
                 {([['needs', data.needsTotal], ['wants', data.wantsTotal]] as [CategoryGroup, number][]).map(([group, amount]) => {
                   const pct = data.totalSpending > 0 ? (amount / data.totalSpending) * 100 : 0
                   return (
                     <div key={group}>
                       <div className="flex justify-between text-sm mb-1">
-                        <span style={{ color: GROUP_COLORS[group] }} className="capitalize">{group}</span>
+                        <span style={{ color: GROUP_COLORS[group] }}>{GROUP_DISPLAY[group]}</span>
                         <span className="text-slate-400">
                           {formatCurrency(amount)} <span className="text-slate-600">({pct.toFixed(0)}%)</span>
                         </span>
@@ -413,15 +436,15 @@ export default function YearReview() {
                   )
                 })}
                 {data.totalSpending === 0 && (
-                  <p className="text-sm text-slate-500 text-center py-2">No spending recorded</p>
+                  <p className="text-sm text-slate-500 text-center py-2">Brak zarejestrowanych wydatków</p>
                 )}
               </div>
             </Card>
 
             <Card>
-              <h3 className="text-sm font-medium text-slate-400 mb-4">Savings Breakdown</h3>
+              <h3 className="text-sm font-medium text-slate-400 mb-4">Podział oszczędności</h3>
               {data.savingsCategoryTotals.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-2">No savings recorded</p>
+                <p className="text-sm text-slate-500 text-center py-2">Brak zarejestrowanych oszczędności</p>
               ) : (
                 <div className="space-y-3">
                   {data.savingsCategoryTotals.map((cat) => {

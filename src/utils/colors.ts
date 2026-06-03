@@ -13,10 +13,10 @@ export function getCategoryIconClassName(group: CategoryGroup): string {
 }
 
 export const GROUP_LABELS: Record<CategoryGroup, string> = {
-  needs: 'Needs',
-  wants: 'Wants',
-  savings: 'Savings',
-  income: 'Income',
+  needs: 'Potrzeby',
+  wants: 'Zachcianki',
+  savings: 'Oszczędności',
+  income: 'Przychód',
 }
 
 export function getHealthBarColor(ratio: number, theme?: string): string {

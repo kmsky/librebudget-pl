@@ -110,14 +110,14 @@ export default function DebtTracker() {
       const newBalance = Math.max(0, debt.balance - amount)
       await updateDebt(showPayment, { balance: newBalance })
 
-      const debtPayoffCat = await db.categories.where('name').equals('Debt Payoff').first()
+      const debtPayoffCat = await db.categories.where('name').equals('Spłata długów').first()
         ?? (await db.categories.where('group').equals('needs').first())
       if (debtPayoffCat?.id) {
         await db.transactions.add({
           amount,
           type: 'expense',
           categoryId: debtPayoffCat.id,
-          description: `Payment: ${debt.name}`,
+          description: `Spłata: ${debt.name}`,
           note: '',
           date: format(new Date(), 'yyyy-MM-dd'),
           createdAt: new Date().toISOString(),
@@ -140,37 +140,41 @@ export default function DebtTracker() {
     return Math.max(max, schedule.length)
   }, 0)
 
-  const modalTitle = editingDebt ? 'Edit Debt' : 'Add Debt'
+  const modalTitle = editingDebt ? 'Edytuj dług' : 'Dodaj dług'
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">Debt Tracker</h1>
+            <h1 className="text-2xl font-bold">Długi</h1>
           </div>
-          <p className="text-sm text-slate-400">Set payoff goals and track progress</p>
+          <p className="text-sm text-slate-400">Ustaw cele spłaty i śledź postępy</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowModal(true) }}>+ Add Debt</Button>
+        <Button onClick={() => { resetForm(); setShowModal(true) }}>+ Dodaj dług</Button>
       </div>
 
       {debts.length > 0 && (
         <>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5">
             <Card className="min-w-0 py-5 px-5">
-              <p className="text-xs text-slate-500">Total Debt</p>
+              <p className="text-xs text-slate-500">Suma długów</p>
               <p className="mt-1 break-words text-xl font-bold text-red-400 sm:text-2xl">{formatCurrency(totalDebt)}</p>
             </Card>
             <Card className="min-w-0 py-5 px-5">
-              <p className="text-xs text-slate-500">Monthly Minimum</p>
+              <p className="text-xs text-slate-500">Minimum miesięcznie</p>
               <p className="mt-1 break-words text-xl font-bold text-slate-200 sm:text-2xl">{formatCurrency(totalMinPayment)}</p>
             </Card>
             <Card className="min-w-0 py-5 px-5">
-              <p className="text-xs text-slate-500">Est. Total Interest</p>
+              <p className="text-xs text-slate-500">Szac. suma odsetek</p>
               <p className="mt-1 break-words text-xl font-bold text-orange-400 sm:text-2xl">{formatCurrency(totalInterest)}</p>
               {maxMonths > 0 && (
                 <p className="text-xs text-slate-500 mt-1">
-                  ~{Math.ceil(maxMonths / 12)} year{maxMonths > 12 ? 's' : ''} to payoff
+                  {(() => {
+                    const years = Math.ceil(maxMonths / 12)
+                    const yearWord = years === 1 ? 'rok' : (years % 10 >= 2 && years % 10 <= 4 && (years % 100 < 10 || years % 100 >= 20)) ? 'lata' : 'lat'
+                    return `~${years} ${yearWord} do spłaty`
+                  })()}
                 </p>
               )}
             </Card>
@@ -186,18 +190,18 @@ export default function DebtTracker() {
               return (
                 <>
                   <Card className="min-w-0 py-5 px-5">
-                    <p className="text-xs text-slate-500">High-Interest (&gt;10%)</p>
+                    <p className="text-xs text-slate-500">Wysokie oprocentowanie (&gt;10%)</p>
                     <p className="mt-1 break-words text-xl font-bold text-amber-400 sm:text-2xl">{formatCurrency(highInterestTotal)}</p>
                     {totalDebt > 0 && (
-                      <p className="text-xs text-slate-500 mt-1">{(highInterestTotal / totalDebt * 100).toFixed(0)}% of total</p>
+                      <p className="text-xs text-slate-500 mt-1">{(highInterestTotal / totalDebt * 100).toFixed(0)}% całości</p>
                     )}
                   </Card>
                   <Card className="min-w-0 py-5 px-5">
-                    <p className="text-xs text-slate-500">Weighted Avg APR</p>
+                    <p className="text-xs text-slate-500">Śr. ważone RRSO</p>
                     <p className="mt-1 break-words text-xl font-bold text-slate-200 sm:text-2xl">{avgApr.toFixed(1)}%</p>
                   </Card>
                   <Card className="min-w-0 py-5 px-5">
-                    <p className="text-xs text-slate-500">Largest Debt Share</p>
+                    <p className="text-xs text-slate-500">Udział największego długu</p>
                     <p className="mt-1 break-words text-xl font-bold text-slate-200 sm:text-2xl">{largestPct.toFixed(0)}%</p>
                   </Card>
                 </>
@@ -213,16 +217,16 @@ export default function DebtTracker() {
         <div className="space-y-3">
           {/* Strategy toggle */}
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-slate-400">Payoff Strategy</h3>
+            <h3 className="text-sm font-medium text-slate-400">Strategia spłaty</h3>
             <div className="flex gap-1 rounded-xl bg-slate-900 border border-slate-800 p-1">
               <button
                 onClick={() => setStrategy('avalanche')}
                 className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${strategy === 'avalanche' ? 'bg-slate-800 text-slate-100' : 'text-slate-500 hover:text-slate-300'}`}
-              >Avalanche</button>
+              >Lawina</button>
               <button
                 onClick={() => setStrategy('snowball')}
                 className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${strategy === 'snowball' ? 'bg-slate-800 text-slate-100' : 'text-slate-500 hover:text-slate-300'}`}
-              >Snowball</button>
+              >Kula śnieżna</button>
             </div>
           </div>
 
@@ -276,14 +280,14 @@ export default function DebtTracker() {
                       </p>
                       <div className="mt-0.5 flex flex-wrap items-center gap-1">
                         <span className="rounded-md bg-slate-800 px-1.5 py-px text-xs text-slate-400">
-                          {debt.interestRate}% APR
+                          {debt.interestRate}% RRSO
                         </span>
                         <span className="rounded-md bg-slate-800 px-1.5 py-px text-xs text-slate-400">
-                          {formatCurrency(debt.minimumPayment)}/mo
+                          {formatCurrency(debt.minimumPayment)}/mies.
                         </span>
                         {!coveringInterest && !isPaidOff && (
                           <span className="rounded-md bg-amber-500/15 px-1.5 py-px text-xs text-amber-400">
-                            ⚠ interest
+                            ⚠ odsetki
                           </span>
                         )}
                       </div>
@@ -309,9 +313,9 @@ export default function DebtTracker() {
                       {!isPaidOff && (
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs text-slate-500">
-                            <span>{paidPercent.toFixed(0)}% paid off</span>
+                            <span>{paidPercent.toFixed(0)}% spłacone</span>
                             {monthsLeft > 0 && (
-                              <span>{monthsLeft} mo · {formatCurrency(interestCost)} interest</span>
+                              <span>{monthsLeft} mies. · {formatCurrency(interestCost)} odsetek</span>
                             )}
                           </div>
                           <div className="h-1.5 rounded-full bg-slate-700 overflow-hidden progress-track">
@@ -327,12 +331,12 @@ export default function DebtTracker() {
                       {debt.targetPayoffDate && !isPaidOff && (
                         <p className="text-xs text-slate-500">
                           {targetDatePassed ? (
-                            <span className="text-amber-400">Goal date has passed — update target or pay in full</span>
+                            <span className="text-amber-400">Termin celu już minął — zaktualizuj cel lub spłać w całości</span>
                           ) : reqForTarget != null ? (
                             <>
-                              Target: {debt.targetPayoffDate} · needs {formatCurrency(reqForTarget)}/mo
+                              Cel: {debt.targetPayoffDate} · wymaga {formatCurrency(reqForTarget)}/mies.
                               {effPayment < reqForTarget && (
-                                <span className="text-amber-400 ml-1">(+{formatCurrency(reqForTarget - effPayment)}/mo)</span>
+                                <span className="text-amber-400 ml-1">(+{formatCurrency(reqForTarget - effPayment)}/mies.)</span>
                               )}
                             </>
                           ) : null}
@@ -343,13 +347,13 @@ export default function DebtTracker() {
                       {(debt.dueDay != null || (debt.annualFee != null && debt.annualFee > 0) || effPayment > debt.minimumPayment) && (
                         <div className="flex flex-wrap gap-1.5">
                           {debt.dueDay != null && (
-                            <span className="rounded-md bg-slate-700 px-2 py-1 text-xs text-slate-400">Due day {debt.dueDay}</span>
+                            <span className="rounded-md bg-slate-700 px-2 py-1 text-xs text-slate-400">Termin płatności: {debt.dueDay}.</span>
                           )}
                           {debt.annualFee != null && debt.annualFee > 0 && (
-                            <span className="rounded-md bg-slate-700 px-2 py-1 text-xs text-slate-400">{formatCurrency(debt.annualFee)}/yr fee</span>
+                            <span className="rounded-md bg-slate-700 px-2 py-1 text-xs text-slate-400">opłata {formatCurrency(debt.annualFee)}/rok</span>
                           )}
                           {effPayment > debt.minimumPayment && (
-                            <span className="rounded-md bg-green-500/15 px-2 py-1 text-xs text-green-400">Target {formatCurrency(effPayment)}/mo</span>
+                            <span className="rounded-md bg-green-500/15 px-2 py-1 text-xs text-green-400">Cel {formatCurrency(effPayment)}/mies.</span>
                           )}
                         </div>
                       )}
@@ -366,7 +370,7 @@ export default function DebtTracker() {
                           className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-700 py-2 text-sm font-medium text-slate-200 transition-colors active:bg-slate-600"
                         >
                           <Icon name="Pencil" size={14} />
-                          Edit
+                          Edytuj
                         </button>
                         {!isPaidOff && (
                           <button
@@ -374,7 +378,7 @@ export default function DebtTracker() {
                             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-green-600/20 py-2 text-sm font-medium text-green-400 transition-colors active:bg-green-600/30"
                           >
                             <Icon name="Banknote" size={14} />
-                            Pay
+                            Zapłać
                           </button>
                         )}
                         <button
@@ -382,7 +386,7 @@ export default function DebtTracker() {
                           className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-700 py-2 text-sm font-medium text-red-400 transition-colors active:bg-slate-600"
                         >
                           <Icon name="Trash2" size={14} />
-                          Delete
+                          Usuń
                         </button>
                       </div>
                     </div>
@@ -396,7 +400,7 @@ export default function DebtTracker() {
 
       {debts.length === 0 && (
         <Card className="text-center">
-          <p className="text-slate-400 py-8">No debts tracked. Add your first debt to set payoff goals.</p>
+          <p className="text-slate-400 py-8">Brak śledzonych długów. Dodaj pierwszy dług, aby ustawić cele spłaty.</p>
         </Card>
       )}
 
@@ -404,7 +408,7 @@ export default function DebtTracker() {
         <div className="space-y-4">
           {/* Icon */}
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Icon</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Ikona</label>
             <div className="flex flex-wrap gap-1.5">
               {DEBT_ICONS.map((i) => (
                 <button key={i} onClick={() => setIcon(i)}
@@ -418,15 +422,15 @@ export default function DebtTracker() {
 
           {/* Name */}
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Name</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Nazwa</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Chase Visa" className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
+              placeholder="np. Karta kredytowa" className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
           </div>
 
           {/* Balance + APR */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Balance</label>
+              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Saldo</label>
               <div className="relative">
                 <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
                 <input inputMode="decimal" value={balance} onChange={(e) => setBalance(e.target.value)}
@@ -434,7 +438,7 @@ export default function DebtTracker() {
               </div>
             </div>
             <div>
-              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">APR</label>
+              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">RRSO</label>
               <div className="relative">
                 <input inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)}
                   placeholder="0.00" className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-4 pr-7 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
@@ -446,7 +450,7 @@ export default function DebtTracker() {
           {/* Min payment + Due day */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Min. Payment</label>
+              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Min. rata</label>
               <div className="relative">
                 <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
                 <input inputMode="decimal" value={minPayment} onChange={(e) => setMinPayment(e.target.value)}
@@ -454,7 +458,7 @@ export default function DebtTracker() {
               </div>
             </div>
             <div>
-              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Due Day</label>
+              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Dzień płatności</label>
               <input type="number" min={1} max={31} value={dueDay} onChange={(e) => setDueDay(e.target.value)}
                 placeholder="1–31" className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
             </div>
@@ -463,7 +467,7 @@ export default function DebtTracker() {
           {/* Target payment + Target date */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Target Payment</label>
+              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Docelowa rata</label>
               <div className="relative">
                 <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
                 <input inputMode="decimal" value={targetMonthlyPayment} onChange={(e) => setTargetMonthlyPayment(e.target.value)}
@@ -471,7 +475,7 @@ export default function DebtTracker() {
               </div>
             </div>
             <div>
-              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Payoff Date</label>
+              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Data spłaty</label>
               <input type="month" value={targetPayoffDate} onChange={(e) => setTargetPayoffDate(e.target.value)}
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 focus:border-green-500 focus:outline-none" />
             </div>
@@ -480,7 +484,7 @@ export default function DebtTracker() {
           {/* Annual fee – credit cards only */}
           {icon === 'CreditCard' && (
             <div>
-              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Annual Fee</label>
+              <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Opłata roczna</label>
               <div className="relative">
                 <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
                 <input inputMode="decimal" value={annualFee} onChange={(e) => setAnnualFee(e.target.value)}
@@ -491,30 +495,30 @@ export default function DebtTracker() {
 
           {/* Notes */}
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Notes</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Notatki</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-              placeholder="Optional" className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none resize-none" />
+              placeholder="Opcjonalnie" className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none resize-none" />
           </div>
 
           {editingDebt ? (
-            <Button onClick={handleUpdate} className="w-full" disabled={!name.trim() || !balance || !minPayment}>Save Changes</Button>
+            <Button onClick={handleUpdate} className="w-full" disabled={!name.trim() || !balance || !minPayment}>Zapisz zmiany</Button>
           ) : (
-            <Button onClick={handleAdd} className="w-full" disabled={!name.trim() || !balance || !minPayment}>Add Debt</Button>
+            <Button onClick={handleAdd} className="w-full" disabled={!name.trim() || !balance || !minPayment}>Dodaj dług</Button>
           )}
         </div>
       </Modal>
 
-      <Modal open={!!showPayment} onClose={() => setShowPayment(null)} title="Make Payment">
+      <Modal open={!!showPayment} onClose={() => setShowPayment(null)} title="Dokonaj płatności">
         <div className="space-y-4">
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Amount</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Kwota</label>
           </div>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
             <input inputMode="decimal" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)}
               placeholder="0.00" autoFocus className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
           </div>
-          <Button onClick={handlePayment} className="w-full" disabled={!paymentAmount}>Apply Payment</Button>
+          <Button onClick={handlePayment} className="w-full" disabled={!paymentAmount}>Zatwierdź płatność</Button>
         </div>
       </Modal>
     </div>

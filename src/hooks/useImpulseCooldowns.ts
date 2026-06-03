@@ -11,11 +11,11 @@ const DURATION_MS: Record<CooldownDuration, number> = {
 }
 
 export const DURATION_LABELS: Record<CooldownDuration, string> = {
-  'instant': 'Instant',
-  '72h': '72 Hours',
-  '7d': '7 Days',
-  '14d': '14 Days',
-  '30d': '30 Days',
+  'instant': 'Natychmiast',
+  '72h': '72 godziny',
+  '7d': '7 dni',
+  '14d': '14 dni',
+  '30d': '30 dni',
 }
 
 export function useImpulseCooldowns() {

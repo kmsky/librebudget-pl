@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { navGroups } from './navItems'
 import { useCloudBackup } from '../../hooks/useCloudBackup'
 import { Icon } from '../ui/Icon'
@@ -67,21 +68,21 @@ export function Sidebar() {
               <button
                 onClick={() => backupNow()}
                 disabled={isBacking || backupCooldown > 0 || !passphraseSet}
-                title={!passphraseSet ? 'Create or restore vault in Account first' : undefined}
+                title={!passphraseSet ? 'Najpierw utwórz lub przywróć sejf w sekcji Konto' : undefined}
                 className="flex-1 rounded-lg bg-slate-800 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isBacking
-                  ? 'Backing up...'
+                  ? 'Tworzenie kopii...'
                   : !passphraseSet
-                    ? 'Set Passphrase'
+                    ? 'Ustaw hasło'
                     : backupCooldown > 0
-                      ? `Wait ${backupCooldown}s`
-                      : 'Back Up Now'}
+                      ? `Poczekaj ${backupCooldown}s`
+                      : 'Utwórz kopię teraz'}
               </button>
               <button
                 onClick={() => setSyncOpen(true)}
                 disabled={!passphraseSet}
-                title="Sync (restore) from cloud backup"
+                title="Synchronizuj (przywróć) z kopii w chmurze"
                 className="flex items-center justify-center rounded-lg bg-slate-800 px-2.5 py-2 text-slate-400 hover:bg-slate-700 hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Icon name="RefreshCw" size={13} />
@@ -89,25 +90,25 @@ export function Sidebar() {
             </div>
             <p className={`text-[0.625rem] text-center ${isStale ? 'text-red-400 font-medium' : 'text-slate-500'}`}>
               {!passphraseSet
-                ? 'Encryption required'
+                ? 'Wymagane szyfrowanie'
                 : lastBackupAt
-                  ? `Last backup: ${formatDistanceToNow(new Date(lastBackupAt), { addSuffix: true })}`
-                  : 'No backup yet'}
+                  ? `Ostatnia kopia: ${formatDistanceToNow(new Date(lastBackupAt), { locale: pl, addSuffix: true })}`
+                  : 'Brak kopii'}
             </p>
           </div>
         )}
         {enabled && (
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-green-500" />
-            <p className="truncate text-xs text-slate-500">Vault active</p>
+            <p className="truncate text-xs text-slate-500">Sejf aktywny</p>
           </div>
         )}
         <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0 text-xs text-slate-600">
-          <NavLink to="/privacy" className="text-slate-500 hover:text-green-400">Privacy</NavLink>
+          <NavLink to="/privacy" className="text-slate-500 hover:text-green-400">Prywatność</NavLink>
           <span>·</span>
-          <NavLink to="/privacy-manifesto" className="text-slate-500 hover:text-green-400">Manifesto</NavLink>
+          <NavLink to="/privacy-manifesto" className="text-slate-500 hover:text-green-400">Manifest</NavLink>
           <span>·</span>
-          <NavLink to="/terms" className="text-slate-500 hover:text-green-400">Terms</NavLink>
+          <NavLink to="/terms" className="text-slate-500 hover:text-green-400">Regulamin</NavLink>
         </div>
         <p className="text-xs text-slate-500">LibreBudget v1.1.2</p>
       </div>

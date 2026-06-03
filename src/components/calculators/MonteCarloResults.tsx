@@ -23,7 +23,7 @@ function successConfig(p: number) {
     ring: 'stroke-green-500',
     ringBg: 'stroke-green-500/10',
     icon: ShieldCheck,
-    label: 'Strong',
+    label: 'Mocny',
   }
   if (p >= 50) return {
     color: 'text-yellow-400',
@@ -32,7 +32,7 @@ function successConfig(p: number) {
     ring: 'stroke-yellow-500',
     ringBg: 'stroke-yellow-500/10',
     icon: ShieldAlert,
-    label: 'At Risk',
+    label: 'Zagrożony',
   }
   return {
     color: 'text-red-400',
@@ -41,7 +41,7 @@ function successConfig(p: number) {
     ring: 'stroke-red-500',
     ringBg: 'stroke-red-500/10',
     icon: AlertTriangle,
-    label: 'Unlikely',
+    label: 'Mało prawdopodobny',
   }
 }
 
@@ -60,9 +60,9 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
   )
 
   const formatAxis = (v: number) => {
-    if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`
-    if (v >= 1_000) return `$${(v / 1_000).toFixed(0)}K`
-    return `$${v.toFixed(0)}`
+    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)} mln zł`
+    if (v >= 1_000) return `${(v / 1_000).toFixed(0)} tys. zł`
+    return `${v.toFixed(0)} zł`
   }
 
   const tooltipFormatter = (value: number | undefined) => value != null ? formatCurrency(value) : ''
@@ -103,24 +103,24 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
               <p className={`text-sm font-semibold ${cfg.color}`}>{cfg.label}</p>
               <InfoTip>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  The percentage of simulated scenarios where your portfolio balance stays above $0 through retirement.
+                  Procent symulowanych scenariuszy, w których saldo Twojego portfela pozostaje powyżej 0 zł przez całą emeryturę.
                 </p>
                 <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                  80%+ is generally considered strong. 50-80% means your plan is at risk and may need adjustments (save more, spend less, or retire later). Below 50% suggests significant changes are needed.
+                  80%+ jest zwykle uznawane za mocny wynik. 50-80% oznacza, że Twój plan jest zagrożony i może wymagać korekt (oszczędzaj więcej, wydawaj mniej lub przejdź na emeryturę później). Poniżej 50% sugeruje konieczność istotnych zmian.
                 </p>
                 <p className="text-xs text-slate-500 leading-relaxed mt-1.5">
-                  Each scenario randomly varies market returns, inflation, and optionally lifespan using Geometric Brownian Motion. Early market crashes in retirement have an outsized impact (sequence-of-returns risk).
+                  Każdy scenariusz losowo zmienia stopy zwrotu z rynku, inflację oraz opcjonalnie długość życia, korzystając z geometrycznego ruchu Browna. Wczesne krachy rynkowe na emeryturze mają nieproporcjonalnie duży wpływ (ryzyko sekwencji stóp zwrotu).
                 </p>
               </InfoTip>
             </div>
             <p className="text-xs text-slate-500">
-              {trialCount.toLocaleString()} simulations &mdash; your portfolio survives through retirement in {probabilityOfSuccess.toFixed(1)}% of scenarios
-              {probabilityOfSuccess < 100 && (<>, depletes in {(100 - probabilityOfSuccess).toFixed(1)}%</>)}
+              {trialCount.toLocaleString()} symulacji &mdash; Twój portfel przetrwa do końca emerytury w {probabilityOfSuccess.toFixed(1)}% scenariuszy
+              {probabilityOfSuccess < 100 && (<>, wyczerpuje się w {(100 - probabilityOfSuccess).toFixed(1)}%</>)}
             </p>
             {failureYear !== null && (
               <p className="text-xs text-red-400/80 mt-1 flex items-center gap-1 justify-center sm:justify-start">
                 <AlertTriangle size={12} />
-                Median fund depletion at age {failureYear} in failed scenarios
+                Mediana wyczerpania środków w wieku {failureYear} w nieudanych scenariuszach
               </p>
             )}
           </div>
@@ -128,19 +128,19 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
 
         {/* Percentile cards */}
         <div className="flex items-center gap-2 mt-5 pt-5 border-t border-slate-800 mb-3">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Ending Balance Percentiles</p>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Percentyle salda końcowego</p>
           <InfoTip>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Your projected portfolio balance at the end of the simulation, sorted across all trials.
+              Prognozowane saldo Twojego portfela na koniec symulacji, posortowane spośród wszystkich prób.
             </p>
             <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-              <span className="font-medium text-red-400">10th percentile:</span> Only 10% of scenarios ended worse than this. Your "bad luck" outcome.
+              <span className="font-medium text-red-400">10. percentyl:</span> Tylko 10% scenariuszy zakończyło się gorzej niż ten wynik. Twój scenariusz „pecha”.
             </p>
             <p className="text-xs text-slate-400 leading-relaxed mt-1">
-              <span className="font-medium text-slate-300">50th percentile (median):</span> Half of scenarios ended above this, half below. Your most likely outcome. Should roughly align with a fixed-rate projection.
+              <span className="font-medium text-slate-300">50. percentyl (mediana):</span> Połowa scenariuszy zakończyła się powyżej tego wyniku, połowa poniżej. Twój najbardziej prawdopodobny wynik. Powinien z grubsza odpowiadać prognozie o stałej stopie.
             </p>
             <p className="text-xs text-slate-400 leading-relaxed mt-1">
-              <span className="font-medium text-green-400">90th percentile:</span> Only 10% of scenarios ended better than this. Your "good luck" outcome.
+              <span className="font-medium text-green-400">90. percentyl:</span> Tylko 10% scenariuszy zakończyło się lepiej niż ten wynik. Twój scenariusz „szczęścia”.
             </p>
           </InfoTip>
         </div>
@@ -148,26 +148,26 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
           <div className="rounded-xl border border-red-500/15 bg-red-500/5 p-2 sm:p-3 text-center min-w-0">
             <div className="flex items-center justify-center gap-1 mb-1.5">
               <TrendingDown size={12} className="text-red-400 shrink-0" />
-              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">10th pctl</p>
+              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">10. perc.</p>
             </div>
             <p className="text-xs sm:text-lg font-bold text-red-400 truncate">{formatCurrency(percentiles.p10)}</p>
-            <p className="text-[10px] text-slate-600 mt-0.5 hidden sm:block">Pessimistic</p>
+            <p className="text-[10px] text-slate-600 mt-0.5 hidden sm:block">Pesymistyczny</p>
           </div>
           <div className="rounded-xl border border-slate-700/50 bg-slate-800/30 p-2 sm:p-3 text-center min-w-0">
             <div className="flex items-center justify-center gap-1 mb-1.5">
               <Minus size={12} className="text-slate-400 shrink-0" />
-              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Median</p>
+              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Mediana</p>
             </div>
             <p className="text-xs sm:text-lg font-bold text-slate-200 truncate">{formatCurrency(percentiles.p50)}</p>
-            <p className="text-[10px] text-slate-600 mt-0.5 hidden sm:block">Most likely</p>
+            <p className="text-[10px] text-slate-600 mt-0.5 hidden sm:block">Najbardziej prawdopodobny</p>
           </div>
           <div className="rounded-xl border border-green-500/15 bg-green-500/5 p-2 sm:p-3 text-center min-w-0">
             <div className="flex items-center justify-center gap-1 mb-1.5">
               <TrendingUp size={12} className="text-green-400 shrink-0" />
-              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">90th pctl</p>
+              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">90. perc.</p>
             </div>
             <p className="text-xs sm:text-lg font-bold text-green-400 truncate">{formatCurrency(percentiles.p90)}</p>
-            <p className="text-[10px] text-slate-600 mt-0.5 hidden sm:block">Optimistic</p>
+            <p className="text-[10px] text-slate-600 mt-0.5 hidden sm:block">Optymistyczny</p>
           </div>
         </div>
       </Card>
@@ -178,20 +178,20 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-slate-300">Portfolio Projection</h3>
+                <h3 className="text-sm font-semibold text-slate-300">Prognoza portfela</h3>
                 <InfoTip>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    A fan chart showing the range of portfolio balances across all simulations at each age. Wider bands mean more uncertainty.
+                    Wykres wachlarzowy pokazujący zakres sald portfela we wszystkich symulacjach w każdym wieku. Szersze pasma oznaczają większą niepewność.
                   </p>
                   <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                    The green line is the median (50th percentile). The inner band covers the 25th-75th percentile range (middle 50% of outcomes). The outer band covers the 10th-90th percentile range (middle 80%).
+                    Zielona linia to mediana (50. percentyl). Wewnętrzne pasmo obejmuje zakres 25.-75. percentyla (środkowe 50% wyników). Zewnętrzne pasmo obejmuje zakres 10.-90. percentyla (środkowe 80%).
                   </p>
                   <p className="text-xs text-slate-500 leading-relaxed mt-1.5">
-                    The purple dashed line marks your retirement age. Notice how the fan widens over time — this reflects compounding uncertainty, and how early retirement crashes can permanently deplete the portfolio (sequence-of-returns risk).
+                    Fioletowa przerywana linia oznacza Twój wiek emerytalny. Zwróć uwagę, jak wachlarz poszerza się w czasie — odzwierciedla to kumulującą się niepewność oraz to, jak wczesne krachy na emeryturze mogą trwale wyczerpać portfel (ryzyko sekwencji stóp zwrotu).
                   </p>
                 </InfoTip>
               </div>
-              <p className="text-xs text-slate-600">Outcome bands across all simulations</p>
+              <p className="text-xs text-slate-600">Pasma wyników we wszystkich symulacjach</p>
             </div>
             <div className="flex items-center gap-3 text-[10px] text-slate-500">
               <span className="flex items-center gap-1">
@@ -201,7 +201,7 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
                 <span className="inline-block w-2.5 h-2.5 rounded-sm bg-green-500/8 border border-green-500/15" /> 10-90th
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-5 h-0.5 bg-green-500 rounded-full" /> Median
+                <span className="inline-block w-5 h-0.5 bg-green-500 rounded-full" /> Mediana
               </span>
             </div>
           </div>
@@ -230,7 +230,7 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
                   width={55} />
                 <Tooltip
                   formatter={tooltipFormatter}
-                  labelFormatter={(v) => `Age ${v}`}
+                  labelFormatter={(v) => `Wiek ${v}`}
                   contentStyle={{
                     backgroundColor: '#0f172a',
                     border: '1px solid #1e293b',
@@ -242,16 +242,16 @@ export function MonteCarloResults({ result, currentAge, retirementAge }: Props) 
                   labelStyle={{ color: '#64748b' }} />
                 {retirementAge > currentAge && (
                   <ReferenceLine x={retirementAge} stroke="#8b5cf6" strokeDasharray="4 4" strokeWidth={1.5}
-                    label={{ value: 'Retire', position: 'top', fill: '#8b5cf6', fontSize: 10 }} />
+                    label={{ value: 'Emerytura', position: 'top', fill: '#8b5cf6', fontSize: 10 }} />
                 )}
                 {/* 10-90 band */}
-                <Area type="monotone" dataKey="p90" stroke="#22c55e" strokeOpacity={0.15} strokeWidth={1} fill="url(#mc-outer)" name="90th Percentile" />
-                <Area type="monotone" dataKey="p10" stroke="#22c55e" strokeOpacity={0.15} strokeWidth={1} fill="#0f172a" fillOpacity={1} name="10th Percentile" />
+                <Area type="monotone" dataKey="p90" stroke="#22c55e" strokeOpacity={0.15} strokeWidth={1} fill="url(#mc-outer)" name="90. percentyl" />
+                <Area type="monotone" dataKey="p10" stroke="#22c55e" strokeOpacity={0.15} strokeWidth={1} fill="#0f172a" fillOpacity={1} name="10. percentyl" />
                 {/* 25-75 band */}
-                <Area type="monotone" dataKey="p75" stroke="#22c55e" strokeOpacity={0.25} strokeWidth={1} fill="url(#mc-inner)" name="75th Percentile" />
-                <Area type="monotone" dataKey="p25" stroke="#22c55e" strokeOpacity={0.25} strokeWidth={1} fill="#0f172a" fillOpacity={1} name="25th Percentile" />
+                <Area type="monotone" dataKey="p75" stroke="#22c55e" strokeOpacity={0.25} strokeWidth={1} fill="url(#mc-inner)" name="75. percentyl" />
+                <Area type="monotone" dataKey="p25" stroke="#22c55e" strokeOpacity={0.25} strokeWidth={1} fill="#0f172a" fillOpacity={1} name="25. percentyl" />
                 {/* Median */}
-                <Area type="monotone" dataKey="p50" stroke="#22c55e" strokeWidth={2} fill="none" name="Median"
+                <Area type="monotone" dataKey="p50" stroke="#22c55e" strokeWidth={2} fill="none" name="Mediana"
                   dot={false} activeDot={{ r: 4, fill: '#22c55e', stroke: '#0f172a', strokeWidth: 2 }} />
               </AreaChart>
             </ResponsiveContainer>

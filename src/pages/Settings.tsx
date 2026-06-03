@@ -73,10 +73,10 @@ export default function Settings() {
       a.download = `librebudget-backup-${new Date().toISOString().split('T')[0]}.json`
       a.click()
       URL.revokeObjectURL(url)
-      setExportStatus('Export successful!')
+      setExportStatus('Eksport zakończony pomyślnie!')
       setTimeout(() => setExportStatus(''), 3000)
     } catch {
-      setExportStatus('Export failed')
+      setExportStatus('Eksport nie powiódł się')
     }
   }
 
@@ -93,23 +93,23 @@ export default function Settings() {
         const data = JSON.parse(text)
 
         if (!data.version) {
-          setImportStatus('Invalid backup file')
+          setImportStatus('Nieprawidłowy plik kopii zapasowej')
           return
         }
 
         await hydrateDatabase(data as BackupPayload)
 
-        setImportStatus('Import successful! Refreshing...')
+        setImportStatus('Import zakończony pomyślnie! Odświeżanie...')
         setTimeout(() => window.location.reload(), 1500)
       } catch {
-        setImportStatus('Failed to import data')
+        setImportStatus('Nie udało się zaimportować danych')
       }
     }
     input.click()
   }
 
   const handleResetData = async () => {
-    if (!window.confirm('Are you sure? This will delete ALL your data. This cannot be undone.')) return
+    if (!window.confirm('Czy na pewno? Spowoduje to usunięcie WSZYSTKICH Twoich danych. Tej operacji nie można cofnąć.')) return
 
     await db.transaction('rw', [db.categories, db.transactions, db.budgetGoals, db.monthlySnapshots, db.settings, db.recurringTransactions, db.savingsGoals, db.debts, db.creditScores], async () => {
       await db.categories.clear()
@@ -137,7 +137,7 @@ export default function Settings() {
       (c) => c.name.toLowerCase() === trimmed.toLowerCase() && c.group === newCatGroup,
     )
     if (exists) {
-      setCatError('A category with this name already exists in this group')
+      setCatError('Kategoria o tej nazwie już istnieje w tej grupie')
       return
     }
     await addCategory({
@@ -157,7 +157,7 @@ export default function Settings() {
     try {
       await deleteCategory(id)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Cannot delete category')
+      alert(err instanceof Error ? err.message : 'Nie można usunąć kategorii')
     }
   }
 
@@ -165,20 +165,20 @@ export default function Settings() {
     try {
       const csv = await exportTransactionsCSV()
       downloadCSV(csv, `librebudget-transactions-${new Date().toISOString().split('T')[0]}.csv`)
-      setCsvStatus('CSV exported!')
+      setCsvStatus('Wyeksportowano CSV!')
       setTimeout(() => setCsvStatus(''), 3000)
-    } catch { setCsvStatus('Export failed') }
+    } catch { setCsvStatus('Eksport nie powiódł się') }
   }
 
   const handlePDFExport = async () => {
     try {
       await exportTransactionsPDF()
-    } catch { setCsvStatus('PDF export failed') }
+    } catch { setCsvStatus('Eksport PDF nie powiódł się') }
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="text-2xl font-bold">Ustawienia</h1>
 
       {/* Cloud Backup status */}
       {isCloudConfigured && (
@@ -196,16 +196,16 @@ export default function Settings() {
               />
               <div>
                 <h3 className="text-sm font-medium text-slate-200">
-                  Cloud Backup
+                  Kopia w chmurze
                 </h3>
                 <p className="text-xs text-slate-500">
                   {!hasWallet
-                    ? 'Create or restore vault to enable'
+                    ? 'Utwórz lub przywróć sejf, aby włączyć'
                     : isBacking
-                      ? 'Syncing...'
+                      ? 'Synchronizowanie...'
                       : lastBackupAt
-                        ? `Last backup: ${new Date(lastBackupAt).toLocaleDateString()}`
-                        : 'No backup yet'}
+                        ? `Ostatnia kopia: ${new Date(lastBackupAt).toLocaleDateString('pl-PL')}`
+                        : 'Brak kopii zapasowej'}
                 </p>
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function Settings() {
               href="/account"
               className="text-xs font-medium text-green-400 hover:text-green-300"
             >
-              {hasWallet ? 'Manage' : 'Set up'}
+              {hasWallet ? 'Zarządzaj' : 'Skonfiguruj'}
             </a>
           </div>
         </Card>
@@ -221,7 +221,7 @@ export default function Settings() {
 
       {/* Appearance */}
       <Card>
-        <h3 className="mb-3 text-sm font-medium text-slate-200">Appearance</h3>
+        <h3 className="mb-3 text-sm font-medium text-slate-200">Wygląd</h3>
         <div className="grid grid-cols-4 gap-2">
           {THEMES.map((t) => {
             const preview = {
@@ -240,7 +240,7 @@ export default function Settings() {
                 type="button"
                 onClick={() => setTheme(t)}
                 aria-pressed={theme === t}
-                aria-label={`${t} theme`}
+                aria-label={`Motyw ${t}`}
                 className={`overflow-hidden rounded-xl border-2 transition-colors ${
                   theme === t ? 'border-green-500 ring-2 ring-green-500/30' : 'border-slate-700 hover:border-slate-600'
                 }`}
@@ -259,7 +259,7 @@ export default function Settings() {
                     </div>
                   </div>
                 </div>
-                <p className="py-1.5 text-center text-xs font-medium text-slate-400">{t === 'black' ? 'Black' : t === 'monokai' ? 'Monokai' : t.charAt(0).toUpperCase() + t.slice(1)}</p>
+                <p className="py-1.5 text-center text-xs font-medium text-slate-400">{({ black: 'Czarny', dark: 'Ciemny', developer: 'Deweloperski', monokai: 'Monokai', obsidian: 'Obsydian', ocean: 'Ocean', purple: 'Fioletowy', light: 'Jasny' } as Record<string, string>)[t] ?? t.charAt(0).toUpperCase() + t.slice(1)}</p>
               </button>
             )
           })}
@@ -268,20 +268,20 @@ export default function Settings() {
 
       {/* Accessibility */}
       <Card>
-        <h3 className="mb-3 text-sm font-medium text-slate-400">Accessibility</h3>
+        <h3 className="mb-3 text-sm font-medium text-slate-400">Dostępność</h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-200">Reduce motion</p>
+              <p className="text-sm text-slate-200">Ogranicz animacje</p>
               <p className="text-xs text-slate-500">
-                Disable animations and transitions
+                Wyłącz animacje i przejścia
               </p>
             </div>
             <button
               type="button"
               role="switch"
               aria-checked={reducedMotion}
-              aria-label="Reduce motion"
+              aria-label="Ogranicz animacje"
               onClick={() => setSetting('reducedMotion', reducedMotion ? 'false' : 'true')}
               className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${reducedMotion ? 'bg-green-600' : 'bg-slate-700'}`}
             >
@@ -290,16 +290,16 @@ export default function Settings() {
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-200">Strong focus indicators</p>
+              <p className="text-sm text-slate-200">Wyraźne wskaźniki fokusu</p>
               <p className="text-xs text-slate-500">
-                Thicker focus rings for keyboard navigation
+                Grubsze obramowania fokusu dla nawigacji klawiaturą
               </p>
             </div>
             <button
               type="button"
               role="switch"
               aria-checked={strongFocusIndicators}
-              aria-label="Strong focus indicators"
+              aria-label="Wyraźne wskaźniki fokusu"
               onClick={() => setSetting('strongFocusIndicators', strongFocusIndicators ? 'false' : 'true')}
               className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${strongFocusIndicators ? 'bg-green-600' : 'bg-slate-700'}`}
             >
@@ -307,9 +307,9 @@ export default function Settings() {
             </button>
           </div>
           <div>
-            <p className="mb-2 text-sm text-slate-200">Font size</p>
+            <p className="mb-2 text-sm text-slate-200">Rozmiar czcionki</p>
             <p className="mb-2 text-xs text-slate-500">
-              Scale text for readability
+              Skaluj tekst dla lepszej czytelności
             </p>
             <div className="flex gap-2 rounded-xl bg-slate-800 p-1">
               {(['normal', 'large', 'xlarge'] as const).map((scale) => (
@@ -318,14 +318,14 @@ export default function Settings() {
                   type="button"
                   onClick={() => setSetting('fontScale', scale)}
                   aria-pressed={fontScale === scale}
-                  aria-label={`Font size: ${scale}`}
-                  className={`flex-1 rounded-lg py-2.5 text-sm font-medium capitalize transition-colors ${
+                  aria-label={`Rozmiar czcionki: ${scale}`}
+                  className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors ${
                     fontScale === scale
                       ? 'bg-green-600 text-white'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  {scale === 'normal' ? 'Normal' : scale === 'large' ? 'Large' : 'Larger'}
+                  {scale === 'normal' ? 'Normalny' : scale === 'large' ? 'Duży' : 'Większy'}
                 </button>
               ))}
             </div>
@@ -336,13 +336,13 @@ export default function Settings() {
       {/* Monthly budget */}
       <Card>
         <h3 className="mb-2 text-sm font-medium text-slate-400">
-          Monthly Budget Target
+          Miesięczny cel budżetowy
         </h3>
         <p className="text-xs text-slate-500 mb-3">
-          Your default spending target (needs + wants). Powers the Dashboard health bar, remaining balance,
-          and over-budget alerts.{' '}
+          Twój domyślny limit wydatków (potrzeby + zachcianki). Zasila pasek kondycji na Pulpicie, pozostałe saldo
+          oraz alerty o przekroczeniu budżetu.{' '}
           <Link to="/goals" className="text-green-400 hover:text-green-300">
-            Set or override per month on Budget
+            Ustaw lub nadpisz dla danego miesiąca w Budżecie
           </Link>
           .
         </p>
@@ -365,10 +365,10 @@ export default function Settings() {
       <Card>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-slate-400">
-            Manage Categories
+            Zarządzaj kategoriami
           </h3>
           <Button size="sm" onClick={() => setShowCatModal(true)}>
-            + New Category
+            + Nowa kategoria
           </Button>
         </div>
         <div className="space-y-4">
@@ -394,13 +394,13 @@ export default function Settings() {
                         {cat.name}
                       </span>
                       {cat.isPreset ? (
-                        <span className="text-xs text-slate-600">Preset</span>
+                        <span className="text-xs text-slate-600">Predefiniowana</span>
                       ) : (
                         <button
                           onClick={() => cat.id && handleDeleteCategory(cat.id)}
                           className="rounded p-1 text-slate-500 hover:bg-red-900/30 hover:text-red-400"
-                          title="Delete custom category"
-                          aria-label={`Delete category ${cat.name}`}
+                          title="Usuń własną kategorię"
+                          aria-label={`Usuń kategorię ${cat.name}`}
                         >
                           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -420,11 +420,11 @@ export default function Settings() {
       <Modal
         open={showCatModal}
         onClose={() => { setShowCatModal(false); setCatError('') }}
-        title="New Custom Category"
+        title="Nowa własna kategoria"
       >
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Group</label>
+            <label className="mb-1 block text-sm text-slate-400">Grupa</label>
             <div className="grid grid-cols-2 gap-2">
               {ALL_GROUPS.map((g) => (
                 <button
@@ -448,18 +448,18 @@ export default function Settings() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Name</label>
+            <label className="mb-1 block text-sm text-slate-400">Nazwa</label>
             <input
               type="text"
               value={newCatName}
               onChange={(e) => { setNewCatName(e.target.value); setCatError('') }}
-              placeholder="e.g. Pet Care"
+              placeholder="np. Opieka nad zwierzętami"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Icon</label>
+            <label className="mb-1 block text-sm text-slate-400">Ikona</label>
             <div className="flex flex-wrap gap-1.5">
               {CATEGORY_ICONS.map((icon) => (
                 <button
@@ -482,7 +482,7 @@ export default function Settings() {
           )}
 
           <Button onClick={handleAddCategory} className="w-full" disabled={!newCatName.trim()}>
-            Add Category
+            Dodaj kategorię
           </Button>
         </div>
       </Modal>
@@ -490,21 +490,21 @@ export default function Settings() {
       {/* Notifications */}
       <Card>
         <h3 className="mb-3 text-sm font-medium text-slate-400">
-          Notifications
+          Powiadomienia
         </h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-200">Daily Reminders</p>
+              <p className="text-sm text-slate-200">Codzienne przypomnienia</p>
               <p className="text-xs text-slate-500">
-                Get reminded to log expenses
+                Otrzymuj przypomnienia o zapisywaniu wydatków
               </p>
             </div>
             <button
               type="button"
               role="switch"
               aria-checked={notificationsEnabled}
-              aria-label="Enable daily reminder notifications"
+              aria-label="Włącz codzienne powiadomienia przypominające"
               onClick={() =>
                 setSetting(
                   'notificationsEnabled',
@@ -527,7 +527,7 @@ export default function Settings() {
             <>
               <div>
                 <label className="mb-1 block text-sm text-slate-400">
-                  Reminder Time
+                  Godzina przypomnienia
                 </label>
                 <input
                   type="time"
@@ -546,14 +546,14 @@ export default function Settings() {
                   size="sm"
                 >
                   {permissionState === 'denied'
-                    ? 'Notifications blocked (check browser settings)'
-                    : 'Enable Browser Notifications'}
+                    ? 'Powiadomienia zablokowane (sprawdź ustawienia przeglądarki)'
+                    : 'Włącz powiadomienia przeglądarki'}
                 </Button>
               )}
 
               {permissionState === 'granted' && (
                 <p className="text-xs text-green-400">
-                  Notifications are enabled
+                  Powiadomienia są włączone
                 </p>
               )}
             </>
@@ -564,22 +564,22 @@ export default function Settings() {
       {/* Data management */}
       <Card>
         <h3 className="mb-3 text-sm font-medium text-slate-400">
-          Data Management
+          Zarządzanie danymi
         </h3>
         <div className="space-y-3">
           <div className="flex gap-3">
             <Button variant="secondary" onClick={handleExport} className="flex-1">
-              Export JSON
+              Eksport JSON
             </Button>
             <Button variant="secondary" onClick={handleImport} className="flex-1">
               Import JSON
             </Button>
           </div>
           <Button variant="secondary" onClick={handleCSVExport} className="w-full">
-            Export CSV
+            Eksport CSV
           </Button>
           <Button variant="secondary" onClick={handlePDFExport} className="w-full">
-            Print / PDF Report
+            Drukuj / raport PDF
           </Button>
           {exportStatus && (
             <p className="text-xs text-green-400">{exportStatus}</p>
@@ -592,17 +592,17 @@ export default function Settings() {
           )}
           <hr className="border-slate-800" />
           <Button variant="danger" onClick={handleResetData} className="w-full">
-            Reset All Data
+            Wyczyść wszystkie dane
           </Button>
           <p className="text-xs text-slate-500">
-            This will permanently delete all your transactions, goals, and settings.
+            Spowoduje to trwałe usunięcie wszystkich Twoich transakcji, celów i ustawień.
           </p>
         </div>
       </Card>
 
       {developerSettingsEnabled && (
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-slate-400">Developer / Testing</h3>
+          <h3 className="mb-3 text-sm font-medium text-slate-400">Deweloperskie / testowe</h3>
           <button
             onClick={() => setShowAuditTest(true)}
             className="flex items-center gap-3 rounded-xl bg-slate-800 px-4 py-3 text-left transition-colors hover:bg-slate-700 active:bg-slate-700 w-full"
@@ -611,8 +611,8 @@ export default function Settings() {
               <Icon name="ClipboardCheck" size={15} className="text-amber-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Test Monthly Review</p>
-              <p className="text-xs text-slate-500">Force-open the monthly review</p>
+              <p className="text-sm font-medium text-slate-200">Testuj miesięczny przegląd</p>
+              <p className="text-xs text-slate-500">Wymuś otwarcie miesięcznego przeglądu</p>
             </div>
           </button>
         </Card>
@@ -624,23 +624,23 @@ export default function Settings() {
 
       {/* About */}
       <Card>
-        <h3 className="mb-3 text-sm font-medium text-slate-400">About</h3>
+        <h3 className="mb-3 text-sm font-medium text-slate-400">O aplikacji</h3>
         <p className="text-sm text-slate-300">
           <strong>LibreBudget</strong> v1.1.2
         </p>
         <p className="mt-1 mb-4 text-xs text-slate-500">
-          Free, open-source budget tracker.
+          Darmowy budżet domowy o otwartym kodzie źródłowym.
         </p>
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-sm text-slate-200">Developer settings</p>
-            <p className="text-xs text-slate-500">Show testing and debug tools</p>
+            <p className="text-sm text-slate-200">Ustawienia deweloperskie</p>
+            <p className="text-xs text-slate-500">Pokaż narzędzia testowe i diagnostyczne</p>
           </div>
           <button
             type="button"
             role="switch"
             aria-checked={developerSettingsEnabled}
-            aria-label="Enable developer settings"
+            aria-label="Włącz ustawienia deweloperskie"
             onClick={() => {
               if (developerSettingsEnabled) {
                 setSetting('developerSettingsEnabled', 'false')
@@ -664,8 +664,8 @@ export default function Settings() {
               <Icon name="Map" size={15} className="text-green-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Replay App Tour</p>
-              <p className="text-xs text-slate-500">Re-watch the intro walkthrough</p>
+              <p className="text-sm font-medium text-slate-200">Powtórz wprowadzenie do aplikacji</p>
+              <p className="text-xs text-slate-500">Obejrzyj ponownie samouczek wprowadzający</p>
             </div>
           </button>
           <button
@@ -676,8 +676,8 @@ export default function Settings() {
               <Icon name="Cloud" size={15} className="text-blue-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Replay Account &amp; Sync Tour</p>
-              <p className="text-xs text-slate-500">Learn about vaults, backup, and syncing</p>
+              <p className="text-sm font-medium text-slate-200">Powtórz wprowadzenie do konta i synchronizacji</p>
+              <p className="text-xs text-slate-500">Dowiedz się o sejfach, kopii zapasowej i synchronizacji</p>
             </div>
           </button>
         </div>
@@ -693,14 +693,14 @@ export default function Settings() {
           setDevPassword('')
           setDevPasswordError('')
         }}
-        title="Enable Developer Settings"
+        title="Włącz ustawienia deweloperskie"
       >
         <div className="space-y-4">
           <p className="text-sm text-slate-400">
-            Enter the password to enable developer and testing tools.
+            Wprowadź hasło, aby włączyć narzędzia deweloperskie i testowe.
           </p>
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Password</label>
+            <label className="mb-1 block text-sm text-slate-400">Hasło</label>
             <input
               type="password"
               value={devPassword}
@@ -716,11 +716,11 @@ export default function Settings() {
                     setDevPassword('')
                     setDevPasswordError('')
                   } else {
-                    setDevPasswordError('Incorrect password')
+                    setDevPasswordError('Nieprawidłowe hasło')
                   }
                 }
               }}
-              placeholder="Enter password"
+              placeholder="Wprowadź hasło"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
               autoFocus
             />
@@ -736,13 +736,13 @@ export default function Settings() {
                 setDevPassword('')
                 setDevPasswordError('')
               } else {
-                setDevPasswordError('Incorrect password')
+                setDevPasswordError('Nieprawidłowe hasło')
               }
             }}
             className="w-full"
             disabled={!devPassword}
           >
-            Enable
+            Włącz
           </Button>
         </div>
       </Modal>

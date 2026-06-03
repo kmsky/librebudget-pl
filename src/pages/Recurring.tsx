@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Modal } from '../components/ui/Modal'
@@ -12,11 +13,11 @@ import { EXPENSE_GROUPS, type TransactionType, type CategoryGroup, type Recurren
 import { Icon } from '../components/ui/Icon'
 
 const INTERVAL_LABELS: Record<RecurrenceInterval, string> = {
-  daily: 'Daily',
-  weekly: 'Weekly',
-  biweekly: 'Every 2 Weeks',
-  monthly: 'Monthly',
-  yearly: 'Yearly',
+  daily: 'Codziennie',
+  weekly: 'Co tydzień',
+  biweekly: 'Co 2 tygodnie',
+  monthly: 'Co miesiąc',
+  yearly: 'Co rok',
 }
 
 export default function Recurring() {
@@ -59,24 +60,24 @@ export default function Recurring() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">Recurring</h1>
+            <h1 className="text-2xl font-bold">Cykliczne</h1>
           </div>
-          <p className="text-sm text-slate-400">Auto-logged transactions</p>
+          <p className="text-sm text-slate-400">Automatycznie zapisywane transakcje</p>
         </div>
-        <Button onClick={() => setShowModal(true)}>+ Add</Button>
+        <Button onClick={() => setShowModal(true)}>+ Dodaj</Button>
       </div>
 
       {recurring.length === 0 && (
         <Card className="text-center">
           <p className="text-slate-400 py-8">
-            No recurring transactions. Add rent, subscriptions, salary, etc.
+            Brak cyklicznych transakcji. Dodaj czynsz, subskrypcje, wypłatę itp.
           </p>
         </Card>
       )}
 
       {activeItems.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium text-slate-400 px-1">Active</h2>
+          <h2 className="text-sm font-medium text-slate-400 px-1">Aktywne</h2>
           {activeItems.map((r) => {
             const cat = getCategoryById(r.categoryId)
             return (
@@ -90,7 +91,7 @@ export default function Recurring() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium text-slate-200">{r.description || cat?.name}</p>
                   <p className="text-xs text-slate-500">
-                    {INTERVAL_LABELS[r.interval]} · Next: {format(new Date(r.nextDue), 'MMM d, yyyy')}
+                    {INTERVAL_LABELS[r.interval]} · Następna: {format(new Date(r.nextDue), 'd MMM yyyy', { locale: pl })}
                   </p>
                 </div>
                 <p className={`font-semibold ${r.type === 'income' ? 'text-green-400' : 'text-slate-200'}`}>
@@ -100,14 +101,14 @@ export default function Recurring() {
                   <button
                     onClick={() => r.id && updateRecurring(r.id, { enabled: false })}
                     className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-yellow-400"
-                    title="Pause"
+                    title="Wstrzymaj"
                   >
                     <Icon name="Pause" size={16} />
                   </button>
                   <button
                     onClick={() => r.id && deleteRecurring(r.id)}
                     className="rounded-lg p-1.5 text-slate-400 hover:bg-red-900/30 hover:text-red-400"
-                    title="Delete"
+                    title="Usuń"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -122,7 +123,7 @@ export default function Recurring() {
 
       {pausedItems.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium text-slate-400 px-1">Paused</h2>
+          <h2 className="text-sm font-medium text-slate-400 px-1">Wstrzymane</h2>
           {pausedItems.map((r) => {
             const cat = getCategoryById(r.categoryId)
             return (
@@ -130,13 +131,13 @@ export default function Recurring() {
                 <Icon name={cat?.icon ?? 'Wallet'} size={20} className={cat ? getCategoryIconClassName(cat.group) : ''} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm text-slate-300">{r.description || cat?.name}</p>
-                  <p className="text-xs text-slate-600">{INTERVAL_LABELS[r.interval]} · Paused</p>
+                  <p className="text-xs text-slate-600">{INTERVAL_LABELS[r.interval]} · Wstrzymana</p>
                 </div>
                 <p className="text-sm text-slate-500">{formatCurrency(r.amount)}</p>
                 <button
                   onClick={() => r.id && updateRecurring(r.id, { enabled: true })}
                   className="rounded-lg p-1.5 text-slate-400 hover:text-green-400"
-                  title="Resume"
+                  title="Wznów"
                 >
                   <Icon name="Play" size={16} />
                 </button>
@@ -154,39 +155,39 @@ export default function Recurring() {
         </div>
       )}
 
-      <Modal open={showModal} onClose={() => setShowModal(false)} title="Add Recurring Transaction">
+      <Modal open={showModal} onClose={() => setShowModal(false)} title="Dodaj transakcję cykliczną">
         <div className="space-y-4">
           <div className="flex gap-2 rounded-xl bg-slate-800 p-1">
             <button
               onClick={() => { setType('expense'); setCategoryId(null) }}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'expense' ? 'bg-orange-600 text-white' : 'text-slate-400'}`}
-            >Expense</button>
+            >Wydatek</button>
             <button
               onClick={() => { setType('income'); setCategoryId(null) }}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'income' ? 'bg-green-600 text-white' : 'text-slate-400'}`}
-            >Income</button>
+            >Przychód</button>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Amount</label>
+            <label className="mb-1 block text-sm text-slate-400">Kwota</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
               <input
                 inputMode="decimal" value={amount}
-                onChange={(e) => setAmount(e.target.value)} placeholder="0.00"
+                onChange={(e) => setAmount(e.target.value)} placeholder="0,00"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Category</label>
+            <label className="mb-1 block text-sm text-slate-400">Kategoria</label>
             <select
               value={categoryId ?? ''}
               onChange={(e) => setCategoryId(Number(e.target.value))}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 focus:border-green-500 focus:outline-none"
             >
-              <option value="">Select...</option>
+              <option value="">Wybierz...</option>
               {activeGroups.map((g) =>
                 categoriesByGroup(g).map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -196,16 +197,16 @@ export default function Recurring() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Description</label>
+            <label className="mb-1 block text-sm text-slate-400">Opis</label>
             <input
               type="text" value={description} onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Netflix, Rent, Salary"
+              placeholder="np. Netflix, czynsz, wypłata"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Frequency</label>
+            <label className="mb-1 block text-sm text-slate-400">Częstotliwość</label>
             <select
               value={interval} onChange={(e) => setInterval(e.target.value as RecurrenceInterval)}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 focus:border-green-500 focus:outline-none"
@@ -217,7 +218,7 @@ export default function Recurring() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Next Due Date</label>
+            <label className="mb-1 block text-sm text-slate-400">Data następnej płatności</label>
             <input
               type="date" value={nextDue} onChange={(e) => setNextDue(e.target.value)}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 focus:border-green-500 focus:outline-none"
@@ -225,7 +226,7 @@ export default function Recurring() {
           </div>
 
           <Button onClick={handleAdd} className="w-full" disabled={!amount || !categoryId}>
-            Add Recurring
+            Dodaj cykliczną
           </Button>
         </div>
       </Modal>

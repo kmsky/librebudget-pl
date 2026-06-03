@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Transaction, type Category } from '../db/database'
 import { useSettings } from '../hooks/useSettings'
@@ -15,7 +16,7 @@ function getPreviousMonth() {
   const prev = subMonths(new Date(), 1)
   return {
     key: format(prev, 'yyyy-MM'),
-    label: format(prev, 'MMMM yyyy'),
+    label: format(prev, 'LLLL yyyy', { locale: pl }),
     start: format(startOfMonth(prev), 'yyyy-MM-dd'),
     end: format(endOfMonth(prev), 'yyyy-MM-dd'),
   }
@@ -23,6 +24,14 @@ function getPreviousMonth() {
 
 function pick<T>(items: T[], seed: number): T {
   return items[Math.abs(seed) % items.length]
+}
+// Polish plural form for "transakcja"
+function pluralizeTransakcje(n: number): string {
+  if (n === 1) return 'transakcja'
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return 'transakcje'
+  return 'transakcji'
 }
 function hashSeed(s: string): number {
   let h = 0
@@ -73,174 +82,174 @@ interface HabitPattern {
 const HABIT_PATTERNS: HabitPattern[] = [
   {
     id: 'delivery',
-    label: 'Food Delivery',
+    label: 'Jedzenie z dostawą',
     icon: 'Car',
     color: 'text-orange-400',
     bgColor: 'bg-orange-500/10',
     borderColor: 'border-orange-800/40',
-    keywords: ['ubereats', 'uber eats', 'doordash', 'door dash', 'postmates', 'deliveroo', 'grubhub', 'seamless', 'instacart', 'gopuff', 'caviar', 'food delivery', 'just eat', 'menulog', 'skip the dishes', 'favor delivery'],
+    keywords: ['ubereats', 'uber eats', 'doordash', 'door dash', 'postmates', 'deliveroo', 'grubhub', 'seamless', 'instacart', 'gopuff', 'caviar', 'food delivery', 'just eat', 'menulog', 'skip the dishes', 'favor delivery', 'pyszne', 'pyszne.pl', 'glovo', 'wolt', 'bolt food'],
     categoryNames: [],
     commentary: [
-      'Delivery apps are a budget killer. The fees, tips, and markups mean you\'re paying 2-3x what the food costs to make at home.',
-      'Every delivery order has a hidden tax: service fees, delivery fees, tip, and inflated menu prices. That adds up fast.',
-      'Convenience has a price tag. Cooking the same meals at home would have saved you a significant chunk of this.',
-      'The delivery apps are designed to make ordering easy — but easy spending is expensive spending. Try meal prepping instead.',
-      'Think about it: delivery fees + tips + markup = roughly 40% extra on every order. That\'s money left on the table.',
-      'Your future self would rather have this money invested. A rice cooker and a slow cooker can replace most of these orders.',
-      'Delivery is the modern equivalent of lighting money on fire for convenience. Batch cook on Sunday, eat like a king all week.',
-      'The average delivery order costs $25-35 when you factor everything in. A home-cooked version? $5-8. Do the math.',
+      'Aplikacje z dostawą to cichy zabójca budżetu. Opłaty, napiwki i narzuty sprawiają, że płacisz 2-3 razy więcej, niż gdybyś ugotował to sam.',
+      'Każde zamówienie ma ukryty podatek: opłata serwisowa, opłata za dostawę, napiwek i zawyżone ceny z menu. To się szybko sumuje.',
+      'Wygoda ma swoją cenę. Te same dania ugotowane w domu zostawiłyby Ci w kieszeni sporą część tej kwoty.',
+      'Aplikacje są zaprojektowane tak, żeby zamawianie było łatwe — ale łatwe wydawanie to drogie wydawanie. Spróbuj gotować z wyprzedzeniem.',
+      'Pomyśl: opłata za dostawę + napiwek + narzut = jakieś 40% więcej do każdego zamówienia. To pieniądze wyrzucone w błoto.',
+      'Twoje przyszłe „ja” wolałoby mieć te pieniądze zainwestowane. Garnek i wolnowar zastąpią większość tych zamówień.',
+      'Dostawa to dzisiejszy odpowiednik palenia pieniędzy dla wygody. Ugotuj raz w niedzielę i jedz jak król przez cały tydzień.',
+      'Średnie zamówienie z dostawą kosztuje 60-90 zł, gdy doliczysz wszystko. Wersja domowa? 12-20 zł. Policz to sobie.',
     ],
   },
   {
     id: 'coffee',
-    label: 'Coffee & Cafes',
+    label: 'Kawa i kawiarnie',
     icon: 'UtensilsCrossed',
     color: 'text-amber-400',
     bgColor: 'bg-amber-500/10',
     borderColor: 'border-amber-800/40',
-    keywords: ['starbucks', 'dunkin', 'coffee', 'cafe', 'latte', 'espresso', 'cappuccino', 'frappuccino', 'dutch bros', 'peets', 'peet\'s', 'tim hortons', 'caribou coffee', 'blue bottle', 'philz'],
+    keywords: ['starbucks', 'dunkin', 'coffee', 'cafe', 'kawa', 'kawiarnia', 'latte', 'espresso', 'cappuccino', 'frappuccino', 'dutch bros', 'peets', 'peet\'s', 'tim hortons', 'caribou coffee', 'blue bottle', 'philz', 'costa', 'green caffe'],
     categoryNames: [],
     commentary: [
-      'The daily coffee habit is a classic budget leak. At $5-7 per drink, that\'s $150-210/month you could be investing.',
-      'No shade on caffeine — but a bag of quality beans costs $15 and makes 30+ cups. Compare that to what you spent here.',
-      'The "latte factor" is real. This spending might feel small per purchase, but it compounds into serious money over a year.',
-      'Making coffee at home for a month costs about the same as 3 cafe visits. Just putting that out there.',
-      'Your coffee habit is costing you more than some people\'s car payments. A French press pays for itself in a week.',
-      'If you invested this coffee money instead, in 10 years you\'d have enough for something that actually matters.',
-      'Not saying quit coffee — saying quit overpaying for it. Home brew tastes just as good once you find your method.',
-      'Every cafe visit is $5+ walking out the door. Multiply that by the days in a month and you\'ll see why this matters.',
+      'Codzienna kawa na mieście to klasyczny przeciek w budżecie. Przy 15-22 zł za kubek to 450-660 zł miesięcznie, które mógłbyś inwestować.',
+      'Nikt nie zabrania kofeiny — ale paczka dobrych ziaren kosztuje 50 zł i starcza na 30+ filiżanek. Porównaj to z tym, co tu wydałeś.',
+      '„Efekt latte” jest prawdziwy. Każdy zakup wydaje się drobny, ale w skali roku zbiera się z tego poważna kwota.',
+      'Parzenie kawy w domu przez cały miesiąc kosztuje tyle, co 3 wizyty w kawiarni. Tak tylko mówię.',
+      'Twój nawyk kawowy kosztuje więcej niż niejedna rata. Kafetiera czy french press zwracają się w tydzień.',
+      'Gdybyś te pieniądze na kawę zainwestował, po 10 latach miałbyś już na coś, co naprawdę ma znaczenie.',
+      'Nie mówię, żeby rzucać kawę — mówię, żeby przestać za nią przepłacać. Domowa smakuje tak samo dobrze, gdy znajdziesz swój sposób.',
+      'Każde wyjście do kawiarni to 15 zł i więcej. Pomnóż to przez dni w miesiącu, a zobaczysz, czemu to ma znaczenie.',
     ],
   },
   {
     id: 'dining',
-    label: 'Dining Out',
+    label: 'Jedzenie na mieście',
     icon: 'UtensilsCrossed',
     color: 'text-red-400',
     bgColor: 'bg-red-500/10',
     borderColor: 'border-red-800/40',
-    keywords: ['restaurant', 'dining', 'dinner out', 'lunch out', 'brunch', 'takeout', 'take out', 'chipotle', 'mcdonald', 'chick-fil-a', 'subway', 'wendy', 'taco bell', 'burger king', 'popeyes', 'panda express', 'five guys', 'wingstop', 'panera', 'olive garden', 'applebee', 'ihop', 'waffle house', 'denny\'s', 'buffalo wild wings', 'chili\'s', 'outback', 'red lobster', 'cracker barrel', 'zaxby'],
-    categoryNames: ['dining out'],
+    keywords: ['restaurant', 'restauracja', 'dining', 'dinner out', 'lunch out', 'obiad na mieście', 'kolacja', 'brunch', 'takeout', 'take out', 'na wynos', 'chipotle', 'mcdonald', 'chick-fil-a', 'subway', 'wendy', 'taco bell', 'burger king', 'popeyes', 'kfc', 'pizza hut', 'sphinx', 'pizzeria', 'kebab', 'bistro'],
+    categoryNames: ['jedzenie na mieście'],
     commentary: [
-      'Eating out is one of the fastest ways to drain a budget. The markup on restaurant food is 3-4x the ingredient cost.',
-      'Social eating is fine occasionally, but when it becomes the default, your budget pays the price. Set a dining-out limit.',
-      'Every restaurant meal could be 3-4 home-cooked meals. That math alone should change your habits.',
-      'Dining out isn\'t just food — it\'s drinks, tips, tax, and parking. The real cost is always higher than the menu price.',
-      'If eating out is your social activity, try hosting potlucks or cooking together. Same fun, fraction of the cost.',
-      'This is probably your biggest controllable expense. Cut it in half and watch your savings transform.',
-      'Restaurants are a luxury, not a food group. Treat them that way and your budget will thank you.',
-      'Meal planning for 30 minutes on Sunday saves you hours of decision-making and hundreds of dollars all month.',
+      'Jedzenie na mieście to jeden z najszybszych sposobów na wydrenowanie budżetu. Narzut w restauracji to 3-4 razy koszt samych składników.',
+      'Wspólne wyjścia od czasu do czasu są spoko, ale gdy stają się normą, budżet płaci rachunek. Ustal sobie limit na jedzenie poza domem.',
+      'Każdy posiłek w restauracji to równowartość 3-4 posiłków ugotowanych w domu. Sama ta matematyka powinna zmienić Twoje nawyki.',
+      'Jedzenie na mieście to nie tylko jedzenie — to napoje, napiwki i dojazd. Realny koszt zawsze jest wyższy niż cena z menu.',
+      'Jeśli to Twój sposób na spotkania, spróbuj gotowania razem albo wspólnego obiadu „w składkę”. Tyle samo frajdy za ułamek ceny.',
+      'To pewnie Twój największy wydatek, który masz pod kontrolą. Zetnij go o połowę i patrz, jak rosną oszczędności.',
+      'Restauracje to luksus, a nie grupa żywieniowa. Traktuj je tak, a budżet Ci podziękuje.',
+      'Pół godziny planowania posiłków w niedzielę oszczędza godziny zastanawiania się i setki złotych przez cały miesiąc.',
     ],
   },
   {
     id: 'fastfood',
-    label: 'Fast Food',
+    label: 'Fast food',
     icon: 'ShoppingBag',
     color: 'text-yellow-400',
     bgColor: 'bg-yellow-500/10',
     borderColor: 'border-yellow-800/40',
-    keywords: ['fast food', 'drive thru', 'drive-thru', 'mcdonalds', 'burger king', 'wendys', 'taco bell', 'kfc', 'popeyes', 'sonic', 'jack in the box', 'in-n-out', 'whataburger', 'rally', 'checkers', 'arby', 'hardee', 'carl\'s jr', 'del taco', 'long john silver'],
+    keywords: ['fast food', 'drive thru', 'drive-thru', 'mcdonalds', 'burger king', 'wendys', 'taco bell', 'kfc', 'popeyes', 'sonic', 'jack in the box', 'in-n-out', 'whataburger', 'rally', 'checkers', 'arby', 'hardee', 'carl\'s jr', 'del taco', 'long john silver', 'maxburger', 'pasibus'],
     categoryNames: [],
     commentary: [
-      'Fast food feels cheap per trip, but it adds up shockingly fast. Track the monthly total and you\'ll see.',
-      'The "value meal" isn\'t valuable when you\'re buying 15 of them a month. Groceries are cheaper and healthier.',
-      'Fast food is the definition of spending money on things that don\'t last. Literally — it\'s gone in 10 minutes.',
-      'If you\'re hitting the drive-thru regularly, it\'s not saving time — it\'s a habit. And habits can be changed.',
-      'Pack a lunch. Seriously. It takes 5 minutes and saves you $8-12 per day. That\'s $200+ per month.',
-      'Fast food spending is usually impulse spending. If you can eliminate the impulse, you eliminate the cost.',
-      'You\'re paying premium prices for the lowest quality food available. Grocery store rotisserie chickens exist for a reason.',
-      'Every fast food meal is a missed opportunity to eat better for less. Your body and wallet both lose.',
+      'Fast food wydaje się tani przy jednej wizycie, ale sumuje się zaskakująco szybko. Spójrz na miesięczny rachunek, a zobaczysz.',
+      '„Zestaw w promocji” przestaje być promocyjny, gdy kupujesz go 15 razy w miesiącu. Zakupy w sklepie są tańsze i zdrowsze.',
+      'Fast food to definicja wydawania na rzeczy, które nie zostają z Tobą. Dosłownie — znikają w 10 minut.',
+      'Jeśli regularnie podjeżdżasz do okienka, to już nie oszczędzanie czasu — to nawyk. A nawyki da się zmienić.',
+      'Zrób sobie kanapki do pracy. Serio. To 5 minut, a oszczędza 20-30 zł dziennie. To ponad 500 zł miesięcznie.',
+      'Wydatki na fast food to zwykle wydatki impulsywne. Jeśli wyeliminujesz impuls, eliminujesz koszt.',
+      'Płacisz wysoką cenę za najgorszej jakości jedzenie. Pieczony kurczak ze sklepu istnieje nie bez powodu.',
+      'Każdy fast food to stracona okazja, żeby zjeść lepiej za mniej. Tracą i Twój portfel, i Twoje ciało.',
     ],
   },
   {
     id: 'subscriptions',
-    label: 'Subscriptions',
+    label: 'Subskrypcje',
     icon: 'Smartphone',
     color: 'text-purple-400',
     bgColor: 'bg-purple-500/10',
     borderColor: 'border-purple-800/40',
-    keywords: ['netflix', 'spotify', 'hulu', 'disney+', 'disney plus', 'hbo', 'paramount', 'peacock', 'apple tv', 'youtube premium', 'amazon prime', 'audible', 'crunchyroll', 'subscription', 'monthly fee', 'membership'],
-    categoryNames: ['subscriptions'],
+    keywords: ['netflix', 'spotify', 'hulu', 'disney+', 'disney plus', 'hbo', 'hbo max', 'max', 'paramount', 'peacock', 'apple tv', 'youtube premium', 'amazon prime', 'audible', 'crunchyroll', 'subscription', 'subskrypcja', 'abonament', 'player', 'canal+', 'storytel', 'legimi'],
+    categoryNames: ['subskrypcje'],
     commentary: [
-      'Subscriptions are silent budget killers. They\'re small enough to ignore but big enough to matter when you add them up.',
-      'How many of these do you actually use weekly? Cancel what you don\'t and rotate the rest monthly.',
-      'The subscription economy is designed to make you forget you\'re paying. Don\'t fall for it — audit them regularly.',
-      'Pick 2-3 subscriptions max. Everything else gets the axe. You can always re-subscribe later.',
-      'Most people have 3-5 subscriptions they forgot about. That\'s $30-75/month going nowhere. Check your statements.',
-      'Subscription stacking is the modern money trap. Each one seems small, but $10 × 8 services = $80/month = $960/year.',
-      'If you wouldn\'t buy it again today, cancel it. The sunk cost isn\'t a reason to keep paying.',
-      'Share accounts where possible, use free tiers, and rotate services. You don\'t need everything at once.',
+      'Subskrypcje to cisi zabójcy budżetu. Każda z osobna na tyle mała, by ją zignorować, ale razem robią różnicę.',
+      'Z ilu z nich faktycznie korzystasz w tygodniu? Anuluj te, których nie używasz, a resztą żongluj co miesiąc.',
+      'Cała ta gospodarka abonamentowa jest zaprojektowana tak, żebyś zapomniał, że płacisz. Nie daj się — przeglądaj je regularnie.',
+      'Wybierz maks. 2-3 subskrypcje. Reszta idzie pod nóż. Zawsze możesz wrócić później.',
+      'Większość ludzi ma 3-5 subskrypcji, o których zapomniała. To 40-150 zł miesięcznie wyrzucane w błoto. Sprawdź wyciąg.',
+      'Stosy subskrypcji to nowoczesna pułapka na pieniądze. Każda wygląda na drobną, ale 25 zł × 8 usług = 200 zł/mies. = 2400 zł rocznie.',
+      'Jeśli nie kupiłbyś tego dzisiaj jeszcze raz — anuluj. To, ile już wydałeś, nie jest powodem, żeby płacić dalej.',
+      'Dziel konta tam, gdzie się da, korzystaj z darmowych planów i rotuj usługi. Nie potrzebujesz wszystkiego naraz.',
     ],
   },
   {
     id: 'rideshare',
-    label: 'Rideshare',
+    label: 'Przejazdy na aplikację',
     icon: 'Car',
     color: 'text-blue-400',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-800/40',
-    keywords: ['uber', 'lyft', 'taxi', 'cab', 'rideshare', 'ride share'],
+    keywords: ['uber', 'lyft', 'taxi', 'taksówka', 'cab', 'rideshare', 'ride share', 'bolt', 'free now', 'freenow', 'itaxi'],
     categoryNames: [],
     commentary: [
-      'Rideshare spending adds up fast — especially with surge pricing. Consider public transit or biking for regular routes.',
-      'Every Uber ride is roughly 3-5x the cost of public transit. If you\'re using it daily, that gap becomes enormous.',
-      'Rideshare should be occasional, not routine. If it\'s routine, it\'s time to rethink your transportation strategy.',
-      'Surge pricing alone can double your transportation costs. Plan around peak hours or find alternatives.',
-      'If you rideshare to work regularly, do the math on a monthly bus pass or even a used bike. The savings are massive.',
-      'Convenience spending on rides is one of those costs that feels necessary but usually isn\'t. Most trips have cheaper options.',
+      'Przejazdy na aplikację sumują się błyskawicznie — zwłaszcza przy cenach w godzinach szczytu. Rozważ komunikację miejską albo rower na stałych trasach.',
+      'Każdy kurs Uberem czy Boltem to mniej więcej 3-5 razy koszt biletu komunikacji miejskiej. Jeśli jeździsz tak codziennie, ta różnica robi się ogromna.',
+      'Aplikacje powinny być od święta, a nie na co dzień. Jeśli to rutyna, czas przemyśleć, jak się przemieszczasz.',
+      'Same ceny w godzinach szczytu potrafią podwoić koszt przejazdu. Planuj wokół godzin szczytu albo szukaj alternatyw.',
+      'Jeśli regularnie jeździsz tak do pracy, policz, ile kosztuje bilet miesięczny albo używany rower. Oszczędności są ogromne.',
+      'Wygodne przejazdy to jeden z tych kosztów, które wydają się konieczne, a zwykle nie są. Większość tras ma tańsze opcje.',
     ],
   },
   {
     id: 'alcohol',
-    label: 'Alcohol & Bars',
+    label: 'Alkohol i bary',
     icon: 'UtensilsCrossed',
     color: 'text-pink-400',
     bgColor: 'bg-pink-500/10',
     borderColor: 'border-pink-800/40',
-    keywords: ['bar', 'pub', 'brewery', 'wine', 'beer', 'liquor', 'cocktail', 'drinks', 'happy hour', 'nightclub', 'club', 'bottle service', 'alcohol', 'spirits', 'total wine', 'bevmo'],
+    keywords: ['bar', 'pub', 'brewery', 'browar', 'wine', 'wino', 'beer', 'piwo', 'liquor', 'cocktail', 'drink', 'drinks', 'happy hour', 'nightclub', 'klub', 'club', 'bottle service', 'alcohol', 'alkohol', 'spirits', 'wódka', 'total wine', 'bevmo'],
     categoryNames: [],
     commentary: [
-      'Bar tabs are budget black holes. One night out can cost more than a week of groceries.',
-      'Drinks at bars are marked up 300-500%. If you\'re going to drink, pregame at home or buy from the store.',
-      'Social drinking is expensive drinking. Set a hard limit before you go out and stick to it.',
-      'The combination of alcohol + impaired judgement + an open tab is how budgets die. Cash-only rule helps.',
-      'Track each bar visit\'s total and you might be shocked. It\'s often way more than you remember spending.',
-      'Hosting instead of going out saves 70-80% on alcohol costs. Better conversations too.',
+      'Rachunki w barze to budżetowe czarne dziury. Jedno wyjście potrafi kosztować więcej niż tygodniowe zakupy spożywcze.',
+      'Drinki w lokalu mają narzut rzędu 300-500%. Jeśli już pijesz, zacznij w domu albo kup w sklepie.',
+      'Picie towarzysko to picie drogie. Ustal twardy limit, zanim wyjdziesz, i się go trzymaj.',
+      'Połączenie alkohol + osłabiony osąd + otwarty rachunek to przepis na śmierć budżetu. Zasada „tylko gotówka” pomaga.',
+      'Zsumuj koszt każdego wyjścia do baru, a możesz się zdziwić. Często jest to znacznie więcej, niż pamiętasz.',
+      'Spotkanie u siebie zamiast wyjścia oszczędza 70-80% kosztów alkoholu. I rozmowy bywają lepsze.',
     ],
   },
   {
     id: 'shopping',
-    label: 'Online Shopping',
+    label: 'Zakupy online',
     icon: 'ShoppingBag',
     color: 'text-cyan-400',
     bgColor: 'bg-cyan-500/10',
     borderColor: 'border-cyan-800/40',
-    keywords: ['amazon', 'walmart', 'target', 'best buy', 'ebay', 'etsy', 'shein', 'temu', 'aliexpress', 'wish', 'online order', 'online purchase'],
-    categoryNames: ['shopping'],
+    keywords: ['amazon', 'walmart', 'target', 'best buy', 'ebay', 'etsy', 'shein', 'temu', 'aliexpress', 'wish', 'online order', 'online purchase', 'allegro', 'zalando', 'olx', 'empik', 'media markt', 'rtv euro agd', 'x-kom'],
+    categoryNames: ['zakupy'],
     commentary: [
-      'One-click buying is the enemy of budgets. Add a 24-hour wait rule before every purchase over $20.',
-      'Online shopping makes spending feel painless — and that\'s exactly why it\'s dangerous. The money is just as real.',
-      'Next time you\'re about to buy something online, add it to a list instead. Revisit in a week. You\'ll want half of it less.',
-      'Free shipping thresholds are designed to make you spend more, not save money. Don\'t fall for it.',
-      'If you can\'t explain why you need it without using the word "want," it can wait.',
-      'Your cart total this month suggests some impulse buying. Try uninstalling shopping apps for 30 days.',
+      'Zakupy „za jednym kliknięciem” to wróg budżetu. Wprowadź zasadę 24 godzin zwłoki przed każdym zakupem powyżej 100 zł.',
+      'Zakupy online sprawiają, że wydawanie wydaje się bezbolesne — i właśnie dlatego są groźne. Pieniądze są tak samo prawdziwe.',
+      'Następnym razem, gdy będziesz coś kupować online, dorzuć to najpierw do listy. Wróć za tydzień. Połowy z tego już nie będziesz chciał.',
+      'Progi darmowej dostawy są po to, żebyś wydał więcej, a nie zaoszczędził. Nie daj się na to nabrać.',
+      'Jeśli nie potrafisz wyjaśnić, po co Ci to, nie używając słowa „chcę”, to może poczekać.',
+      'Suma w Twoim koszyku w tym miesiącu sugeruje trochę impulsywnych zakupów. Spróbuj odinstalować aplikacje zakupowe na 30 dni.',
     ],
   },
   {
     id: 'gaming',
-    label: 'Gaming',
+    label: 'Gry',
     icon: 'Package',
     color: 'text-indigo-400',
     bgColor: 'bg-indigo-500/10',
     borderColor: 'border-indigo-800/40',
-    keywords: ['steam', 'playstation', 'xbox', 'nintendo', 'epic games', 'game pass', 'twitch', 'v-bucks', 'robux', 'in-app purchase', 'microtransaction', 'gaming', 'video game'],
+    keywords: ['steam', 'playstation', 'xbox', 'nintendo', 'epic games', 'game pass', 'twitch', 'v-bucks', 'robux', 'in-app purchase', 'microtransaction', 'mikrotransakcja', 'gaming', 'video game', 'gry', 'gra'],
     categoryNames: [],
     commentary: [
-      'Gaming is fine as a hobby, but microtransactions and impulse buys add up. Set a monthly gaming budget and stick to it.',
-      'In-game purchases are designed by psychologists to get you to spend. Be aware of the manipulation.',
-      'Wait for sales. Most games drop 40-75% within a few months. Patience is a financial superpower.',
-      'The games in your backlog are free entertainment. Play what you own before buying more.',
-      'Game Pass and subscription services can save money — but only if you cancel the games you were buying individually.',
-      'Cosmetic items and DLC are pure wants spending. They\'re fine if budgeted, but they can\'t be impulse buys.',
+      'Granie jako hobby jest w porządku, ale mikrotransakcje i zakupy pod wpływem chwili się sumują. Ustal miesięczny budżet na gry i się go trzymaj.',
+      'Zakupy w grach są projektowane przez psychologów tak, żeby skłonić Cię do wydawania. Bądź świadomy tej manipulacji.',
+      'Poczekaj na promocje. Większość gier tanieje o 40-75% w ciągu kilku miesięcy. Cierpliwość to finansowa supermoc.',
+      'Gry zalegające w Twojej bibliotece to darmowa rozrywka. Zagraj w to, co już masz, zanim kupisz więcej.',
+      'Game Pass i abonamenty potrafią oszczędzić pieniądze — ale tylko jeśli odpuścisz gry, które kupowałeś osobno.',
+      'Skórki i DLC to czyste zachcianki. Są okej, jeśli zaplanowane w budżecie, ale nie mogą być impulsem.',
     ],
   },
 ]
@@ -295,128 +304,128 @@ function detectHabits(
 
 const OVERVIEW_OVER = [
   (spent: string, budget: string, pct: string) =>
-    `We need to talk. You spent ${spent} against a ${budget} budget. That's ${pct}% of your target.`,
+    `Musimy porozmawiać. Wydałeś ${spent} przy budżecie ${budget}. To ${pct}% Twojego celu.`,
   (spent: string, budget: string, pct: string) =>
-    `Let's be honest — ${spent} spent on a ${budget} budget (${pct}%) is a problem. Time to course-correct.`,
+    `Bądźmy szczerzy — ${spent} wydane przy budżecie ${budget} (${pct}%) to problem. Czas na korektę kursu.`,
   (spent: string, budget: string, pct: string) =>
-    `${spent} out the door against a ${budget} limit — that's ${pct}%. Your wallet is waving the white flag.`,
+    `${spent} wyparowało przy limicie ${budget} — czyli ${pct}%. Twój portfel macha białą flagą.`,
   (spent: string, budget: string, pct: string) =>
-    `You burned through ${spent} on a ${budget} budget — ${pct}%. That's not a plan, that's a problem.`,
+    `Przepuściłeś ${spent} przy budżecie ${budget} — ${pct}%. To nie plan, to problem.`,
   (spent: string, budget: string, pct: string) =>
-    `${spent} spent. ${budget} was the limit. ${pct}% used. The math doesn't lie — something has to change.`,
+    `${spent} wydane. ${budget} to był limit. Zużyte ${pct}%. Liczby nie kłamią — coś musi się zmienić.`,
   (spent: string, budget: string, pct: string) =>
-    `Ouch. ${spent} against a ${budget} target puts you at ${pct}%. Let's figure out where it went wrong.`,
+    `Auć. ${spent} przy celu ${budget} daje ${pct}%. Zobaczmy, gdzie poszło nie tak.`,
   (spent: string, budget: string, pct: string) =>
-    `Your spending hit ${spent} on a ${budget} budget — that's ${pct}%. Time to face the numbers and fix this.`,
+    `Twoje wydatki dobiły do ${spent} przy budżecie ${budget} — to ${pct}%. Czas spojrzeć liczbom w oczy i to naprawić.`,
   (spent: string, budget: string, pct: string) =>
-    `${pct}% of your ${budget} budget is gone — ${spent} total. Every overshoot makes the next month harder.`,
+    `${pct}% Twojego budżetu ${budget} już nie ma — łącznie ${spent}. Każde przekroczenie utrudnia kolejny miesiąc.`,
 ]
 
 const OVERVIEW_UNDER = [
   (spent: string, budget: string) =>
-    `Excellent work. You spent ${spent} against a ${budget} budget. That discipline builds wealth.`,
+    `Świetna robota. Wydałeś ${spent} przy budżecie ${budget}. Taka dyscyplina buduje majątek.`,
   (spent: string, budget: string) =>
-    `Look at you. ${spent} spent with a ${budget} budget — that's how financial freedom is built.`,
+    `No proszę. ${spent} wydane przy budżecie ${budget} — tak właśnie buduje się wolność finansową.`,
   (spent: string, budget: string) =>
-    `${spent} on a ${budget} budget. Clean, controlled, and calculated. Keep stacking.`,
+    `${spent} przy budżecie ${budget}. Czysto, pod kontrolą i z głową. Tak trzymaj.`,
   (spent: string, budget: string) =>
-    `You came in at ${spent} under a ${budget} limit. That gap? That's your future getting brighter.`,
+    `Zmieściłeś się w ${spent} przy limicie ${budget}. Ta różnica? To Twoja jaśniejsza przyszłość.`,
   (spent: string, budget: string) =>
-    `${spent} spent, ${budget} budgeted. You left room to breathe and that's a power move.`,
+    `${spent} wydane, ${budget} w budżecie. Zostawiłeś sobie zapas — i to jest mistrzowskie zagranie.`,
   (spent: string, budget: string) =>
-    `Budget was ${budget}. You only spent ${spent}. That self-control is rare — don't take it for granted.`,
+    `Budżet wynosił ${budget}. Wydałeś tylko ${spent}. Taka samokontrola to rzadkość — nie bierz jej za pewnik.`,
   (spent: string, budget: string) =>
-    `${spent} against ${budget} — you played it smart. The surplus is proof you're in control.`,
+    `${spent} przy ${budget} — zagrałeś sprytnie. Ta nadwyżka to dowód, że masz wszystko pod kontrolą.`,
   (spent: string, budget: string) =>
-    `Under budget again. ${spent} out of ${budget}. This is the consistency that changes lives.`,
+    `Znów poniżej budżetu. ${spent} z ${budget}. To właśnie ta konsekwencja zmienia życie.`,
 ]
 
 const TOP_EXP_HEADER = [
-  'These three transactions hit your wallet the hardest.',
-  'Your top three money exits. No hiding from the numbers.',
-  'The big three. Every dollar here is a dollar that didn\'t go to your goals.',
-  'Here\'s where the bulk of your money went. Any surprises?',
-  'Your three heaviest hitters. Were they all worth it?',
-  'These purchases made the biggest dent. Let\'s take a closer look.',
-  'The top three. Sometimes seeing them together tells a story.',
-  'Three transactions, maximum impact. Knowledge is power.',
+  'Te trzy transakcje uderzyły Cię po portfelu najmocniej.',
+  'Twoje trzy największe ubytki gotówki. Przed liczbami nie ma ucieczki.',
+  'Wielka trójka. Każda złotówka tutaj to złotówka, która nie poszła na Twoje cele.',
+  'Oto gdzie poszła większość Twoich pieniędzy. Jakieś niespodzianki?',
+  'Twoje trzy najcięższe ciosy. Czy każdy był tego wart?',
+  'Te zakupy zrobiły największą wyrwę. Przyjrzyjmy się im bliżej.',
+  'Wielka trójka. Czasem zobaczenie ich razem opowiada całą historię.',
+  'Trzy transakcje, maksymalny wpływ. Wiedza to potęga.',
 ]
 
 const OUCH_PROMPT = [
-  'No judgement — but ask yourself: "If I could go back, would I spend this again?" If the answer is no, you just found your first cut for this month.',
-  'Real talk — was this purchase still making you happy a week later? If not, that\'s your signal to cut it next month.',
-  'Think about this one honestly. Would your future self thank you for it, or shake their head? That answer is your action plan.',
-  'Here\'s the test: did this purchase add value to your life, or was it just a moment? Be honest with yourself.',
-  'Picture yourself a year from now. Does this expense matter? If not, you know what to do differently.',
-  'Not all spending is bad — but was this one necessary or just convenient? That distinction is where savings hide.',
-  'Ask yourself: was this a need, a genuine want, or just an impulse? The answer reveals a lot about your habits.',
-  'Close your eyes and think about this purchase. Feel good? Keep it. Feel nothing? That\'s your cut list starting.',
+  'Bez oceniania — ale zadaj sobie pytanie: „Gdybym mógł cofnąć czas, wydałbym to jeszcze raz?”. Jeśli nie, to właśnie znalazłeś swoją pierwszą rzecz do wycięcia w tym miesiącu.',
+  'Szczerze — czy ten zakup nadal cieszył Cię tydzień później? Jeśli nie, to sygnał, żeby odpuścić go w przyszłym miesiącu.',
+  'Pomyśl o tym uczciwie. Twoje przyszłe „ja” podziękowałoby Ci za to czy pokręciłoby głową? Ta odpowiedź to Twój plan działania.',
+  'Test jest prosty: czy ten zakup wniósł coś do Twojego życia, czy był tylko chwilą? Bądź ze sobą szczery.',
+  'Wyobraź sobie siebie za rok. Czy ten wydatek ma znaczenie? Jeśli nie, to wiesz, co robić inaczej.',
+  'Nie każdy wydatek jest zły — ale czy ten był konieczny, czy tylko wygodny? Właśnie w tej różnicy kryją się oszczędności.',
+  'Zapytaj siebie: czy to była potrzeba, prawdziwa zachcianka, czy tylko impuls? Odpowiedź mówi wiele o Twoich nawykach.',
+  'Zamknij oczy i pomyśl o tym zakupie. Czujesz satysfakcję? Zostaw go. Czujesz nic? To początek Twojej listy do wycięcia.',
 ]
 
 const NO_DISCRETIONARY = [
-  'No discretionary spending to call out. You kept it tight!',
-  'Zero wants spending worth flagging. That takes serious discipline.',
-  'Nothing to roast here — your discretionary spending was locked down.',
-  'Clean sheet on discretionary spending. That\'s genuinely impressive.',
-  'Not a single wants expense to question. You\'re running a tight ship.',
-  'Your wants spending was virtually nonexistent. That restraint is paying off.',
-  'No impulse buys, no fluff. You treated your budget like a contract.',
-  'Discretionary spending? What discretionary spending? Exactly.',
+  'Brak wydatków na zachcianki, do których można by się przyczepić. Trzymałeś budżet krótko!',
+  'Zero wydatków na zachcianki wartych odnotowania. To wymaga poważnej dyscypliny.',
+  'Nie ma się tu z czego nabijać — Twoje zachcianki były pod pełną kontrolą.',
+  'Czysta karta, jeśli chodzi o zachcianki. To naprawdę imponujące.',
+  'Ani jednej zachcianki, którą trzeba by kwestionować. Trzymasz wszystko twardą ręką.',
+  'Twoje wydatki na zachcianki praktycznie nie istniały. Ta powściągliwość się opłaca.',
+  'Żadnych zakupów pod wpływem chwili, żadnego zbędnego balastu. Potraktowałeś budżet jak kontrakt.',
+  'Zachcianki? Jakie zachcianki? No właśnie.',
 ]
 
 const VERDICT_A = [
-  'Outstanding. You stayed well under budget and showed real discipline. Keep this energy — consistency is how wealth is built. Don\'t let lifestyle creep sneak in this month.',
-  'This is what financial control looks like. You left money on the table and that\'s a flex. Stay hungry, stay disciplined.',
-  'Elite-level budgeting. You\'re not just saving money — you\'re building habits that compound for years. Don\'t get comfortable, keep pushing.',
-  'You\'re doing what 90% of people can\'t — spending less than you planned. That surplus is your future self saying thank you.',
-  'Textbook execution. Under budget with room to spare. This is the kind of month that builds emergency funds and retirements.',
-  'If budgeting were a sport, you just had an all-star game. The gap between your spending and your budget is where wealth grows.',
-  'You crushed it. Staying this far under budget isn\'t easy — it means you said no to things. That takes strength. Keep going.',
-  'This is how you win with money. Not with one lucky month, but with disciplined months like this one. Stack another on top.',
+  'Wybitnie. Zostałeś sporo poniżej budżetu i pokazałeś prawdziwą dyscyplinę. Trzymaj tę energię — to konsekwencja buduje majątek. Nie pozwól, żeby w tym miesiącu wkradła się inflacja stylu życia.',
+  'Tak wygląda kontrola nad finansami. Zostawiłeś pieniądze na stole i jest się czym chwalić. Pozostań głodny i zdyscyplinowany.',
+  'Budżetowanie na najwyższym poziomie. Nie tylko oszczędzasz — budujesz nawyki, które procentują latami. Nie spoczywaj na laurach, działaj dalej.',
+  'Robisz to, czego 90% ludzi nie potrafi — wydajesz mniej, niż zaplanowałeś. Ta nadwyżka to podziękowanie od Twojego przyszłego „ja”.',
+  'Wykonanie wzorcowe. Poniżej budżetu, i to z zapasem. To taki miesiąc, który buduje fundusze awaryjne i emerytury.',
+  'Gdyby budżetowanie było sportem, właśnie rozegrałeś mecz gwiazd. To w różnicy między wydatkami a budżetem rośnie majątek.',
+  'Pozamiatałeś. Zejście tak daleko poniżej budżetu nie jest łatwe — oznacza, że powiedziałeś czemuś „nie”. To wymaga siły. Tak dalej.',
+  'Tak właśnie wygrywa się z pieniędzmi. Nie jednym szczęśliwym miesiącem, ale zdyscyplinowanymi miesiącami jak ten. Dorzuć kolejny.',
 ]
 
 const VERDICT_B = [
-  'Solid month. You stayed under budget, which is the goal. There\'s room to tighten up a bit, but you\'re moving in the right direction. Small improvements compound.',
-  'Good, not great — and that\'s okay. You stayed in bounds. Now ask yourself what small cuts could turn this B into an A next month.',
-  'You held the line and kept spending under control. That\'s a win. But there\'s always another level — find one area to trim and level up.',
-  'You stayed under budget and that matters. The margin was thin though — one or two cuts and you\'d be sitting in A territory.',
-  'Respectable month. You didn\'t overspend, and that\'s the foundation. Now look for the 5-10% you can shave off to really accelerate.',
-  'Under budget is under budget — own that win. But don\'t coast. The best budgeters are always looking for the next edge.',
-  'You passed the test, but just barely. Review your wants spending — there\'s almost certainly room to push this into A range.',
-  'A B means you\'re on the right track but not quite locked in. Find one recurring expense to cut and watch next month transform.',
+  'Solidny miesiąc. Zmieściłeś się w budżecie, a to jest cel. Jest miejsce, żeby trochę przykręcić śrubę, ale idziesz w dobrym kierunku. Drobne poprawki się sumują.',
+  'Dobrze, choć nie rewelacyjnie — i to jest okej. Zmieściłeś się w ramach. Teraz zastanów się, jakie małe cięcia zamieniłyby tę czwórkę w piątkę w przyszłym miesiącu.',
+  'Utrzymałeś linię i panowałeś nad wydatkami. To wygrana. Ale zawsze jest kolejny poziom — znajdź jeden obszar do przycięcia i wskocz wyżej.',
+  'Zmieściłeś się w budżecie i to ma znaczenie. Margines był jednak cienki — jedno czy dwa cięcia i byłbyś na piątkę.',
+  'Przyzwoity miesiąc. Nie przekroczyłeś budżetu, a to fundament. Teraz poszukaj tych 5-10%, które możesz zetrzeć, żeby naprawdę przyspieszyć.',
+  'Poniżej budżetu to poniżej budżetu — odtrąb ten sukces. Ale nie odpuszczaj. Najlepsi w budżetowaniu zawsze szukają kolejnej przewagi.',
+  'Zaliczyłeś test, ale rzutem na taśmę. Przejrzyj wydatki na zachcianki — niemal na pewno jest miejsce, żeby wbić się na piątkę.',
+  'Czwórka oznacza, że jesteś na dobrej drodze, ale jeszcze nie do końca skupiony. Znajdź jeden stały wydatek do wycięcia i patrz, jak zmienia się przyszły miesiąc.',
 ]
 
 const VERDICT_C = [
-  (over: string) => `We need to do better. You went over budget by ${over}. Take a hard look at your discretionary spending. Every dollar over budget is a dollar away from your financial goals. Lock in this month.`,
-  (over: string) => `You slipped — ${over} over budget. It happens, but don't let it become a pattern. Identify your biggest leak and plug it this month. No excuses.`,
-  (over: string) => `${over} past the limit. That's not a disaster, but it is a warning sign. The difference between building wealth and treading water is right here. Tighten up.`,
-  (over: string) => `Over by ${over}. Not the end of the world, but it's a trend you need to kill before it kills your goals. Pick two expenses to eliminate.`,
-  (over: string) => `${over} over — close enough to fix, far enough to worry about. This is the kind of month that separates people who talk about budgeting from people who do it.`,
-  (over: string) => `You missed the mark by ${over}. The good news? That's a fixable gap. The question is whether you'll actually fix it or let it slide again.`,
-  (over: string) => `${over} in the red. You were close, which means the discipline is there — it just needs to be sharper. Cut one habit and you're golden.`,
-  (over: string) => `Budget busted by ${over}. Don't beat yourself up, but don't ignore it either. Write down three things you'll skip this month and commit.`,
+  (over: string) => `Musimy popracować. Przekroczyłeś budżet o ${over}. Przyjrzyj się krytycznie wydatkom na zachcianki. Każda złotówka ponad budżet to złotówka oddalająca Cię od celów. Skup się w tym miesiącu.`,
+  (over: string) => `Powinęła Ci się noga — ${over} ponad budżet. Zdarza się, ale nie pozwól, żeby to weszło w nawyk. Znajdź swój największy przeciek i załataj go w tym miesiącu. Bez wymówek.`,
+  (over: string) => `${over} ponad limit. To nie katastrofa, ale to sygnał ostrzegawczy. Różnica między budowaniem majątku a dreptaniem w miejscu jest właśnie tutaj. Przykręć śrubę.`,
+  (over: string) => `Ponad budżet o ${over}. To nie koniec świata, ale to trend, który musisz zabić, zanim on zabije Twoje cele. Wskaż dwa wydatki do wyeliminowania.`,
+  (over: string) => `${over} ponad — wystarczająco blisko, by to naprawić, wystarczająco daleko, by się martwić. To taki miesiąc, który odróżnia tych, którzy mówią o budżetowaniu, od tych, którzy je robią.`,
+  (over: string) => `Rozminąłeś się z celem o ${over}. Dobra wiadomość? Tę lukę da się załatać. Pytanie, czy faktycznie to zrobisz, czy znów odpuścisz.`,
+  (over: string) => `${over} na minusie. Byłeś blisko, co oznacza, że dyscyplina jest — trzeba ją tylko wyostrzyć. Odetnij jeden nawyk i będzie pięknie.`,
+  (over: string) => `Budżet rozbity o ${over}. Nie biczuj się, ale też tego nie ignoruj. Wypisz trzy rzeczy, które odpuścisz w tym miesiącu, i się ich trzymaj.`,
 ]
 
 const VERDICT_F = [
-  (over: string, pct: string) => `This needs a reset. You spent ${over} over budget — that's ${pct}% of your target. It's time to cut the unnecessary spending and get serious. Your future self is counting on you. No more excuses.`,
-  (over: string, pct: string) => `${over} over budget at ${pct}% — that's a five-alarm fire. Every swipe of the card matters. Sit down, look at every subscription, every impulse buy, and make cuts. You can turn this around.`,
-  (over: string, pct: string) => `Hard truth: ${over} over at ${pct}% utilization is unsustainable. If this was someone else's budget, you'd tell them to stop. Treat yours the same way. This month is a fresh start — act like it.`,
-  (over: string, pct: string) => `${over} past your limit — ${pct}% of budget used. This isn't a stumble, it's a freefall. You need a hard reset: cancel what you don't need, cook at home, and treat your budget like a promise.`,
-  (over: string, pct: string) => `At ${pct}% budget usage and ${over} in the hole, something is fundamentally broken. Don't just trim — restructure. Look at every recurring charge and every category. Start from zero.`,
-  (over: string, pct: string) => `${over} over. ${pct}% spent. Those numbers should make you uncomfortable — and that discomfort is useful. Channel it into action. This month, track every single dollar.`,
-  (over: string, pct: string) => `You blew through your budget by ${over}, landing at ${pct}%. No sugarcoating it. But here's the thing — awareness is step one, and you're looking at the numbers. Now do something about it.`,
-  (over: string, pct: string) => `${pct}% of your budget, ${over} over the line. You're spending like the budget doesn't exist. This month, prove it does. Write it on your mirror if you have to.`,
+  (over: string, pct: string) => `To wymaga resetu. Przekroczyłeś budżet o ${over} — to ${pct}% Twojego celu. Czas wyciąć zbędne wydatki i wziąć się do roboty. Twoje przyszłe „ja” na Ciebie liczy. Koniec wymówek.`,
+  (over: string, pct: string) => `${over} ponad budżet przy ${pct}% — to pożar na całego. Każde stuknięcie kartą ma znaczenie. Usiądź, prześwietl każdą subskrypcję, każdy impulsywny zakup i tnij. Da się to odwrócić.`,
+  (over: string, pct: string) => `Gorzka prawda: ${over} ponad przy zużyciu ${pct}% jest nie do utrzymania. Gdyby to był cudzy budżet, kazałbyś mu przestać. Potraktuj swój tak samo. Ten miesiąc to nowy start — zachowuj się jak ktoś, kto zaczyna od nowa.`,
+  (over: string, pct: string) => `${over} ponad limit — zużyte ${pct}% budżetu. To nie potknięcie, to swobodny upadek. Potrzebujesz twardego resetu: anuluj, czego nie potrzebujesz, gotuj w domu i traktuj budżet jak obietnicę.`,
+  (over: string, pct: string) => `Przy ${pct}% zużycia budżetu i ${over} na minusie coś jest fundamentalnie zepsute. Nie przycinaj — przebuduj. Prześwietl każdą cykliczną opłatę i każdą kategorię. Zacznij od zera.`,
+  (over: string, pct: string) => `${over} ponad. Wydane ${pct}%. Te liczby powinny Cię uwierać — i ten dyskomfort jest przydatny. Zamień go w działanie. W tym miesiącu zapisuj każdą złotówkę.`,
+  (over: string, pct: string) => `Przepaliłeś budżet o ${over}, lądując na ${pct}%. Nie ma co tego osładzać. Ale jest jedno „ale” — świadomość to pierwszy krok, a Ty właśnie patrzysz na liczby. Teraz coś z tym zrób.`,
+  (over: string, pct: string) => `${pct}% Twojego budżetu, ${over} ponad kreskę. Wydajesz tak, jakby budżet nie istniał. W tym miesiącu udowodnij, że istnieje. Napisz to sobie na lustrze, jeśli trzeba.`,
 ]
 
 const DISMISS_LABEL = [
-  "Let's Crush This Month",
-  "Time to Lock In",
-  "New Month, New Focus",
-  "I'm Ready — Let's Go",
-  "Challenge Accepted",
-  "Bring It On",
-  "Fresh Start, Let's Roll",
-  "Game On",
+  'Rozbijmy ten miesiąc',
+  'Czas się skupić',
+  'Nowy miesiąc, nowy cel',
+  'Jestem gotów — działamy',
+  'Wyzwanie przyjęte',
+  'No to jazda',
+  'Świeży start, ruszamy',
+  'Gramy dalej',
 ]
 
 // ─── Component ──────────────────────────────────────────────────────────
@@ -436,7 +445,7 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
     const now = new Date()
     return {
       key: format(now, 'yyyy-MM'),
-      label: format(now, 'MMMM yyyy'),
+      label: format(now, 'LLLL yyyy', { locale: pl }),
       start: format(startOfMonth(now), 'yyyy-MM-dd'),
       end: format(endOfMonth(now), 'yyyy-MM-dd'),
     }
@@ -484,9 +493,9 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 3)
       .map((t) => ({
-        description: t.description || 'Unnamed expense',
+        description: t.description || 'Wydatek bez nazwy',
         amount: t.amount,
-        category: catMap.get(t.categoryId)?.name ?? 'Unknown',
+        category: catMap.get(t.categoryId)?.name ?? 'Nieznane',
       }))
 
     const topCats = [...categoryTotals.entries()]
@@ -494,7 +503,7 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
       .slice(0, 5)
       .map(([catId, total]) => {
         const cat = catMap.get(catId)
-        return { name: cat?.name ?? 'Unknown', group: cat?.group ?? 'needs', total }
+        return { name: cat?.name ?? 'Nieznane', group: cat?.group ?? 'needs', total }
       })
 
     const wantsExpenses = transactions
@@ -502,9 +511,9 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
       .sort((a, b) => b.amount - a.amount)
 
     const biggestUnnecessary = wantsExpenses.length > 0 ? {
-      description: wantsExpenses[0].description || 'Unnamed expense',
+      description: wantsExpenses[0].description || 'Wydatek bez nazwy',
       amount: wantsExpenses[0].amount,
-      category: catMap.get(wantsExpenses[0].categoryId)?.name ?? 'Unknown',
+      category: catMap.get(wantsExpenses[0].categoryId)?.name ?? 'Nieznane',
     } : null
 
     const budgetPct = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0
@@ -565,10 +574,10 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
   // Next button label
   const nextStepId = stepIds[step + 1]
   const nextLabel =
-    nextStepId === 'top-expenses' ? 'See Top Expenses' :
-    nextStepId === 'habits' ? 'Spending Habits' :
-    nextStepId === 'ouch' ? 'The Hard Truth' :
-    nextStepId === 'verdict' ? 'Final Verdict' : 'Next'
+    nextStepId === 'top-expenses' ? 'Zobacz największe wydatki' :
+    nextStepId === 'habits' ? 'Nawyki wydatkowe' :
+    nextStepId === 'ouch' ? 'Gorzka prawda' :
+    nextStepId === 'verdict' ? 'Werdykt końcowy' : 'Dalej'
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pb-20 md:pb-4">
@@ -582,7 +591,7 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
               <Icon name="ClipboardCheck" size={18} className="text-amber-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-100">Monthly Review</h2>
+              <h2 className="text-lg font-bold text-slate-100">Przegląd miesiąca</h2>
               <p className="text-xs text-slate-500">{reviewMonth.label}</p>
             </div>
           </div>
@@ -605,19 +614,19 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
               <div className="text-center">
                 {audit.overBudget ? (
                   <>
-                    <p className="text-xl font-bold text-red-400 mb-1">{overStr} Over Budget</p>
+                    <p className="text-xl font-bold text-red-400 mb-1">{overStr} ponad budżet</p>
                     <p className="text-sm text-slate-400">{pick(OVERVIEW_OVER, seed)(spentStr, budgetStr, pctStr)}</p>
                   </>
                 ) : (
                   <>
-                    <p className="text-xl font-bold text-green-400 mb-1">{overStr} Under Budget</p>
+                    <p className="text-xl font-bold text-green-400 mb-1">{overStr} poniżej budżetu</p>
                     <p className="text-sm text-slate-400">{pick(OVERVIEW_UNDER, seed)(spentStr, budgetStr)}</p>
                   </>
                 )}
               </div>
               <div>
                 <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-                  <span>Spent</span><span>{pctStr}%</span>
+                  <span>Wydane</span><span>{pctStr}%</span>
                 </div>
                 <div className="h-3 rounded-full bg-slate-800 overflow-hidden">
                   <div className={`h-full rounded-full transition-all duration-700 ${barColor}`} style={{ width: `${barWidth}%` }} />
@@ -628,16 +637,16 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-slate-800 p-3 text-center">
-                  <p className="text-xs text-slate-500 mb-0.5">Income</p>
+                  <p className="text-xs text-slate-500 mb-0.5">Przychód</p>
                   <p className="text-lg font-bold text-green-400">{formatCurrency(audit.totalIncome)}</p>
                 </div>
                 <div className="rounded-xl bg-slate-800 p-3 text-center">
-                  <p className="text-xs text-slate-500 mb-0.5">Expenses</p>
+                  <p className="text-xs text-slate-500 mb-0.5">Wydatki</p>
                   <p className="text-lg font-bold text-red-400">{spentStr}</p>
                 </div>
               </div>
               <div>
-                <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Top Categories</p>
+                <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Główne kategorie</p>
                 <div className="space-y-2">
                   {audit.topCategories.map((cat, i) => {
                     const pct = audit.totalSpent > 0 ? (cat.total / audit.totalSpent) * 100 : 0
@@ -663,7 +672,7 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
           {currentStepId === 'top-expenses' && (
             <div className="space-y-5">
               <div className="text-center">
-                <p className="text-lg font-bold text-slate-100 mb-1">Your Biggest Expenses</p>
+                <p className="text-lg font-bold text-slate-100 mb-1">Twoje największe wydatki</p>
                 <p className="text-sm text-slate-400">{pick(TOP_EXP_HEADER, seed)}</p>
               </div>
               <div className="space-y-3">
@@ -682,12 +691,12 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
               </div>
               {audit.topExpenses.length > 0 && (
                 <p className="text-sm text-slate-500 text-center">
-                  These three alone account for{' '}
+                  Same te trzy to aż{' '}
                   <span className="text-slate-300 font-medium">
                     {formatCurrency(audit.topExpenses.reduce((s, e) => s + e.amount, 0))}
                   </span>
                   {' '}— {audit.totalSpent > 0
-                    ? `${((audit.topExpenses.reduce((s, e) => s + e.amount, 0) / audit.totalSpent) * 100).toFixed(0)}% of all spending.`
+                    ? `${((audit.topExpenses.reduce((s, e) => s + e.amount, 0) / audit.totalSpent) * 100).toFixed(0)}% wszystkich wydatków.`
                     : ''}
                 </p>
               )}
@@ -701,8 +710,8 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500/10 mx-auto mb-3">
                   <Icon name="AlertTriangle" size={28} className="text-orange-400" />
                 </div>
-                <p className="text-lg font-bold text-slate-100 mb-1">Spending Habits Detected</p>
-                <p className="text-sm text-slate-400">We found some patterns in your spending worth calling out.</p>
+                <p className="text-lg font-bold text-slate-100 mb-1">Wykryto nawyki wydatkowe</p>
+                <p className="text-sm text-slate-400">Znaleźliśmy w Twoich wydatkach kilka schematów, o których warto wspomnieć.</p>
               </div>
               <div className="space-y-3">
                 {habits.map((habit) => {
@@ -716,7 +725,7 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
                         <div className="flex-1 min-w-0">
                           <p className={`text-sm font-bold ${habit.color}`}>{habit.label}</p>
                           <p className="text-xs text-slate-500">
-                            {habit.count} transaction{habit.count !== 1 ? 's' : ''} · {budgetPct}% of budget
+                            {habit.count} {pluralizeTransakcje(habit.count)} · {budgetPct}% budżetu
                           </p>
                         </div>
                         <p className={`text-lg font-black ${habit.color} shrink-0`}>
@@ -732,13 +741,13 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
               </div>
               {habits.length > 0 && (
                 <div className="rounded-xl bg-slate-800 p-3 text-center">
-                  <p className="text-xs text-slate-500 mb-0.5">Combined habit spending</p>
+                  <p className="text-xs text-slate-500 mb-0.5">Łącznie na te nawyki</p>
                   <p className="text-lg font-bold text-orange-400">
                     {formatCurrency(habits.reduce((s, h) => s + h.total, 0))}
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {audit.totalBudget > 0
-                      ? `${((habits.reduce((s, h) => s + h.total, 0) / audit.totalBudget) * 100).toFixed(0)}% of your monthly budget`
+                      ? `${((habits.reduce((s, h) => s + h.total, 0) / audit.totalBudget) * 100).toFixed(0)}% Twojego miesięcznego budżetu`
                       : ''}
                   </p>
                 </div>
@@ -753,12 +762,12 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 mx-auto mb-3">
                   <Icon name="AlertTriangle" size={28} className="text-amber-400" />
                 </div>
-                <p className="text-lg font-bold text-slate-100 mb-1">The "Was It Worth It?" Check</p>
+                <p className="text-lg font-bold text-slate-100 mb-1">Test „Czy było warto?”</p>
               </div>
               {audit.biggestUnnecessary ? (
                 <div className="space-y-4">
                   <div className="rounded-xl border border-amber-800/40 bg-amber-900/15 p-4 text-center">
-                    <p className="text-xs text-amber-400/80 mb-1 uppercase tracking-wider">Biggest Discretionary Expense</p>
+                    <p className="text-xs text-amber-400/80 mb-1 uppercase tracking-wider">Największa zachcianka</p>
                     <p className="text-2xl font-black text-amber-400">{formatCurrency(audit.biggestUnnecessary.amount)}</p>
                     <p className="text-sm text-slate-300 mt-1">{audit.biggestUnnecessary.description}</p>
                     <p className="text-xs text-slate-500">{audit.biggestUnnecessary.category}</p>
@@ -766,9 +775,9 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
                   <p className="text-sm text-slate-400 text-center leading-relaxed">{pick(OUCH_PROMPT, seed)}</p>
                   {audit.overBudget && (
                     <p className="text-sm text-red-400/80 text-center">
-                      Cutting this alone would have saved you {formatCurrency(audit.biggestUnnecessary.amount)}.
+                      Sama rezygnacja z tego zaoszczędziłaby Ci {formatCurrency(audit.biggestUnnecessary.amount)}.
                       {audit.biggestUnnecessary.amount >= Math.abs(audit.remaining) && (
-                        <span className="block mt-1 text-green-400">That would have kept you under budget.</span>
+                        <span className="block mt-1 text-green-400">To pozwoliłoby Ci zmieścić się w budżecie.</span>
                       )}
                     </p>
                   )}
@@ -789,41 +798,41 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
                 <div className={`flex h-20 w-20 items-center justify-center rounded-3xl ${gradeBg} mx-auto mb-3`}>
                   <span className={`text-4xl font-black ${gradeColor}`}>{grade}</span>
                 </div>
-                <p className="text-lg font-bold text-slate-100 mb-2">Your {reviewMonth.label} Verdict</p>
+                <p className="text-lg font-bold text-slate-100 mb-2">Werdykt za {reviewMonth.label}</p>
               </div>
               <div className="rounded-xl bg-slate-800 p-4 space-y-3">
                 {grade === 'A' && (
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    <span className="text-green-400 font-bold">Grade: A.</span>{' '}{pick(VERDICT_A, seed)}
+                    <span className="text-green-400 font-bold">Ocena: A.</span>{' '}{pick(VERDICT_A, seed)}
                   </p>
                 )}
                 {grade === 'B' && (
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    <span className="text-blue-400 font-bold">Grade: B.</span>{' '}{pick(VERDICT_B, seed)}
+                    <span className="text-blue-400 font-bold">Ocena: B.</span>{' '}{pick(VERDICT_B, seed)}
                   </p>
                 )}
                 {grade === 'C' && (
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    <span className="text-amber-400 font-bold">Grade: C.</span>{' '}{pick(VERDICT_C, seed)(overStr)}
+                    <span className="text-amber-400 font-bold">Ocena: C.</span>{' '}{pick(VERDICT_C, seed)(overStr)}
                   </p>
                 )}
                 {grade === 'F' && (
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    <span className="text-red-400 font-bold">Grade: F.</span>{' '}{pick(VERDICT_F, seed)(overStr, pctStr)}
+                    <span className="text-red-400 font-bold">Ocena: F.</span>{' '}{pick(VERDICT_F, seed)(overStr, pctStr)}
                   </p>
                 )}
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <div className="rounded-xl bg-slate-800 p-2.5 text-center">
-                  <p className="text-[10px] text-slate-500 mb-0.5">Budget</p>
+                  <p className="text-[10px] text-slate-500 mb-0.5">Budżet</p>
                   <p className="text-sm font-bold text-slate-200">{budgetStr}</p>
                 </div>
                 <div className="rounded-xl bg-slate-800 p-2.5 text-center">
-                  <p className="text-[10px] text-slate-500 mb-0.5">Spent</p>
+                  <p className="text-[10px] text-slate-500 mb-0.5">Wydane</p>
                   <p className={`text-sm font-bold ${audit.overBudget ? 'text-red-400' : 'text-green-400'}`}>{spentStr}</p>
                 </div>
                 <div className="rounded-xl bg-slate-800 p-2.5 text-center">
-                  <p className="text-[10px] text-slate-500 mb-0.5">Income</p>
+                  <p className="text-[10px] text-slate-500 mb-0.5">Przychód</p>
                   <p className="text-sm font-bold text-green-400">{formatCurrency(audit.totalIncome)}</p>
                 </div>
               </div>
@@ -838,7 +847,7 @@ export function MonthlyAudit({ forceOpen, onForceClose }: { forceOpen?: boolean;
               onClick={() => setStep(step - 1)}
               className="flex-1 rounded-xl bg-slate-800 py-3 text-sm font-medium text-slate-300 transition-colors active:bg-slate-700"
             >
-              Back
+              Wstecz
             </button>
           )}
           {step < totalSteps - 1 ? (

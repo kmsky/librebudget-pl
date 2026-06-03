@@ -31,8 +31,8 @@ export function useNotifications() {
 
         if (todayTxs === 0) {
           sendNotification(
-            'LibreBudget Reminder',
-            "Don't forget to log today's expenses!",
+            'Przypomnienie LibreBudget',
+            'Nie zapomnij zapisać dzisiejszych wydatków!',
           )
         }
       })

@@ -7,32 +7,32 @@ const STORAGE_KEY = 'lb-account-onboarding-done'
 const STEPS = [
   {
     icon: 'Wallet',
-    title: 'Your Vault — the Key to Everything',
-    description: 'Your vault is created from a 12-word recovery phrase. Those words are the only way to encrypt and decrypt your cloud backup. LibreBudget never sees them — write them down and store them somewhere safe. If you lose the phrase, your cloud backup cannot be recovered.',
+    title: 'Twój sejf — klucz do wszystkiego',
+    description: 'Twój sejf jest tworzony na podstawie 12-wyrazowej frazy odzyskiwania. Te słowa to jedyny sposób na zaszyfrowanie i odszyfrowanie kopii zapasowej w chmurze. LibreBudget nigdy ich nie widzi — zapisz je i przechowuj w bezpiecznym miejscu. Jeśli utracisz frazę, kopia zapasowa w chmurze nie będzie mogła zostać odzyskana.',
     tip: null,
   },
   {
     icon: 'Cloud',
-    title: 'Automatic Encrypted Backup',
-    description: 'Once your vault is active, your data is encrypted in your browser and automatically backed up to the cloud after every change. The server only ever receives an encrypted blob — your recovery phrase and keys never leave your device.',
-    tip: 'Use "Back Up Now" after major changes or before switching devices to push a fresh copy immediately.',
+    title: 'Automatyczna zaszyfrowana kopia zapasowa',
+    description: 'Gdy Twój sejf jest aktywny, dane są szyfrowane w przeglądarce i automatycznie kopiowane do chmury po każdej zmianie. Serwer otrzymuje wyłącznie zaszyfrowany blok danych — Twoja fraza odzyskiwania i klucze nigdy nie opuszczają urządzenia.',
+    tip: 'Użyj opcji „Utwórz kopię teraz” po większych zmianach lub przed zmianą urządzenia, aby od razu wysłać świeżą kopię.',
   },
   {
     icon: 'RefreshCw',
-    title: 'Syncing — Pull Your Latest Data',
-    description: 'The Sync button (cloud icon in the nav bar) pulls your latest backup from the cloud onto this device. Use it any time you want to bring in changes made on another device, or after restoring your vault on a new browser.',
-    tip: 'Sync replaces local data with the cloud copy. Back up first if you have unsaved local changes.',
+    title: 'Synchronizacja — pobierz najnowsze dane',
+    description: 'Przycisk Synchronizacja (ikona chmury na pasku nawigacji) pobiera najnowszą kopię zapasową z chmury na to urządzenie. Użyj go zawsze, gdy chcesz wczytać zmiany wprowadzone na innym urządzeniu lub po przywróceniu sejfu w nowej przeglądarce.',
+    tip: 'Synchronizacja zastępuje dane lokalne kopią z chmury. Najpierw utwórz kopię zapasową, jeśli masz niezapisane zmiany lokalne.',
   },
   {
     icon: 'HardDrive',
-    title: 'Restoring on a New Device',
-    description: 'Moving to a new phone or browser? Go to Account → "Restore from Recovery Phrase", enter your 12 words, then tap Sync. Your full transaction history, budget goals, debts, and savings are back in seconds.',
-    tip: 'Keep your recovery phrase in a password manager and a physical backup in a secure location.',
+    title: 'Przywracanie na nowym urządzeniu',
+    description: 'Przenosisz się na nowy telefon lub do nowej przeglądarki? Wejdź do sekcji Konto → „Przywróć z frazy odzyskiwania”, wprowadź swoje 12 słów, a następnie dotknij Synchronizuj. Cała historia transakcji, cele budżetowe, długi i oszczędności wrócą w kilka sekund.',
+    tip: 'Przechowuj frazę odzyskiwania w menedżerze haseł oraz fizyczną kopię w bezpiecznym miejscu.',
   },
   {
     icon: 'Shield',
-    title: 'You\'re in Control',
-    description: 'Your data is yours. Export a full JSON or CSV backup any time from Settings. Delete your cloud backup from Account at any time — we retain nothing. The app works completely offline without any vault or cloud.',
+    title: 'Masz pełną kontrolę',
+    description: 'Twoje dane należą do Ciebie. W każdej chwili wyeksportujesz pełną kopię zapasową w formacie JSON lub CSV z Ustawień. Możesz usunąć kopię zapasową z chmury w sekcji Konto w dowolnym momencie — nie zachowujemy niczego. Aplikacja działa całkowicie offline, bez żadnego sejfu i chmury.',
     tip: null,
   },
 ]
@@ -96,10 +96,10 @@ export function AccountOnboarding({ open, onClose }: AccountOnboardingProps = {}
           {/* Step counter */}
           <div className="flex items-center justify-between mb-5">
             <span className="text-xs font-medium text-slate-500">
-              Step {step + 1} of {STEPS.length}
+              Krok {step + 1} z {STEPS.length}
             </span>
             <button onClick={finish} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-              Skip
+              Pomiń
             </button>
           </div>
 
@@ -137,16 +137,16 @@ export function AccountOnboarding({ open, onClose }: AccountOnboardingProps = {}
           <div className="flex gap-2.5">
             {step > 0 && (
               <Button variant="secondary" onClick={() => setStep(step - 1)} className="flex-1">
-                Back
+                Wstecz
               </Button>
             )}
             {isLast ? (
               <Button onClick={finish} className="flex-1">
-                Got it
+                Rozumiem
               </Button>
             ) : (
               <Button onClick={() => setStep(step + 1)} className="flex-1">
-                Next
+                Dalej
               </Button>
             )}
           </div>

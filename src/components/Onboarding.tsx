@@ -5,39 +5,39 @@ import { Icon } from './ui/Icon'
 const STEPS = [
   {
     icon: 'Hand',
-    title: 'Welcome to LibreBudget',
-    description: 'A free, open-source budget tracker. Your data stays on your device — nothing is sent anywhere unless you enable optional encrypted cloud backup.',
+    title: 'Witaj w LibreBudget',
+    description: 'Darmowy budżet domowy o otwartym kodzie źródłowym. Twoje dane pozostają na Twoim urządzeniu — nic nie jest nigdzie wysyłane, chyba że włączysz opcjonalną, zaszyfrowaną kopię zapasową w chmurze.',
     tip: null,
   },
   {
     icon: 'LayoutDashboard',
-    title: 'Your Dashboard',
-    description: 'See income, expenses, and savings at a glance. The budget health bar and % of income saved (goal: 25%+) keep you on track. Add transactions with the + button.',
+    title: 'Twój pulpit',
+    description: 'Zobacz przychody, wydatki i oszczędności na pierwszy rzut oka. Pasek kondycji budżetu oraz % zaoszczędzonego dochodu (cel: 25%+) pomagają Ci trzymać się planu. Dodawaj transakcje przyciskiem +.',
     tip: null,
   },
   {
     icon: 'DollarSign',
-    title: 'Budget & Spending',
-    description: 'Set monthly limits in Budget. Track transactions, recurring items (rent, subscriptions, salary), and debts. Categorize as needs, wants, or savings.',
-    tip: 'Set your monthly budget in Settings before adding your first transaction.',
+    title: 'Budżet i wydatki',
+    description: 'Ustaw miesięczne limity w sekcji Budżet. Śledź transakcje, pozycje cykliczne (czynsz, subskrypcje, wynagrodzenie) oraz długi. Przypisuj kategorie do potrzeb, zachcianek lub oszczędności.',
+    tip: 'Ustaw swój miesięczny budżet w Ustawieniach, zanim dodasz pierwszą transakcję.',
   },
   {
     icon: 'BarChart3',
-    title: 'Wealth Tools',
-    description: 'Savings goals, compound interest & retirement calculators, auto loan (20/3/8 rule), home affordability (own or rent).',
+    title: 'Narzędzia do budowania majątku',
+    description: 'Cele oszczędnościowe, kalkulatory procentu składanego i emerytury, kalkulator kredytu samochodowego (zasada 20/3/8), dostępność mieszkania (zakup lub wynajem).',
     tip: null,
   },
   {
     icon: 'Map',
-    title: 'Financial Roadmap & Insights',
-    description: 'Follow the step-by-step Financial Roadmap. Use Trends, Monthly Review, and Year Review to see how you\'re improving over time.',
+    title: 'Plan finansowy i analizy',
+    description: 'Postępuj krok po kroku zgodnie z Planem finansowym. Korzystaj z Trendów, Przeglądu miesięcznego i Przeglądu rocznego, aby zobaczyć, jak poprawiasz swoją sytuację w czasie.',
     tip: null,
   },
   {
     icon: 'Trophy',
-    title: "You're All Set",
-    description: 'Add your first transaction to get started. Visit Account to set up optional encrypted cloud backup so your data follows you across devices.',
-    tip: 'Check Settings for themes, font size, accessibility options, and data export.',
+    title: 'Wszystko gotowe',
+    description: 'Dodaj swoją pierwszą transakcję, aby zacząć. Wejdź do sekcji Konto, aby skonfigurować opcjonalną, zaszyfrowaną kopię zapasową w chmurze, dzięki której Twoje dane będą Ci towarzyszyć na różnych urządzeniach.',
+    tip: 'Zajrzyj do Ustawień, aby zmienić motywy, rozmiar czcionki, opcje dostępności oraz wyeksportować dane.',
   },
 ]
 
@@ -100,10 +100,10 @@ export function Onboarding({ open, onClose }: OnboardingProps = {}) {
           {/* Step counter + skip */}
           <div className="flex items-center justify-between mb-5">
             <span className="text-xs font-medium text-slate-500">
-              Step {step + 1} of {STEPS.length}
+              Krok {step + 1} z {STEPS.length}
             </span>
             <button onClick={finish} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-              Skip
+              Pomiń
             </button>
           </div>
 
@@ -141,16 +141,16 @@ export function Onboarding({ open, onClose }: OnboardingProps = {}) {
           <div className="flex gap-2.5">
             {step > 0 && (
               <Button variant="secondary" onClick={() => setStep(step - 1)} className="flex-1">
-                Back
+                Wstecz
               </Button>
             )}
             {isLast ? (
               <Button onClick={finish} className="flex-1">
-                Get Started
+                Zaczynamy
               </Button>
             ) : (
               <Button onClick={() => setStep(step + 1)} className="flex-1">
-                Next
+                Dalej
               </Button>
             )}
           </div>

@@ -43,8 +43,8 @@ export default function FinancialOrder() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Financial Roadmap</h1>
-          <p className="text-sm text-slate-400">Follow these steps to financial freedom.</p>
+          <h1 className="text-2xl font-bold">Plan działania</h1>
+          <p className="text-sm text-slate-400">Wykonaj te kroki w drodze do wolności finansowej.</p>
         </div>
       </div>
 
@@ -77,7 +77,7 @@ export default function FinancialOrder() {
                     </h3>
                     {step.isAutomated && (
                       <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                        Automated Check
+                        Automatyczna kontrola
                       </span>
                     )}
                   </div>
@@ -102,7 +102,7 @@ export default function FinancialOrder() {
                     <div className="pt-2">
                       <Link to={step.actionLink}>
                         <Button size="sm" variant="secondary">
-                          {step.actionLabel || 'Go to Page'}
+                          {step.actionLabel || 'Przejdź do strony'}
                         </Button>
                       </Link>
                     </div>

@@ -13,47 +13,47 @@ interface Resource {
 const RESOURCES: Resource[] = [
   {
     name: 'The Money Guy Show',
-    tagline: 'The Financial Order of Operations',
+    tagline: 'Finansowa kolejność działań',
     description:
-      'Hosts Brian Preston and Bo Hanson break down complex financial topics into actionable advice. Known for the "Financial Order of Operations" — a step-by-step framework for building wealth the right way.',
+      'Prowadzący Brian Preston i Bo Hanson tłumaczą złożone tematy finansowe na konkretne, praktyczne porady. Znani z „Financial Order of Operations” — krok po kroku opisanego schematu mądrego budowania majątku.',
     philosophy: [
-      'Follow the Financial Order of Operations (FOO)',
-      'Invest 25% of net income for financial independence',
-      'Build wealth steadily through index fund investing',
-      'Avoid lifestyle inflation as income grows',
+      'Trzymaj się finansowej kolejności działań (FOO)',
+      'Inwestuj 25% dochodu netto, by osiągnąć niezależność finansową',
+      'Buduj majątek systematycznie, inwestując w fundusze indeksowe',
+      'Unikaj inflacji stylu życia w miarę wzrostu dochodów',
     ],
     url: 'https://moneyguy.com',
-    tag: 'Wealth Building',
+    tag: 'Budowanie majątku',
     tagColor: 'bg-green-500/10 text-green-400',
   },
   {
     name: 'Caleb Hammer',
-    tagline: 'Financial Audit',
+    tagline: 'Audyt finansowy',
     description:
-      'Caleb Hammer audits real people\'s finances live on YouTube with brutal honesty. If you need a wake-up call about your spending habits, this is the show for you. No sugar-coating — just facts.',
+      'Caleb Hammer brutalnie szczerze audytuje finanse prawdziwych osób na żywo na YouTube. Jeśli potrzebujesz otrzeźwienia w kwestii swoich nawyków wydawania, to program dla Ciebie. Bez owijania w bawełnę — same fakty.',
     philosophy: [
-      'Face your financial reality head-on',
-      'Stop making excuses and take accountability',
-      'Cut unnecessary spending ruthlessly',
-      'Build an emergency fund before anything else',
+      'Spójrz prawdzie o swoich finansach prosto w oczy',
+      'Przestań się tłumaczyć i weź odpowiedzialność',
+      'Bezwzględnie tnij zbędne wydatki',
+      'Najpierw zbuduj fundusz awaryjny',
     ],
     url: 'https://www.youtube.com/@CalebHammer',
-    tag: 'Reality Check',
+    tag: 'Zderzenie z rzeczywistością',
     tagColor: 'bg-red-500/10 text-red-400',
   },
   {
     name: 'Dave Ramsey',
-    tagline: 'The Baby Steps',
+    tagline: 'Małe kroki (Baby Steps)',
     description:
-      'Dave Ramsey\'s "Baby Steps" method is one of the most widely followed debt-freedom frameworks in the US. Focused on getting out of debt fast using the debt snowball method and building a solid financial foundation.',
+      'Metoda „Baby Steps” Dave\'a Ramseya to jeden z najpopularniejszych w USA schematów wychodzenia z długów. Skupia się na szybkim spłaceniu długów metodą kuli śnieżnej i zbudowaniu solidnych podstaw finansowych.',
     philosophy: [
-      '$1,000 starter emergency fund first',
-      'Pay off all debt using the debt snowball',
-      'Build a 3–6 month emergency fund',
-      'Invest 15% of income into retirement',
+      'Najpierw mały fundusz awaryjny na start (równowartość ok. 1000 zł)',
+      'Spłać wszystkie długi metodą kuli śnieżnej',
+      'Zbuduj fundusz awaryjny na 3–6 miesięcy',
+      'Inwestuj 15% dochodu z myślą o emeryturze',
     ],
     url: 'https://www.ramseysolutions.com',
-    tag: 'Debt Freedom',
+    tag: 'Wolność od długów',
     tagColor: 'bg-blue-500/10 text-blue-400',
   },
 ]
@@ -62,9 +62,9 @@ export default function Resources() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Resources</h1>
+        <h1 className="text-2xl font-bold">Materiały</h1>
         <p className="text-sm text-slate-400 mt-0.5">
-          Vetted financial educators to help you learn and grow
+          Sprawdzeni edukatorzy finansowi, którzy pomogą Ci się uczyć i rozwijać
         </p>
       </div>
 
@@ -87,7 +87,7 @@ export default function Resources() {
                 rel="noopener noreferrer"
                 className="flex shrink-0 items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
               >
-                Visit
+                Odwiedź
                 <svg
                   className="h-3 w-3"
                   fill="none"
@@ -109,7 +109,7 @@ export default function Resources() {
 
             <div className="border-t border-slate-800 pt-3">
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
-                Key Principles
+                Najważniejsze zasady
               </p>
               <ul className="space-y-1">
                 {r.philosophy.map((p) => (
@@ -125,7 +125,7 @@ export default function Resources() {
       </div>
 
       <p className="text-center text-xs text-slate-600 pb-2">
-        LibreBudget does not endorse any specific financial advisor. Always do your own research.
+        LibreBudget nie promuje żadnego konkretnego doradcy finansowego. Zawsze weryfikuj informacje samodzielnie.
       </p>
     </div>
   )

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { Turnstile } from '@marsidev/react-turnstile'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
@@ -43,40 +44,41 @@ export default function Account() {
       <>
         <AccountOnboarding />
         <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Account</h1>
+        <h1 className="text-2xl font-bold">Konto</h1>
         <Card>
           <div className="space-y-3 py-4 text-center">
             <Icon name="Cloud" size={48} className="text-slate-400 mx-auto" />
             <h3 className="text-lg font-semibold text-slate-200">
-              Cloud Backup Not Configured
+              Kopia zapasowa w chmurze nie jest skonfigurowana
             </h3>
             <p className="text-sm text-slate-400 max-w-sm mx-auto">
-              Set VITE_BACKUP_API_URL to your Cloudflare Worker URL to enable
-              cloud backup.
+              Ustaw VITE_BACKUP_API_URL na adres swojego Cloudflare Workera, aby
+              włączyć kopię zapasową w chmurze.
             </p>
             <p className="text-xs text-slate-500">
-              Your data is still safely stored locally in your browser.
+              Twoje dane są nadal bezpiecznie przechowywane lokalnie w przeglądarce.
             </p>
           </div>
         </Card>
         <Card>
           <h3 className="mb-3 text-sm font-medium text-slate-400">
-            Vault (Local Only)
+            Sejf (tylko lokalnie)
           </h3>
           <div className="space-y-3">
             <p className="text-sm text-slate-400">
-              Create or restore a vault to prepare for cloud backup. Your
-              recovery phrase gives you full control of your encrypted data.
+              Utwórz lub przywróć sejf, aby przygotować się do kopii zapasowej w
+              chmurze. Fraza odzyskiwania daje Ci pełną kontrolę nad Twoimi
+              zaszyfrowanymi danymi.
             </p>
             <div className="flex gap-3">
               <Link to="/generate-wallet" className="flex-1">
                 <Button variant="secondary" className="w-full">
-                  Create Vault
+                  Utwórz sejf
                 </Button>
               </Link>
               <Link to="/restore-wallet" className="flex-1">
                 <Button variant="secondary" className="w-full">
-                  Restore Vault
+                  Przywróć sejf
                 </Button>
               </Link>
             </div>
@@ -92,35 +94,35 @@ export default function Account() {
       <>
         <AccountOnboarding />
         <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Account</h1>
+        <h1 className="text-2xl font-bold">Konto</h1>
         <Card className="max-w-md mx-auto">
           <div className="mb-5 text-center">
             <Icon name="Wallet" size={48} className="text-slate-400 mx-auto mb-2" />
             <h2 className="text-lg font-semibold text-slate-200">
-              Cloud Backup
+              Kopia zapasowa w chmurze
             </h2>
             <p className="text-sm text-slate-400 mt-1">
-              Create a vault or restore from your recovery phrase to enable
-              encrypted cloud backup.
+              Utwórz sejf lub przywróć go z frazy odzyskiwania, aby włączyć
+              zaszyfrowaną kopię zapasową w chmurze.
             </p>
           </div>
 
           <div className="flex flex-col gap-3">
             <Link to="/generate-wallet">
               <Button variant="primary" className="w-full" size="lg">
-                Create New Vault
+                Utwórz nowy sejf
               </Button>
             </Link>
             <Link to="/restore-wallet">
               <Button variant="secondary" className="w-full" size="lg">
-                Restore from Recovery Phrase
+                Przywróć z frazy odzyskiwania
               </Button>
             </Link>
           </div>
 
           <p className="mt-4 text-center text-xs text-slate-500">
-            Your budget data stays local. Cloud backup is optional and encrypted
-            before leaving your device.
+            Twoje dane budżetowe pozostają lokalnie. Kopia zapasowa w chmurze jest
+            opcjonalna i szyfrowana, zanim opuści Twoje urządzenie.
           </p>
         </Card>
       </div>
@@ -133,11 +135,11 @@ export default function Account() {
       <AccountOnboarding open={showTutorial} onClose={() => setShowTutorial(false)} />
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Account</h1>
+          <h1 className="text-2xl font-bold">Konto</h1>
           <button
             onClick={() => setShowTutorial(true)}
             className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 transition-colors"
-            title="View account tutorial"
+            title="Zobacz samouczek konta"
           >
             <span className="text-sm font-bold">?</span>
           </button>
@@ -152,14 +154,14 @@ export default function Account() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-100">Vault Active</span>
+                <span className="font-semibold text-slate-100">Sejf aktywny</span>
                 <span className="flex items-center gap-1 rounded-full bg-green-600/20 px-2 py-0.5 text-xs font-medium text-green-400">
                   <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse inline-block" />
-                  Unlocked
+                  Odblokowany
                 </span>
               </div>
               <p className="mt-0.5 text-xs text-slate-500">
-                Cloud backup {backupEnabled ? 'enabled' : 'disabled'}
+                Kopia zapasowa w chmurze {backupEnabled ? 'włączona' : 'wyłączona'}
               </p>
             </div>
           </div>
@@ -167,7 +169,7 @@ export default function Account() {
           {/* Vault ID row */}
           <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-800">
             <div className="min-w-0">
-              <p className="text-xs text-slate-500 mb-0.5">Anonymous ID</p>
+              <p className="text-xs text-slate-500 mb-0.5">Anonimowy identyfikator</p>
               <p className="font-mono text-xs text-slate-300 truncate">
                 {wallet?.anonymousId?.slice(0, 24)}…
               </p>
@@ -184,27 +186,27 @@ export default function Account() {
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-800">
                 <Icon name="Lock" size={15} className="text-slate-400" />
               </div>
-              <span className="flex-1 text-sm text-slate-300">Lock Vault</span>
+              <span className="flex-1 text-sm text-slate-300">Zablokuj sejf</span>
               <Icon name="ChevronRight" size={15} className="text-slate-600" />
             </button>
           ) : (
             <div className="px-4 py-3 space-y-2">
-              <p className="text-sm text-amber-400">Locking your vault will sign you out and clear all data on this device. You can restore it anytime with your recovery phrase.</p>
+              <p className="text-sm text-amber-400">Zablokowanie sejfu wyloguje Cię i wyczyści wszystkie dane na tym urządzeniu. Możesz go przywrócić w dowolnym momencie za pomocą frazy odzyskiwania.</p>
               {lastBackupAt && (
-                <p className="text-xs text-slate-500">Last backup: {format(new Date(lastBackupAt), 'MMM d, yyyy h:mm a')}</p>
+                <p className="text-xs text-slate-500">Ostatnia kopia zapasowa: {format(new Date(lastBackupAt), 'd MMM yyyy, HH:mm', { locale: pl })}</p>
               )}
               {!lastBackupAt && (
-                <p className="text-xs text-red-400">No cloud backup found. You may lose all data.</p>
+                <p className="text-xs text-red-400">Nie znaleziono kopii zapasowej w chmurze. Możesz utracić wszystkie dane.</p>
               )}
               <div className="flex gap-2">
                 <button
                   onClick={() => setLockConfirm(false)}
                   className="flex-1 rounded-lg bg-slate-800 py-2 text-sm font-medium text-slate-300 active:bg-slate-700"
-                >Cancel</button>
+                >Anuluj</button>
                 <button
                   onClick={clearWallet}
                   className="flex-1 rounded-lg bg-red-600/20 py-2 text-sm font-medium text-red-400 active:bg-red-600/30"
-                >Lock & Erase</button>
+                >Zablokuj i wymaż</button>
               </div>
             </div>
           )}
@@ -212,7 +214,7 @@ export default function Account() {
 
         {/* Cloud Backup card */}
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-slate-400">Cloud Backup</h3>
+          <h3 className="mb-3 text-sm font-medium text-slate-400">Kopia zapasowa w chmurze</h3>
           <div className="space-y-4">
 
             {/* Status pill */}
@@ -221,10 +223,10 @@ export default function Account() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-slate-200 truncate">
                   {lastBackupAt
-                    ? `Backed up ${format(new Date(lastBackupAt), 'MMM d · h:mm a')}`
-                    : 'No backup yet'}
+                    ? `Utworzono kopię ${format(new Date(lastBackupAt), 'd MMM · HH:mm', { locale: pl })}`
+                    : 'Brak kopii zapasowej'}
                 </p>
-                <p className="text-xs text-slate-500">Auto-syncs after every change</p>
+                <p className="text-xs text-slate-500">Automatyczna synchronizacja po każdej zmianie</p>
               </div>
             </div>
 
@@ -236,7 +238,7 @@ export default function Account() {
 
             {TURNSTILE_REQUIRED && !TURNSTILE_SITE_KEY && (
               <div className="rounded-xl bg-amber-900/20 border border-amber-800/40 p-3 text-sm text-amber-200">
-                Cloud backup requires VITE_TURNSTILE_SITE_KEY in production. See SETUP.md.
+                Kopia zapasowa w chmurze wymaga ustawienia VITE_TURNSTILE_SITE_KEY w środowisku produkcyjnym. Zobacz SETUP.md.
               </div>
             )}
             {TURNSTILE_SITE_KEY && (
@@ -258,39 +260,39 @@ export default function Account() {
                 disabled={isBacking || backupCooldown > 0}
                 className="w-full"
               >
-                {isBacking ? 'Backing up…' : backupCooldown > 0 ? `Wait ${backupCooldown}s` : 'Backup Now'}
+                {isBacking ? 'Tworzenie kopii…' : backupCooldown > 0 ? `Poczekaj ${backupCooldown}s` : 'Utwórz kopię teraz'}
               </Button>
               <Button
                 variant="secondary"
                 onClick={() =>
                   window.confirm(
-                    'This will replace all local data with your cloud backup. Continue?'
+                    'Spowoduje to zastąpienie wszystkich danych lokalnych kopią zapasową z chmury. Kontynuować?'
                   ) && restoreFromCloud(turnstileToken ?? undefined)
                 }
                 disabled={isRestoring || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
                 className="w-full"
               >
-                {isRestoring ? 'Restoring…' : 'Restore from Cloud'}
+                {isRestoring ? 'Przywracanie…' : 'Przywróć z chmury'}
               </Button>
             </div>
 
             <p className="text-xs text-slate-500">
-              Restore pulls your latest cloud backup into this browser, replacing local data.
+              Przywracanie pobiera najnowszą kopię zapasową z chmury do tej przeglądarki, zastępując dane lokalne.
             </p>
 
             {/* Danger zone */}
             <div className="pt-3 border-t border-slate-800">
               <p className="text-xs text-slate-500 mb-3">
-                Permanently delete cloud backup data. Local data is unaffected. This cannot be undone.
+                Trwale usuń dane kopii zapasowej z chmury. Dane lokalne nie zostaną zmienione. Tej operacji nie można cofnąć.
               </p>
               {!showDeleteConfirm ? (
                 <Button variant="danger" size="sm" onClick={() => setShowDeleteConfirm(true)}>
-                  Delete cloud backup
+                  Usuń kopię zapasową z chmury
                 </Button>
               ) : (
                 <div className="space-y-3 rounded-xl bg-red-900/20 border border-red-800/50 p-3">
                   <p className="text-sm text-slate-300">
-                    Type <span className="font-mono font-bold text-red-400">DELETE</span> to confirm:
+                    Wpisz <span className="font-mono font-bold text-red-400">DELETE</span>, aby potwierdzić:
                   </p>
                   <input
                     type="text"
@@ -312,7 +314,7 @@ export default function Account() {
                         }
                       }}
                     >
-                      {isDeleting ? 'Deleting…' : 'Permanently delete'}
+                      {isDeleting ? 'Usuwanie…' : 'Usuń trwale'}
                     </Button>
                     <Button
                       variant="ghost"
@@ -323,7 +325,7 @@ export default function Account() {
                         setDeleteConfirmText('')
                       }}
                     >
-                      Cancel
+                      Anuluj
                     </Button>
                   </div>
                 </div>
@@ -334,14 +336,14 @@ export default function Account() {
 
         {/* How it works */}
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-slate-400">How Cloud Backup Works</h3>
+          <h3 className="mb-3 text-sm font-medium text-slate-400">Jak działa kopia zapasowa w chmurze</h3>
           <div className="space-y-3">
             {[
-              { icon: 'HardDrive', text: 'Your data lives locally in this browser first' },
-              { icon: 'Key', text: 'Your recovery phrase derives encryption keys — never shared' },
-              { icon: 'Lock', text: 'Data is encrypted with AES-256-GCM before leaving your device' },
-              { icon: 'RefreshCw', text: 'On a new device, restore with your recovery phrase' },
-              { icon: 'WifiOff', text: 'The app works fully offline — cloud is optional' },
+              { icon: 'HardDrive', text: 'Twoje dane są najpierw przechowywane lokalnie w tej przeglądarce' },
+              { icon: 'Key', text: 'Z Twojej frazy odzyskiwania wyprowadzane są klucze szyfrujące — nigdy nie są udostępniane' },
+              { icon: 'Lock', text: 'Dane są szyfrowane algorytmem AES-256-GCM, zanim opuszczą Twoje urządzenie' },
+              { icon: 'RefreshCw', text: 'Na nowym urządzeniu przywrócisz dane za pomocą frazy odzyskiwania' },
+              { icon: 'WifiOff', text: 'Aplikacja działa w pełni offline — chmura jest opcjonalna' },
             ].map(({ icon, text }, i) => (
               <div key={i} className="flex items-start gap-3">
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-green-600/10">

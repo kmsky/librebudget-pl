@@ -39,7 +39,7 @@ export function useSavingsGoals() {
     })
 
     if (affectsBudget && sanitizedAmount > 0) {
-      const catName = type === 'emergency_fund' ? 'Emergency Fund' : 'Savings'
+      const catName = type === 'emergency_fund' ? 'Fundusz awaryjny' : 'Oszczędności'
       const savingsCat = await db.categories.where('name').equals(catName).first()
         ?? (await db.categories.where('group').equals('savings').first())
       if (savingsCat?.id) {
@@ -47,7 +47,7 @@ export function useSavingsGoals() {
           amount: sanitizedAmount,
           type: 'expense',
           categoryId: savingsCat.id,
-          description: `Initial balance: ${sanitizeString(data.name, 100)}`,
+          description: `Saldo początkowe: ${sanitizeString(data.name, 100)}`,
           note: '',
           date: new Date().toISOString().slice(0, 10),
           createdAt: new Date().toISOString(),
@@ -85,12 +85,12 @@ export function useSavingsGoals() {
       })
 
       if (affectsBudget) {
-        const catName = goal.type === 'emergency_fund' ? 'Emergency Fund' : 'Savings'
+        const catName = goal.type === 'emergency_fund' ? 'Fundusz awaryjny' : 'Oszczędności'
         const savingsCat = await db.categories.where('name').equals(catName).first()
           ?? (await db.categories.where('group').equals('savings').first())
         if (savingsCat?.id) {
           const date = opts?.date ?? new Date().toISOString().slice(0, 10)
-          const description = opts?.description ?? `Contribution: ${goal.name}`
+          const description = opts?.description ?? `Wpłata: ${goal.name}`
           await db.transactions.add({
             amount: sanitizedAmount,
             type: 'expense',

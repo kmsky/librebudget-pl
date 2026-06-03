@@ -13,25 +13,25 @@ export function QuickStats({ totalIncome, totalExpenses, savedThisMonth, effecti
 
   const stats = [
     {
-      label: 'Income',
+      label: 'Przychód',
       value: formatCurrency(totalIncome),
       color: 'text-green-400',
       bgColor: 'bg-green-500/10',
     },
     {
-      label: 'Expenses',
+      label: 'Wydatki',
       value: formatCurrency(spendingExpenses),
       color: 'text-orange-400',
       bgColor: 'bg-orange-500/10',
     },
     {
-      label: 'Remaining',
+      label: 'Pozostało',
       value: formatCurrency(remaining),
       color: remaining >= 0 ? 'text-green-400' : 'text-red-400',
       bgColor: remaining >= 0 ? 'bg-green-500/10' : 'bg-red-500/10',
     },
     {
-      label: 'Saved',
+      label: 'Zaoszczędzono',
       value: formatCurrency(savedThisMonth),
       color: 'text-blue-400',
       bgColor: 'bg-blue-500/10',

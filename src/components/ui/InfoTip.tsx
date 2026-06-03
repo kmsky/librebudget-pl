@@ -191,7 +191,7 @@ export function InfoTip({ children, className = '' }: InfoTipProps) {
     >
       <button
         type="button"
-        aria-label="More info"
+        aria-label="Więcej informacji"
         onClick={(e) => { e.preventDefault(); setPinned((v) => !v) }}
         className="inline-flex cursor-help touch-manipulation"
       >
@@ -213,7 +213,7 @@ export function InfoTip({ children, className = '' }: InfoTipProps) {
             onClick={() => { setPinned(false); setHovering(false) }}
             className="mt-2 text-[10px] text-slate-500 hover:text-slate-400 transition-colors sm:hidden"
           >
-            Tap to dismiss
+            Dotknij, aby zamknąć
           </button>
         </div>
       )}

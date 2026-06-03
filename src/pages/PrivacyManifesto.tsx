@@ -5,9 +5,9 @@ export default function PrivacyManifesto() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold">Privacy & Security Manifesto</h1>
+        <h1 className="text-2xl font-bold">Manifest prywatności i bezpieczeństwa</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Zero-knowledge architecture: we cannot see your data
+          Architektura zero-knowledge: nie jesteśmy w stanie zobaczyć Twoich danych
         </p>
       </div>
 
@@ -15,102 +15,105 @@ export default function PrivacyManifesto() {
         <div className="prose-content">
 
           <p>
-            LibreBudget is built on one principle: <strong>your money data is yours</strong>.
-            We use a <strong>zero-knowledge architecture</strong> — we cannot read,
-            analyze, or recover your financial data, even when you use cloud backup.
-            This manifesto explains how we achieve that.
+            LibreBudget opiera się na jednej zasadzie: <strong>dane o Twoich
+            pieniądzach należą do Ciebie</strong>. Stosujemy <strong>architekturę
+            zero-knowledge (bez wiedzy serwera)</strong> — nie jesteśmy w stanie
+            odczytać, analizować ani odzyskać Twoich danych finansowych, nawet gdy
+            korzystasz z kopii zapasowej w chmurze. Niniejszy manifest wyjaśnia, jak
+            to osiągamy.
           </p>
 
-          <h2>1. Zero-Knowledge Architecture</h2>
+          <h2>1. Architektura zero-knowledge</h2>
           <p>
-            When you enable cloud backup, your data is <strong>encrypted in your
-            browser</strong> before it ever leaves. We use <strong>AES-256-GCM</strong> with
-            keys derived from your <strong>recovery phrase</strong> (BIP39
-            seed + HKDF-SHA256). Your recovery phrase never leaves your device.
-            We store only ciphertext — an opaque blob. Without your recovery
-            phrase, no one (including us, Cloudflare, or an attacker with KV
-            access) can read your transactions, amounts, descriptions, debts,
-            credit scores, or goals.
+            Gdy włączysz kopię zapasową w chmurze, Twoje dane są <strong>szyfrowane
+            w Twojej przeglądarce</strong>, zanim ją opuszczą. Używamy
+            <strong> AES-256-GCM</strong> z kluczami pochodzącymi z Twojej
+            <strong> frazy odzyskiwania</strong> (ziarno BIP39 + HKDF-SHA256). Twoja
+            fraza odzyskiwania nigdy nie opuszcza Twojego urządzenia. Przechowujemy
+            wyłącznie zaszyfrowany tekst — nieprzejrzysty blok danych. Bez Twojej
+            frazy odzyskiwania nikt (włącznie z nami, Cloudflare czy atakującym z
+            dostępem do KV) nie jest w stanie odczytać Twoich transakcji, kwot,
+            opisów, długów, scoringu kredytowego ani celów.
           </p>
           <p>
-            Encryption indicators in Settings show which fields are protected.
-            You can verify the implementation; the source code is open.
+            Wskaźniki szyfrowania w Ustawieniach pokazują, które pola są chronione.
+            Możesz zweryfikować implementację; kod źródłowy jest otwarty.
           </p>
 
-          <h2>2. Local-First: Your Device Is the Source of Truth</h2>
+          <h2>2. Lokalne dane: Twoje urządzenie jest źródłem prawdy</h2>
           <p>
-            By default, <strong>nothing leaves your browser</strong>. Transactions,
-            categories, budget goals, debts, savings goals, credit scores,
-            recurring transactions, and settings live in IndexedDB on your
-            device. The app works fully offline. Cloud backup is optional — you
-            must explicitly create a vault and enable it. No vault, no cloud,
-            no transmission.
+            Domyślnie <strong>nic nie opuszcza Twojej przeglądarki</strong>.
+            Transakcje, kategorie, cele budżetowe, długi, cele oszczędnościowe,
+            scoring kredytowy, transakcje cykliczne i ustawienia znajdują się w
+            bazie IndexedDB na Twoim urządzeniu. Aplikacja działa w pełni offline.
+            Kopia zapasowa w chmurze jest opcjonalna — musisz samodzielnie utworzyć
+            sejf i ją włączyć. Brak sejfu, brak chmury, brak transmisji.
           </p>
 
-          <h2>3. What We Never See</h2>
+          <h2>3. Czego nigdy nie widzimy</h2>
           <ul>
-            <li>Your recovery phrase</li>
-            <li>Your encryption keys</li>
-            <li>Decrypted transactions, amounts, or descriptions</li>
-            <li>Budget goals, debt balances, or savings targets</li>
-            <li>Credit scores or financial risk assessments</li>
-            <li>Any data that could identify your spending or income</li>
+            <li>Twojej frazy odzyskiwania</li>
+            <li>Twoich kluczy szyfrujących</li>
+            <li>Odszyfrowanych transakcji, kwot ani opisów</li>
+            <li>Celów budżetowych, sald długów ani celów oszczędnościowych</li>
+            <li>Scoringu kredytowego ani ocen ryzyka finansowego</li>
+            <li>Jakichkolwiek danych mogących ujawnić Twoje wydatki lub przychody</li>
           </ul>
 
-          <h2>4. Vault-Based Access</h2>
+          <h2>4. Dostęp oparty na sejfie</h2>
           <ul>
-            <li><strong>Recovery phrase (BIP39)</strong> — Your 12-word mnemonic derives an anonymous storage ID and an encryption key. It never leaves your device.</li>
-            <li><strong>Anonymous storage</strong> — Cloud storage uses a derived 64-character hex ID; no email, no password, no personal identifiers.</li>
-            <li><strong>In-memory only</strong> — Vault keys live in browser memory while the tab is open. Lock the vault or close the tab to clear them.</li>
+            <li><strong>Fraza odzyskiwania (BIP39)</strong> — Twoja 12-wyrazowa mnemonika służy do wyprowadzenia anonimowego identyfikatora zasobu oraz klucza szyfrującego. Nigdy nie opuszcza Twojego urządzenia.</li>
+            <li><strong>Anonimowe przechowywanie</strong> — Magazyn w chmurze korzysta z wyprowadzonego 64-znakowego identyfikatora szesnastkowego; bez adresu e-mail, hasła i identyfikatorów osobowych.</li>
+            <li><strong>Tylko w pamięci</strong> — Klucze sejfu znajdują się w pamięci przeglądarki, dopóki karta jest otwarta. Zablokuj sejf lub zamknij kartę, aby je usunąć.</li>
           </ul>
 
-          <h2>5. Cloudflare Worker & KV</h2>
+          <h2>5. Cloudflare Worker i KV</h2>
           <ul>
-            <li><strong>Dumb pipe</strong> — The backend stores only id + encrypted payload. No decryption logic. No key storage.</li>
-            <li><strong>Payload limit</strong> — 5MB max per backup to prevent abuse.</li>
-            <li><strong>Ciphertext only</strong> — Even with KV access, values are encrypted blobs.</li>
+            <li><strong>Głupia rura (dumb pipe)</strong> — Serwer przechowuje wyłącznie identyfikator + zaszyfrowaną zawartość. Brak logiki odszyfrowywania. Brak przechowywania kluczy.</li>
+            <li><strong>Limit zawartości</strong> — Maksymalnie 5 MB na kopię zapasową, aby zapobiec nadużyciom.</li>
+            <li><strong>Wyłącznie zaszyfrowany tekst</strong> — Nawet przy dostępie do KV wartości są zaszyfrowanymi blokami danych.</li>
           </ul>
 
-          <h2>6. Client-Side Protections</h2>
+          <h2>6. Zabezpieczenia po stronie klienta</h2>
           <ul>
-            <li><strong>Content Security Policy (CSP)</strong> — Restricts script sources and connect targets.</li>
-            <li><strong>No analytics or tracking</strong> — No Google Analytics, Mixpanel, or ad networks.</li>
-            <li><strong>No PII</strong> — With cloud backup, we store only an anonymous derived ID.</li>
+            <li><strong>Polityka bezpieczeństwa treści (CSP)</strong> — Ogranicza źródła skryptów i cele połączeń.</li>
+            <li><strong>Brak analityki i śledzenia</strong> — Brak Google Analytics, Mixpanel czy sieci reklamowych.</li>
+            <li><strong>Brak danych osobowych (PII)</strong> — Przy kopii zapasowej w chmurze przechowujemy wyłącznie anonimowy, wyprowadzony identyfikator.</li>
           </ul>
 
-          <h2>7. Data You Control</h2>
+          <h2>7. Dane pod Twoją kontrolą</h2>
           <ul>
-            <li><strong>Export</strong> — JSON and CSV export from Settings.</li>
-            <li><strong>Import</strong> — Bounded CSV import with validation.</li>
-            <li><strong>Reset</strong> — Lock your vault or delete cloud backup to remove cloud data.</li>
-            <li><strong>Audit</strong> — Read the source code; run your own build.</li>
+            <li><strong>Eksport</strong> — Eksport do formatów JSON i CSV z Ustawień.</li>
+            <li><strong>Import</strong> — Ograniczony import CSV z walidacją.</li>
+            <li><strong>Reset</strong> — Zablokuj sejf lub usuń kopię zapasową w chmurze, aby usunąć dane z chmury.</li>
+            <li><strong>Audyt</strong> — Przeczytaj kod źródłowy; uruchom własną kompilację.</li>
           </ul>
 
-          <h2>8. What We Don&apos;t Do</h2>
+          <h2>8. Czego nie robimy</h2>
           <ul>
-            <li>We don&apos;t sell, rent, or share your data.</li>
-            <li>We don&apos;t use your data for advertising or profiling.</li>
-            <li>We don&apos;t require cloud backup — the app is useful fully offline.</li>
-            <li>We don&apos;t store your recovery phrase — lose it, and encrypted backups cannot be recovered (by design).</li>
-            <li>We don&apos;t have the ability to decrypt your data — zero-knowledge by architecture.</li>
+            <li>Nie sprzedajemy, nie wynajmujemy ani nie udostępniamy Twoich danych.</li>
+            <li>Nie wykorzystujemy Twoich danych do reklam ani profilowania.</li>
+            <li>Nie wymagamy kopii zapasowej w chmurze — aplikacja jest użyteczna w pełni offline.</li>
+            <li>Nie przechowujemy Twojej frazy odzyskiwania — jeśli ją utracisz, zaszyfrowanych kopii zapasowych nie da się odzyskać (z założenia).</li>
+            <li>Nie mamy możliwości odszyfrowania Twoich danych — zero-knowledge wynika z samej architektury.</li>
           </ul>
 
           <p className="pt-2" style={{ opacity: 0.7 }}>
-            LibreBudget is open-source. You can read the code, run it yourself,
-            and verify these claims. Privacy isn&apos;t a feature — it&apos;s the
-            foundation. Zero-knowledge isn&apos;t a promise; it&apos;s how the system
-            is built.
+            LibreBudget jest oprogramowaniem open source. Możesz przeczytać kod,
+            uruchomić go samodzielnie i zweryfikować te deklaracje. Prywatność nie
+            jest funkcją — jest fundamentem. Zero-knowledge nie jest obietnicą; to
+            sposób, w jaki zbudowany jest cały system.
           </p>
 
         </div>
       </Card>
 
       <p className="text-center text-xs text-slate-500">
-        <Link to="/privacy" className="text-green-400 hover:text-green-300">Privacy Policy</Link>
+        <Link to="/privacy" className="text-green-400 hover:text-green-300">Polityka prywatności</Link>
         {' · '}
-        <Link to="/terms" className="text-green-400 hover:text-green-300">Terms of Use</Link>
+        <Link to="/terms" className="text-green-400 hover:text-green-300">Regulamin</Link>
         {' · '}
-        <Link to="/settings" className="text-green-400 hover:text-green-300">Settings</Link>
+        <Link to="/settings" className="text-green-400 hover:text-green-300">Ustawienia</Link>
       </p>
     </div>
   )

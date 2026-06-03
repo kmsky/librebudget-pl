@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid, Legend,
@@ -46,7 +47,7 @@ export default function Trends() {
       const breakdown = await groupByCategoryGroup(txs)
 
       months.push({
-        label: format(date, 'MMM'),
+        label: format(date, 'LLL', { locale: pl }),
         income,
         expenses,
         net: income - expenses,
@@ -71,7 +72,7 @@ export default function Trends() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-slate-400">Loading trends...</p>
+        <p className="text-slate-400">Ładowanie trendów...</p>
       </div>
     )
   }
@@ -87,29 +88,29 @@ export default function Trends() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Spending Trends</h1>
-          <p className="text-sm text-slate-400">See the big picture over time</p>
+          <h1 className="text-2xl font-bold">Trendy wydatków</h1>
+          <p className="text-sm text-slate-400">Zobacz szerszy obraz w czasie</p>
         </div>
         <div className="flex gap-1 rounded-xl bg-slate-900 border border-slate-800 p-1">
           {([6, 12] as const).map((r) => (
             <button key={r} onClick={() => setRange(r)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${range === r ? 'bg-slate-800 text-slate-100' : 'text-slate-500'}`}
-            >{r}mo</button>
+            >{r} mies.</button>
           ))}
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
-          <p className="text-xs text-slate-500">Avg Monthly Income</p>
+          <p className="text-xs text-slate-500">Śr. miesięczny przychód</p>
           <p className="text-2xl font-bold text-green-400">{formatCurrency(avgIncome)}</p>
         </Card>
         <Card>
-          <p className="text-xs text-slate-500">Avg Monthly Spending</p>
+          <p className="text-xs text-slate-500">Śr. miesięczne wydatki</p>
           <p className="text-2xl font-bold text-slate-200">{formatCurrency(avgExpenses)}</p>
         </Card>
         <Card>
-          <p className="text-xs text-slate-500">Avg Savings Rate</p>
+          <p className="text-xs text-slate-500">Śr. stopa oszczędności</p>
           <p className={`text-2xl font-bold ${avgSavingsRate >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {avgSavingsRate.toFixed(1)}%
           </p>
@@ -117,32 +118,32 @@ export default function Trends() {
       </div>
 
       <Card>
-        <h3 className="mb-4 text-sm font-medium text-slate-400">Income vs Expenses</h3>
+        <h3 className="mb-4 text-sm font-medium text-slate-400">Przychody vs wydatki</h3>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="label" tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} />
-              <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} tickFormatter={(v) => `$${v}`} />
+              <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} tickFormatter={(v) => `${v} zł`} />
               <Tooltip contentStyle={tooltipStyle} formatter={(value) => formatCurrency(value as number)} />
               <Legend />
-              <Line type="monotone" dataKey="income" stroke="#22c55e" strokeWidth={2} name="Income" dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="expenses" stroke="#f97316" strokeWidth={2} name="Expenses" dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="income" stroke="#22c55e" strokeWidth={2} name="Przychód" dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="expenses" stroke="#f97316" strokeWidth={2} name="Wydatki" dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </Card>
 
       <Card>
-        <h3 className="mb-4 text-sm font-medium text-slate-400">Net Savings per Month</h3>
+        <h3 className="mb-4 text-sm font-medium text-slate-400">Oszczędności netto na miesiąc</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="label" tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} />
-              <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} tickFormatter={(v) => `$${v}`} />
+              <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} tickFormatter={(v) => `${v} zł`} />
               <Tooltip contentStyle={tooltipStyle} formatter={(value) => formatCurrency(value as number)} />
-              <Bar dataKey="net" name="Net Savings" radius={[4, 4, 0, 0]}
+              <Bar dataKey="net" name="Oszczędności netto" radius={[4, 4, 0, 0]}
                 fill="#22c55e"
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 shape={(props: any) => {
@@ -157,13 +158,13 @@ export default function Trends() {
       </Card>
 
       <Card>
-        <h3 className="mb-4 text-sm font-medium text-slate-400">Spending by Category Group</h3>
+        <h3 className="mb-4 text-sm font-medium text-slate-400">Wydatki według grup kategorii</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="label" tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} />
-              <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} tickFormatter={(v) => `$${v}`} />
+              <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={{ stroke: '#334155' }} tickFormatter={(v) => `${v} zł`} />
               <Tooltip contentStyle={tooltipStyle} formatter={(value) => formatCurrency(value as number)} />
               <Legend />
               {EXPENSE_GROUPS.map((g) => (

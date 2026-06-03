@@ -33,7 +33,7 @@ export default function RestoreWallet() {
   const handleRestore = useCallback(async () => {
     const normalized = mnemonicInput.trim().replace(/\s+/g, ' ')
     if (!validateMnemonic(normalized, wordlist)) {
-      setError('Invalid recovery phrase. Check that all words are correct and in order.')
+      setError('Nieprawidłowa fraza odzyskiwania. Sprawdź, czy wszystkie słowa są poprawne i w odpowiedniej kolejności.')
       return
     }
     setError(null)
@@ -59,14 +59,14 @@ export default function RestoreWallet() {
             if (validation.valid) {
               await hydrateDatabase(payload)
             } else {
-              setError(`Invalid backup data: ${validation.reason}`)
+              setError(`Nieprawidłowe dane kopii zapasowej: ${validation.reason}`)
               setLoading(false)
               return
             }
           }
         } else if (res.status !== 404) {
           const body = await res.json().catch(() => ({})) as { error?: string; hint?: string }
-          const msg = body.error || 'Failed to fetch backup from cloud'
+          const msg = body.error || 'Nie udało się pobrać kopii zapasowej z chmury'
           setError(body.hint ? `${msg}. ${body.hint}` : msg)
           setLoading(false)
           return
@@ -78,9 +78,9 @@ export default function RestoreWallet() {
       setKeysForPin(keys)
       setShowPinModal(true)
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Restore failed'
+      const msg = err instanceof Error ? err.message : 'Przywracanie nie powiodło się'
       setError(msg === 'Failed to fetch'
-        ? 'Failed to fetch. Check your connection. If using a custom domain, add it to the Worker\'s ALLOWED_ORIGINS (SETUP.md).'
+        ? 'Nie udało się pobrać danych. Sprawdź połączenie. Jeśli używasz własnej domeny, dodaj ją do ALLOWED_ORIGINS Workera (SETUP.md).'
         : msg)
     } finally {
       setLoading(false)
@@ -94,13 +94,13 @@ export default function RestoreWallet() {
   if (TURNSTILE_REQUIRED && !TURNSTILE_SITE_KEY) {
     return (
       <div className="space-y-6 max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold">Restore Vault</h1>
+        <h1 className="text-2xl font-bold">Przywróć sejf</h1>
         <Card>
           <div className="py-6 text-center text-slate-400">
-            <p className="font-medium text-amber-400">Cloud backup is not configured for production.</p>
-            <p className="mt-2 text-sm">VITE_TURNSTILE_SITE_KEY must be set. See SETUP.md.</p>
+            <p className="font-medium text-amber-400">Kopia zapasowa w chmurze nie jest skonfigurowana dla środowiska produkcyjnego.</p>
+            <p className="mt-2 text-sm">Należy ustawić VITE_TURNSTILE_SITE_KEY. Zobacz SETUP.md.</p>
             <Link to="/account" className="mt-4 inline-block text-sm text-green-400 hover:text-green-300">
-              ← Back to Account
+              ← Powrót do konta
             </Link>
           </div>
         </Card>
@@ -110,28 +110,28 @@ export default function RestoreWallet() {
 
   return (
     <div className="space-y-6 max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold">Restore Vault</h1>
+      <h1 className="text-2xl font-bold">Przywróć sejf</h1>
       <Card>
         <div className="space-y-4">
           <div className="text-center mb-4">
             <Icon name="Wallet" size={48} className="text-green-400 mx-auto mb-2" />
             <h2 className="text-lg font-semibold text-slate-200">
-              Enter Your Recovery Phrase
+              Wprowadź swoją frazę odzyskiwania
             </h2>
             <p className="text-sm text-slate-400 mt-1">
-              Paste or type your recovery phrase to restore your vault
-              and cloud backup.
+              Wklej lub wpisz swoją frazę odzyskiwania, aby przywrócić sejf
+              i kopię zapasową z chmury.
             </p>
           </div>
 
           <div>
             <label className="mb-1 block text-sm text-slate-400">
-              Recovery phrase (12 or 24 words)
+              Fraza odzyskiwania (12 lub 24 słowa)
             </label>
             <textarea
               value={mnemonicInput}
               onChange={(e) => setMnemonicInput(e.target.value)}
-              placeholder="word1 word2 word3 ..."
+              placeholder="słowo1 słowo2 słowo3 ..."
               rows={4}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm font-mono text-slate-200 placeholder-slate-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
             />
@@ -139,10 +139,10 @@ export default function RestoreWallet() {
               {wordCount > 0
                 ? (wordCount === 12 || wordCount === 24)
                   ? isValid
-                    ? 'Valid phrase'
-                    : 'Invalid phrase — check words'
-                  : `${wordCount} words (need 12 or 24)`
-                : 'Enter your recovery phrase'}
+                    ? 'Prawidłowa fraza'
+                    : 'Nieprawidłowa fraza — sprawdź słowa'
+                  : `${wordCount} słów (potrzeba 12 lub 24)`
+                : 'Wprowadź swoją frazę odzyskiwania'}
             </p>
           </div>
 
@@ -167,7 +167,7 @@ export default function RestoreWallet() {
             disabled={!isValid || (!!TURNSTILE_SITE_KEY && !turnstileToken) || loading}
             onClick={handleRestore}
           >
-            {loading ? 'Restoring...' : 'Restore Vault'}
+            {loading ? 'Przywracanie...' : 'Przywróć sejf'}
           </Button>
 
           <PinSetupModal
@@ -189,14 +189,15 @@ export default function RestoreWallet() {
 
           {!BACKUP_API_URL && (
             <p className="text-xs text-amber-400 text-center">
-              Backup API not configured. Vault will be restored but cloud data
-              cannot be fetched until the backend is set up.
+              API kopii zapasowej nie jest skonfigurowane. Sejf zostanie przywrócony,
+              ale dane z chmury nie mogą zostać pobrane, dopóki backend nie zostanie
+              skonfigurowany.
             </p>
           )}
 
           <p className="text-center">
             <Link to="/account" className="text-sm text-slate-500 hover:text-slate-300">
-              ← Back to Account
+              ← Powrót do konta
             </Link>
           </p>
         </div>

@@ -84,15 +84,15 @@ export function AutoLoanCalculator() {
             <Car size={20} className="text-orange-400" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-semibold text-slate-200">Auto Loan Details</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">Evaluate against the 20/3/8 rule</p>
+            <h2 className="text-base font-semibold text-slate-200">Szczegóły kredytu samochodowego</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">Ocena na tle reguły 20/3/8</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Car price (zł)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Cena samochodu (zł)</label>
               <input inputMode="decimal" value={carPrice}
                 onChange={(e) => setCarPrice(e.target.value)}
                 onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.carPrice) setCarPrice(String(CAPS.carPrice)) }}
@@ -100,9 +100,9 @@ export function AutoLoanCalculator() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-slate-400">
-                Monthly net income (zł)
+                Miesięczny dochód netto (zł)
                 {budgetForPrefill > 0 && Math.abs((parseLocaleAmount(monthlyIncome) || 0) - budgetForPrefill) < 1 && (
-                  <span className="ml-1.5 text-xs text-slate-600">(from budget)</span>
+                  <span className="ml-1.5 text-xs text-slate-600">(z budżetu)</span>
                 )}
               </label>
               <input inputMode="decimal" value={monthlyIncome}
@@ -114,7 +114,7 @@ export function AutoLoanCalculator() {
 
           {/* Down payment */}
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Down payment</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Wkład własny</label>
             <div className="flex gap-2 rounded-xl bg-slate-800 p-1 mb-2">
               {(['percent', 'dollar'] as const).map((m) => (
                 <button key={m} type="button" onClick={() => setDownPaymentMode(m)}
@@ -134,20 +134,20 @@ export function AutoLoanCalculator() {
                 placeholder="16000" className={INPUT} />
             )}
             {carPriceNum > 0 && (
-              <p className="text-xs text-slate-500 mt-1">= {formatCurrency(downPaymentAmount)} down</p>
+              <p className="text-xs text-slate-500 mt-1">= {formatCurrency(downPaymentAmount)} wkładu własnego</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Interest rate (%)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Oprocentowanie (%)</label>
               <input inputMode="decimal" value={interestRate}
                 onChange={(e) => setInterestRate(e.target.value)}
                 onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.interestRatePercent) setInterestRate(String(CAPS.interestRatePercent)) }}
                 placeholder="7,5" className={INPUT} />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Loan term (months)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Okres kredytu (miesiące)</label>
               <input type="number" step="1" min="1" max={CAPS.loanTermMonths} value={loanTermMonths}
                 onChange={(e) => setLoanTermMonths(e.target.value)}
                 onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v)) { if (v > CAPS.loanTermMonths) setLoanTermMonths(String(CAPS.loanTermMonths)); else if (v < 1) setLoanTermMonths('1') } }}
@@ -165,9 +165,9 @@ export function AutoLoanCalculator() {
               <DollarSign size={20} className={allPass ? 'text-green-400' : 'text-red-400'} />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base font-semibold text-slate-200">Loan Analysis</h2>
+              <h2 className="text-base font-semibold text-slate-200">Analiza kredytu</h2>
               <p className="text-xs text-slate-500 leading-relaxed">
-                {passCount}/3 rules passed
+                Spełniono {passCount}/3 reguł
               </p>
             </div>
           </div>
@@ -176,13 +176,13 @@ export function AutoLoanCalculator() {
           <div className={`rounded-xl border p-4 mb-5 ${allPass ? 'border-green-500/20 bg-green-500/5' : 'border-orange-500/20 bg-orange-500/5'}`}>
             <div className="flex items-center gap-2 mb-1">
               <DollarSign size={14} className={allPass ? 'text-green-400' : 'text-orange-400'} />
-              <p className="text-xs text-slate-400">Estimated monthly payment</p>
+              <p className="text-xs text-slate-400">Szacowana rata miesięczna</p>
             </div>
             <p className={`text-2xl font-bold ${allPass ? 'text-green-400' : 'text-orange-400'}`}>
               {formatCurrency(result.monthlyPayment)}
             </p>
             <p className="text-xs text-slate-500 mt-1">
-              Principal: {formatCurrency(result.principal)}
+              Kapitał: {formatCurrency(result.principal)}
             </p>
           </div>
 
@@ -190,29 +190,29 @@ export function AutoLoanCalculator() {
           <div className="space-y-2.5">
             <div className="flex items-center gap-2 mb-1">
               <Percent size={14} className="text-slate-500" />
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">20/3/8 Rule Checklist</p>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Lista kontrolna reguły 20/3/8</p>
             </div>
 
             {[
               {
                 rule: result.rule1,
-                title: 'Down payment ≥ 20%',
-                passMsg: `${formatCurrency(result.downPaymentAmount)} meets 20% (${formatCurrency(result.rule1.required)})`,
-                failMsg: `Increase by ${formatCurrency(result.rule1.shortfall)} to reach ${formatCurrency(result.rule1.required)}`,
+                title: 'Wkład własny ≥ 20%',
+                passMsg: `${formatCurrency(result.downPaymentAmount)} spełnia 20% (${formatCurrency(result.rule1.required)})`,
+                failMsg: `Zwiększ o ${formatCurrency(result.rule1.shortfall)}, aby osiągnąć ${formatCurrency(result.rule1.required)}`,
               },
               {
                 rule: result.rule2,
-                title: `Term ≤ ${result.rule2.maxMonths} months`,
-                passMsg: `${loanTermNum} months is within limit`,
-                failMsg: `Reduce by ${result.rule2.excess} months (max ${result.rule2.maxMonths})`,
+                title: `Okres ≤ ${result.rule2.maxMonths} miesięcy`,
+                passMsg: `${loanTermNum} miesięcy mieści się w limicie`,
+                failMsg: `Skróć o ${result.rule2.excess} miesięcy (maks. ${result.rule2.maxMonths})`,
               },
               {
                 rule: result.rule3,
-                title: 'Payment ≤ 8% of income',
+                title: 'Rata ≤ 8% dochodu',
                 passMsg: `${formatCurrency(result.monthlyPayment)} ≤ 8% (${formatCurrency(result.rule3.maxPayment)})`,
                 failMsg: monthlyIncomeNum > 0
-                  ? `Reduce by ${formatCurrency(result.rule3.excess)} — need income ≥ ${formatCurrency(result.monthlyPayment / 0.08)}/mo`
-                  : 'Enter monthly income to check',
+                  ? `Zmniejsz o ${formatCurrency(result.rule3.excess)} — potrzebny dochód ≥ ${formatCurrency(result.monthlyPayment / 0.08)}/mies.`
+                  : 'Wpisz miesięczny dochód, aby sprawdzić',
               },
             ].map(({ rule, title, passMsg, failMsg }, i) => (
               <div key={i}
@@ -240,9 +240,9 @@ export function AutoLoanCalculator() {
               <TableProperties size={20} className="text-blue-400" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base font-semibold text-slate-200">Max Affordable Estimates</h2>
+              <h2 className="text-base font-semibold text-slate-200">Szacunki maksymalnej zdolności</h2>
               <p className="text-xs text-slate-500 leading-relaxed">
-                8% of income = {formatCurrency(monthlyIncomeNum * 0.08)}/mo for {loanTermNum} months
+                8% dochodu = {formatCurrency(monthlyIncomeNum * 0.08)}/mies. przez {loanTermNum} miesięcy
               </p>
             </div>
           </div>
@@ -251,9 +251,9 @@ export function AutoLoanCalculator() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-700/50 bg-slate-800/30">
-                  <th className="text-left py-2.5 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Rate</th>
-                  <th className="text-right py-2.5 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Max Loan</th>
-                  <th className="text-right py-2.5 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Max Price</th>
+                  <th className="text-left py-2.5 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Oprocentowanie</th>
+                  <th className="text-right py-2.5 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Maks. kredyt</th>
+                  <th className="text-right py-2.5 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Maks. cena</th>
                 </tr>
               </thead>
               <tbody>

@@ -21,11 +21,11 @@ export interface FinancialRiskResult {
 }
 
 const GRADE_RANGES: { min: number; label: string }[] = [
-  { min: 9, label: 'Minimal' },
-  { min: 7, label: 'Low' },
-  { min: 5, label: 'Medium' },
-  { min: 3, label: 'High' },
-  { min: 0, label: 'Critical' },
+  { min: 9, label: 'Minimalne' },
+  { min: 7, label: 'Niskie' },
+  { min: 5, label: 'Średnie' },
+  { min: 3, label: 'Wysokie' },
+  { min: 0, label: 'Krytyczne' },
 ]
 
 /** Severity → flat penalty used by non-proportional checks. */
@@ -39,7 +39,7 @@ function getGrade(score: number): string {
   for (const g of GRADE_RANGES) {
     if (score >= g.min) return g.label
   }
-  return 'Critical'
+  return 'Krytyczne'
 }
 
 // ---------------------------------------------------------------------------
@@ -82,10 +82,10 @@ function checkNoEmergencyFund(
   const severity: Severity = 'high'
   return [{
     id: 'no-emergency-fund',
-    title: 'No emergency fund',
+    title: 'Brak funduszu awaryjnego',
     severity,
     penaltyAmount: SEVERITY_PENALTY[severity],
-    description: 'Add an emergency fund to protect against unexpected expenses.',
+    description: 'Załóż fundusz awaryjny, aby zabezpieczyć się przed nieprzewidzianymi wydatkami.',
   }]
 }
 
@@ -108,10 +108,10 @@ function checkEmergencyFund(
 
   return [{
     id: months < 3 ? 'emergency-fund-high' : 'emergency-fund-medium',
-    title: 'Low emergency fund',
+    title: 'Niski fundusz awaryjny',
     severity,
     penaltyAmount: penalty,
-    description: `Savings cover ${months.toFixed(1)} months of expenses. Target: ${months < 3 ? '3+' : '6+'} months.`,
+    description: `Oszczędności pokrywają ${months.toFixed(1)} mies. wydatków. Cel: ${months < 3 ? '3+' : '6+'} mies.`,
   }]
 }
 
@@ -130,10 +130,10 @@ function checkDebtToIncome(totalMinPayment: number, totalIncome: number): Findin
 
   return [{
     id: ratio > 43 ? 'debt-to-income-high' : 'debt-to-income-medium',
-    title: 'High debt-to-income',
+    title: 'Wysoki stosunek długu do dochodu',
     severity,
     penaltyAmount: penalty,
-    description: `Debt payments are ${ratio.toFixed(0)}% of income (threshold: 36%).`,
+    description: `Raty długów to ${ratio.toFixed(0)}% dochodu (próg: 36%).`,
   }]
 }
 
@@ -142,20 +142,20 @@ function checkCreditScore(score: number): Finding[] {
     const severity: Severity = 'high'
     return [{
       id: 'credit-poor',
-      title: 'Poor credit score',
+      title: 'Niska ocena kredytowa',
       severity,
       penaltyAmount: SEVERITY_PENALTY[severity],
-      description: `Score ${score} is below 580 (Poor).`,
+      description: `Ocena ${score} jest poniżej 580 (słaba).`,
     }]
   }
   if (score < 670) {
     const severity: Severity = 'medium'
     return [{
       id: 'credit-fair',
-      title: 'Fair credit score',
+      title: 'Przeciętna ocena kredytowa',
       severity,
       penaltyAmount: SEVERITY_PENALTY[severity],
-      description: `Score ${score} is in Fair range (580–669).`,
+      description: `Ocena ${score} mieści się w przedziale przeciętnym (580–669).`,
     }]
   }
   return []
@@ -190,10 +190,10 @@ function checkBudgetOverrun(projectedExpenses: number, budget: number): Finding[
 
   return [{
     id: 'budget-overrun',
-    title: 'Budget overrun',
+    title: 'Przekroczenie budżetu',
     severity,
     penaltyAmount: penalty,
-    description: `Projected spend ($${projectedExpenses.toFixed(0)}) exceeds budget ($${budget.toFixed(0)}) by ${overrunPct.toFixed(0)}%.`,
+    description: `Prognozowane wydatki (${projectedExpenses.toFixed(0)} zł) przekraczają budżet (${budget.toFixed(0)} zł) o ${overrunPct.toFixed(0)}%.`,
   }]
 }
 
@@ -216,14 +216,14 @@ function checkDominantExpenseCategory(
   for (const [catId, amount] of Object.entries(expenseByCat)) {
     const pct = (amount / totalExpenses) * 100
     if (pct > 50) {
-      const name = catMap.get(Number(catId))?.name ?? 'Unknown'
+      const name = catMap.get(Number(catId))?.name ?? 'Nieznana'
       const severity: Severity = 'low'
       return [{
         id: 'dominant-expense',
-        title: 'Dominant expense category',
+        title: 'Dominująca kategoria wydatków',
         severity,
         penaltyAmount: SEVERITY_PENALTY[severity],
-        description: `${name} is ${pct.toFixed(0)}% of expenses.`,
+        description: `${name} stanowi ${pct.toFixed(0)}% wydatków.`,
       }]
     }
   }
@@ -237,20 +237,20 @@ function checkSavingsRate(totalIncome: number, totalExpenses: number): Finding[]
     const severity: Severity = 'high'
     return [{
       id: 'negative-savings',
-      title: 'Negative savings rate',
+      title: 'Ujemna stopa oszczędności',
       severity,
       penaltyAmount: SEVERITY_PENALTY[severity],
-      description: 'Spending exceeds income.',
+      description: 'Wydatki przewyższają przychody.',
     }]
   }
   if (savingsRate < 10) {
     const severity: Severity = 'low'
     return [{
       id: 'low-savings',
-      title: 'Low savings rate',
+      title: 'Niska stopa oszczędności',
       severity,
       penaltyAmount: SEVERITY_PENALTY[severity],
-      description: `Savings rate is ${savingsRate.toFixed(1)}% (<10%).`,
+      description: `Stopa oszczędności to ${savingsRate.toFixed(1)}% (<10%).`,
     }]
   }
   return []
@@ -261,10 +261,10 @@ function checkNoRecentData(hasRecentTx: boolean): Finding[] {
   const severity: Severity = 'low'
   return [{
     id: 'no-recent-data',
-    title: 'No recent data',
+    title: 'Brak ostatnich danych',
     severity,
     penaltyAmount: SEVERITY_PENALTY[severity],
-    description: 'No transactions in the last 30 days.',
+    description: 'Brak transakcji w ciągu ostatnich 30 dni.',
   }]
 }
 

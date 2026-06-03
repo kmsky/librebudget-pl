@@ -47,15 +47,15 @@ function useCountUp(target: number, duration = 600) {
 
 function getTimeRemaining(endsAt: string) {
   const diff = new Date(endsAt).getTime() - Date.now()
-  if (diff <= 0) return { expired: true, label: 'Ready' }
+  if (diff <= 0) return { expired: true, label: 'Gotowe' }
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
   const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
   const minutes = Math.floor((diff / (1000 * 60)) % 60)
   const parts: string[] = []
-  if (days > 0) parts.push(`${days}d`)
-  if (hours > 0) parts.push(`${hours}h`)
-  if (days === 0 && minutes > 0) parts.push(`${minutes}m`)
-  return { expired: false, label: parts.join(' ') + ' left' }
+  if (days > 0) parts.push(`${days} dn.`)
+  if (hours > 0) parts.push(`${hours} godz.`)
+  if (days === 0 && minutes > 0) parts.push(`${minutes} min`)
+  return { expired: false, label: 'pozostało ' + parts.join(' ') }
 }
 
 function getProgress(createdAt: string, endsAt: string) {
@@ -103,13 +103,13 @@ function isLateNight(): boolean {
 // ---------------------------------------------------------------------------
 
 const REPLACEMENT_LABELS: Record<ImpulseInterrogationAnswers['isReplacement'], string> = {
-  replacement: 'Replacing something broken',
-  new: 'Brand new item',
+  replacement: 'Zastępuje coś zepsutego',
+  new: 'Zupełnie nowy przedmiot',
 }
 const BORROW_LABELS: Record<ImpulseInterrogationAnswers['canBorrow'], string> = {
-  yes: 'Yes',
-  no: 'No',
-  maybe: 'Maybe',
+  yes: 'Tak',
+  no: 'Nie',
+  maybe: 'Może',
 }
 
 // ---------------------------------------------------------------------------
@@ -134,14 +134,14 @@ function FixedCostInsight({ amount, recurring }: {
 
   return (
     <div className="rounded-xl border border-slate-700 bg-slate-800 p-3 space-y-2">
-      <p className="text-xs font-medium text-slate-400">Fixed-Cost Equivalent</p>
+      <p className="text-xs font-medium text-slate-400">Odpowiednik stałych kosztów</p>
       {top.map((bill) => {
         const pct = (amount / bill.monthly) * 100
         return (
           <div key={bill.description} className="flex items-center justify-between gap-2">
             <span className="text-xs text-slate-400 truncate">{bill.description}</span>
             <span className={`text-xs font-semibold shrink-0 ${pct >= 50 ? 'text-red-400' : pct >= 25 ? 'text-amber-400' : 'text-slate-300'}`}>
-              {pct.toFixed(0)}% of {formatCurrency(bill.monthly)}/mo
+              {pct.toFixed(0)}% z {formatCurrency(bill.monthly)}/mies.
             </span>
           </div>
         )
@@ -176,23 +176,30 @@ function PayoffProjection({ amount, debts, getEffectivePayment }: {
   const maxMonths = currentMonths + extraMonths
   const currentPct = maxMonths > 0 ? (currentMonths / maxMonths) * 100 : 100
   const extraDays = Math.round(extraMonths * 30.4)
+  const pluralizePl = (n: number, one: string, few: string, many: string) => {
+    const mod10 = n % 10
+    const mod100 = n % 100
+    if (n === 1) return one
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few
+    return many
+  }
   const extraLabel = extraDays >= 30
-    ? `${Math.round(extraDays / 30.4)} month${Math.round(extraDays / 30.4) !== 1 ? 's' : ''}`
-    : `${extraDays} day${extraDays !== 1 ? 's' : ''}`
+    ? `${Math.round(extraDays / 30.4)} ${pluralizePl(Math.round(extraDays / 30.4), 'miesiąc', 'miesiące', 'miesięcy')}`
+    : `${extraDays} ${pluralizePl(extraDays, 'dzień', 'dni', 'dni')}`
 
   return (
     <div className="rounded-xl border border-slate-700 bg-slate-800 p-3 space-y-2">
-      <p className="text-xs font-medium text-slate-400">Debt Payoff Impact</p>
+      <p className="text-xs font-medium text-slate-400">Wpływ na spłatę długów</p>
       <div className="space-y-1.5">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 w-20 shrink-0">Now</span>
+          <span className="text-xs text-slate-400 w-20 shrink-0">Teraz</span>
           <div className="flex-1 h-2 rounded-full bg-slate-700">
             <div className="h-full rounded-full bg-green-500 transition-all" style={{ width: '100%' }} />
           </div>
-          <span className="text-xs text-slate-400 shrink-0">{currentMonths}mo</span>
+          <span className="text-xs text-slate-400 shrink-0">{currentMonths} mies.</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 w-20 shrink-0">If bought</span>
+          <span className="text-xs text-slate-400 w-20 shrink-0">Po zakupie</span>
           <div className="flex-1 h-2 rounded-full bg-slate-700 overflow-hidden flex">
             <div className="h-full bg-green-500 transition-all" style={{ width: `${currentPct}%` }} />
             <div className="h-full bg-red-500/70 transition-all" style={{ width: `${100 - currentPct}%` }} />
@@ -201,7 +208,7 @@ function PayoffProjection({ amount, debts, getEffectivePayment }: {
         </div>
       </div>
       {extraDays > 0 && (
-        <p className="text-xs text-slate-500">Buying this delays your debt freedom by approximately <span className="text-red-400 font-medium">{extraLabel}</span>.</p>
+        <p className="text-xs text-slate-500">Ten zakup opóźni Twoje uwolnienie od długów o około <span className="text-red-400 font-medium">{extraLabel}</span>.</p>
       )}
     </div>
   )
@@ -220,7 +227,7 @@ function DecisionModal({ item, open, onClose, onBuy, onSave }: {
 }) {
   if (!item) return null
   return (
-    <Modal open={open} onClose={onClose} title="Cooldown Complete">
+    <Modal open={open} onClose={onClose} title="Okres do namysłu zakończony">
       <div className="space-y-5">
         <div className="text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10">
@@ -229,24 +236,24 @@ function DecisionModal({ item, open, onClose, onBuy, onSave }: {
           <h3 className="text-lg font-semibold text-slate-200">{item.description}</h3>
           <p className="text-2xl font-bold text-amber-400 mt-1">{formatCurrency(item.amount)}</p>
           <p className="mt-3 text-sm text-slate-400 leading-relaxed">
-            Your {DURATION_LABELS[item.cooldownDuration]} cooldown is complete.<br />
-            Do you still want to buy this?
+            Twój okres do namysłu ({DURATION_LABELS[item.cooldownDuration]}) dobiegł końca.<br />
+            Czy nadal chcesz to kupić?
           </p>
         </div>
         {item.interrogationAnswers && (
           <div className="rounded-xl border border-slate-700 bg-slate-800 p-3 space-y-1.5 text-xs text-slate-400">
-            <p><span className="text-slate-500">Type:</span> {REPLACEMENT_LABELS[item.interrogationAnswers.isReplacement]}</p>
-            <p><span className="text-slate-500">Borrow?</span> {item.interrogationAnswers.canBorrow === 'yes' ? 'Yes, could borrow it' : item.interrogationAnswers.canBorrow === 'maybe' ? 'Maybe' : 'No'}</p>
+            <p><span className="text-slate-500">Typ:</span> {REPLACEMENT_LABELS[item.interrogationAnswers.isReplacement]}</p>
+            <p><span className="text-slate-500">Pożyczyć?</span> {item.interrogationAnswers.canBorrow === 'yes' ? 'Tak, mógłbym pożyczyć' : item.interrogationAnswers.canBorrow === 'maybe' ? 'Może' : 'Nie'}</p>
             {item.interrogationAnswers.storageLocation && (
-              <p><span className="text-slate-500">Location:</span> {item.interrogationAnswers.storageLocation}</p>
+              <p><span className="text-slate-500">Miejsce:</span> {item.interrogationAnswers.storageLocation}</p>
             )}
           </div>
         )}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Button variant="secondary" onClick={onSave} className="w-full">
-            Skip & Save {formatCurrency(item.amount)}
+            Odpuść i zaoszczędź {formatCurrency(item.amount)}
           </Button>
-          <Button onClick={onBuy} className="w-full">Buy It</Button>
+          <Button onClick={onBuy} className="w-full">Kup to</Button>
         </div>
       </div>
     </Modal>
@@ -332,7 +339,7 @@ function AddImpulseModal({
   const answeredCount = [isReplacement !== '', canBorrow !== '', storageLocation.trim().length > 0].filter(Boolean).length
 
   return (
-    <Modal open={open} onClose={handleClose} title={step === 'interrogation' ? 'Before You Add It…' : 'Add Impulse Buy'}>
+    <Modal open={open} onClose={handleClose} title={step === 'interrogation' ? 'Zanim to dodasz…' : 'Dodaj zachciankę'}>
       {step === 'interrogation' ? (
         <div className="space-y-5">
           {/* Header */}
@@ -341,8 +348,8 @@ function AddImpulseModal({
               <Icon name="AlertTriangle" size={18} className="text-amber-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Slow down for a second.</p>
-              <p className="text-xs text-slate-400 mt-0.5">Answer honestly — your future self will thank you.</p>
+              <p className="text-sm font-medium text-slate-200">Zwolnij na chwilę.</p>
+              <p className="text-xs text-slate-400 mt-0.5">Odpowiedz szczerze — Twoje przyszłe ja Ci podziękuje.</p>
             </div>
           </div>
 
@@ -358,7 +365,7 @@ function AddImpulseModal({
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isReplacement ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-400'}`}>1</span>
-              <p className="text-sm font-medium text-slate-200">Is this replacing something broken, or a brand new item?</p>
+              <p className="text-sm font-medium text-slate-200">Czy to zamiennik czegoś zepsutego, czy zupełnie nowy przedmiot?</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {(['replacement', 'new'] as const).map((v) => (
@@ -374,7 +381,7 @@ function AddImpulseModal({
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${canBorrow ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-400'}`}>2</span>
-              <p className="text-sm font-medium text-slate-200">Can you borrow this from someone instead?</p>
+              <p className="text-sm font-medium text-slate-200">Czy możesz to od kogoś pożyczyć zamiast kupować?</p>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {(['yes', 'maybe', 'no'] as const).map((v) => (
@@ -390,19 +397,19 @@ function AddImpulseModal({
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${storageLocation.trim() ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-400'}`}>3</span>
-              <p className="text-sm font-medium text-slate-200">Where will this purchase be in a month?</p>
+              <p className="text-sm font-medium text-slate-200">Gdzie znajdzie się ten zakup za miesiąc?</p>
             </div>
             <textarea
               value={storageLocation}
               onChange={(e) => setStorageLocation(e.target.value)}
-              placeholder="e.g. On my desk, in a drawer, collecting dust in the garage…"
+              placeholder="np. Na biurku, w szufladzie, kurzy się w garażu…"
               rows={2}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none resize-none text-sm"
             />
           </div>
 
           <Button onClick={() => setStep('form')} className="w-full" disabled={!interrogationComplete}>
-            {interrogationComplete ? 'Continue →' : `Answer all 3 to continue (${answeredCount}/3)`}
+            {interrogationComplete ? 'Dalej →' : `Odpowiedz na wszystkie 3, aby kontynuować (${answeredCount}/3)`}
           </Button>
         </div>
       ) : (
@@ -411,19 +418,19 @@ function AddImpulseModal({
           {lateNight && (
             <div className="flex items-start gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5">
               <Icon name="AlertTriangle" size={16} className="text-amber-400 mt-0.5 shrink-0" />
-              <p className="text-xs text-amber-400">Late-night purchase detected — 24 hours will be added to your cooldown automatically.</p>
+              <p className="text-xs text-amber-400">Wykryto nocny zakup — do okresu do namysłu zostanie automatycznie dodane 24 godziny.</p>
             </div>
           )}
 
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">What do you want to buy?</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Co chcesz kupić?</label>
             <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. New headphones" autoFocus
+              placeholder="np. Nowe słuchawki" autoFocus
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Amount</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Kwota</label>
             <div className="relative">
               <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)}
                 placeholder="0,00"
@@ -439,17 +446,17 @@ function AddImpulseModal({
           <PayoffProjection amount={parsedAmount} debts={debts} getEffectivePayment={getEffectivePayment} />
 
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Category</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Kategoria</label>
             <select value={categoryId} onChange={(e) => setCategoryId(e.target.value ? Number(e.target.value) : '')}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 focus:border-green-500 focus:outline-none">
-              <option value="">Select a category</option>
+              <option value="">Wybierz kategorię</option>
               {wantsCategories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               {categories.filter((c) => c.group === 'needs').map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Cooldown Period</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Okres do namysłu</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {(Object.keys(DURATION_LABELS) as CooldownDuration[]).filter((d) => d !== 'instant' || devMode).map((d) => (
                 <button key={d} onClick={() => setCooldown(d)}
@@ -461,9 +468,9 @@ function AddImpulseModal({
           </div>
 
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => setStep('interrogation')} className="shrink-0">← Back</Button>
+            <Button variant="secondary" onClick={() => setStep('interrogation')} className="shrink-0">← Wstecz</Button>
             <Button onClick={handleSubmit} className="flex-1" disabled={!formComplete}>
-              Start Cooldown{lateNight ? ' (+24h)' : ''}
+              Rozpocznij okres do namysłu{lateNight ? ' (+24 godz.)' : ''}
             </Button>
           </div>
         </div>
@@ -507,7 +514,7 @@ function ImpulseCard({ item, categoryName, onDecide, onDelete }: {
           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
             <p className="text-xs text-slate-500">{categoryName} · {DURATION_LABELS[item.cooldownDuration]}</p>
             {item.lateNightAdded && (
-              <span className="text-xs text-amber-500/70">· +24h 🌙</span>
+              <span className="text-xs text-amber-500/70">· +24 godz. 🌙</span>
             )}
           </div>
         </div>
@@ -517,7 +524,7 @@ function ImpulseCard({ item, categoryName, onDecide, onDelete }: {
       <div className="mb-3">
         <div className="flex justify-between text-xs mb-1.5">
           <span className={time.expired ? 'text-green-400 font-medium' : 'text-slate-400'}>
-            {time.expired ? 'Cooldown complete!' : time.label}
+            {time.expired ? 'Okres do namysłu zakończony!' : time.label}
           </span>
           <span className="text-slate-500">{(progress * 100).toFixed(0)}%</span>
         </div>
@@ -533,14 +540,14 @@ function ImpulseCard({ item, categoryName, onDecide, onDelete }: {
           <button onClick={() => setShowAnswers(!showAnswers)}
             className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-400 transition-colors">
             <Icon name="ChevronRight" size={12} className={`transition-transform ${showAnswers ? 'rotate-90' : ''}`} />
-            Your answers
+            Twoje odpowiedzi
           </button>
           {showAnswers && (
             <div className="mt-2 rounded-lg bg-slate-800 px-3 py-2 space-y-1 text-xs text-slate-400">
-              <p><span className="text-slate-500">Type: </span>{REPLACEMENT_LABELS[item.interrogationAnswers.isReplacement]}</p>
-              <p><span className="text-slate-500">Borrow? </span>{BORROW_LABELS[item.interrogationAnswers.canBorrow]}</p>
+              <p><span className="text-slate-500">Typ: </span>{REPLACEMENT_LABELS[item.interrogationAnswers.isReplacement]}</p>
+              <p><span className="text-slate-500">Pożyczyć? </span>{BORROW_LABELS[item.interrogationAnswers.canBorrow]}</p>
               {item.interrogationAnswers.storageLocation && (
-                <p><span className="text-slate-500">Location: </span>{item.interrogationAnswers.storageLocation}</p>
+                <p><span className="text-slate-500">Miejsce: </span>{item.interrogationAnswers.storageLocation}</p>
               )}
             </div>
           )}
@@ -549,9 +556,9 @@ function ImpulseCard({ item, categoryName, onDecide, onDelete }: {
 
       <div className="flex gap-2">
         {time.expired ? (
-          <Button size="sm" onClick={onDecide} className="flex-1">Decide Now</Button>
+          <Button size="sm" onClick={onDecide} className="flex-1">Zdecyduj teraz</Button>
         ) : <div className="flex-1" />}
-        <Button size="sm" variant="danger" onClick={onDelete}>Remove</Button>
+        <Button size="sm" variant="danger" onClick={onDelete}>Usuń</Button>
       </div>
     </Card>
   )
@@ -583,11 +590,11 @@ function ResolvedCard({ item, categoryName, variant, onArchive, onDelete }: {
             </p>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            {categoryName} · {isSaved ? 'Saved' : 'Bought'} {item.resolvedAt ? new Date(item.resolvedAt).toLocaleDateString() : ''}
+            {categoryName} · {isSaved ? 'Zaoszczędzono' : 'Kupiono'} {item.resolvedAt ? new Date(item.resolvedAt).toLocaleDateString('pl-PL') : ''}
           </p>
           <div className="flex gap-2 mt-3">
-            <Button size="sm" variant="secondary" onClick={onArchive}>Archive</Button>
-            <Button size="sm" variant="danger" onClick={onDelete}>Delete</Button>
+            <Button size="sm" variant="secondary" onClick={onArchive}>Archiwizuj</Button>
+            <Button size="sm" variant="danger" onClick={onDelete}>Usuń</Button>
           </div>
         </div>
       </div>
@@ -634,7 +641,7 @@ export default function ImpulseTracker() {
       type: 'expense',
       categoryId: decisionItem.categoryId,
       description: decisionItem.description,
-      note: 'Impulse buy (approved after cooldown)',
+      note: 'Zachcianka (zatwierdzona po okresie do namysłu)',
       date: new Date().toISOString().split('T')[0],
     })
     await markBought(decisionItem.id)
@@ -647,7 +654,7 @@ export default function ImpulseTracker() {
     setDecisionItem(null)
   }
 
-  const getCategoryName = (id: number) => categories.find((c) => c.id === id)?.name ?? 'Unknown'
+  const getCategoryName = (id: number) => categories.find((c) => c.id === id)?.name ?? 'Nieznana'
 
   const expired = waiting.filter((i) => new Date(i.cooldownEndsAt).getTime() <= Date.now())
   const active = waiting.filter((i) => new Date(i.cooldownEndsAt).getTime() > Date.now())
@@ -663,10 +670,10 @@ export default function ImpulseTracker() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100">Impulse Control</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Cool down before you buy</p>
+          <h1 className="text-2xl font-bold text-slate-100">Kontrola impulsów</h1>
+          <p className="text-sm text-slate-400 mt-0.5">Ochłoń, zanim coś kupisz</p>
         </div>
-        <Button onClick={() => setShowAddModal(true)}>+ Add Impulse</Button>
+        <Button onClick={() => setShowAddModal(true)}>+ Dodaj zachciankę</Button>
       </div>
 
       {/* Summary cards */}
@@ -676,11 +683,11 @@ export default function ImpulseTracker() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
               <Icon name="Timer" size={16} className="text-amber-400" />
             </div>
-            <p className="text-xs font-medium text-slate-400">Active Cooldowns</p>
+            <p className="text-xs font-medium text-slate-400">Aktywne okresy do namysłu</p>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-amber-400">{waiting.length}</p>
           {expired.length > 0 && (
-            <p className="text-xs text-green-400 mt-1.5">{expired.length} ready to decide</p>
+            <p className="text-xs text-green-400 mt-1.5">{expired.length} gotowych do decyzji</p>
           )}
         </div>
         <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-4">
@@ -688,13 +695,13 @@ export default function ImpulseTracker() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500/10">
               <Icon name="DollarSign" size={16} className="text-green-400" />
             </div>
-            <p className="text-xs font-medium text-slate-400">Money Saved</p>
+            <p className="text-xs font-medium text-slate-400">Zaoszczędzone pieniądze</p>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-green-400">
             {animatedTotalSaved.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
           {saved.length > 0 && (
-            <p className="text-xs text-slate-500 mt-1.5">{saved.length} impulse{saved.length !== 1 ? 's' : ''} resisted</p>
+            <p className="text-xs text-slate-500 mt-1.5">Oparłeś się {saved.length} {saved.length === 1 ? 'zachciance' : 'zachciankom'}</p>
           )}
         </div>
       </div>
@@ -706,9 +713,9 @@ export default function ImpulseTracker() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10">
               <Icon name="Timer" size={28} className="text-amber-400" />
             </div>
-            <h3 className="text-base font-medium text-slate-200 mb-1">No impulse buys tracked</h3>
+            <h3 className="text-base font-medium text-slate-200 mb-1">Brak śledzonych zachcianek</h3>
             <p className="text-sm text-slate-400 max-w-xs mx-auto">
-              Thinking about buying something? Add it here and wait out the cooldown before deciding.
+              Myślisz o jakimś zakupie? Dodaj go tutaj i odczekaj okres do namysłu, zanim podejmiesz decyzję.
             </p>
           </div>
         </Card>
@@ -719,7 +726,7 @@ export default function ImpulseTracker() {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-            <h2 className="text-sm font-semibold text-slate-300">Ready to Decide</h2>
+            <h2 className="text-sm font-semibold text-slate-300">Gotowe do decyzji</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {expired.map((item) => (
@@ -735,7 +742,7 @@ export default function ImpulseTracker() {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-amber-500" />
-            <h2 className="text-sm font-semibold text-slate-300">Cooling Down</h2>
+            <h2 className="text-sm font-semibold text-slate-300">W trakcie namysłu</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {active.map((item) => (
@@ -749,7 +756,7 @@ export default function ImpulseTracker() {
       {/* Resisted Impulses */}
       {saved.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-300">Resisted Impulses</h2>
+          <h2 className="text-sm font-semibold text-slate-300">Pokonane zachcianki</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {saved.map((item) => (
               <ResolvedCard key={item.id} item={item} categoryName={getCategoryName(item.categoryId)}
@@ -762,7 +769,7 @@ export default function ImpulseTracker() {
       {/* Purchased */}
       {bought.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-300">Purchased</h2>
+          <h2 className="text-sm font-semibold text-slate-300">Kupione</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {bought.map((item) => (
               <ResolvedCard key={item.id} item={item} categoryName={getCategoryName(item.categoryId)}
@@ -778,13 +785,13 @@ export default function ImpulseTracker() {
           <button onClick={() => setShowArchived(!showArchived)}
             className="flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-slate-300 transition-colors">
             <Icon name="ChevronRight" size={14} className={`transition-transform ${showArchived ? 'rotate-90' : ''}`} />
-            <span>Archived</span>
+            <span>Zarchiwizowane</span>
             <span className="rounded-full bg-slate-800 px-2 py-0.5 text-xs font-normal text-slate-500">{archived.length}</span>
           </button>
           {showArchived && (
             <div className="space-y-4">
               <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900 px-4 py-3">
-                <span className="text-sm text-slate-400">Include saved amounts in total</span>
+                <span className="text-sm text-slate-400">Uwzględnij zaoszczędzone kwoty w sumie</span>
                 <button type="button" role="switch" aria-checked={countArchivedSaved}
                   onClick={() => setSetting('impulseCountArchivedSaved', countArchivedSaved ? 'false' : 'true')}
                   className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${countArchivedSaved ? 'bg-green-600' : 'bg-slate-700'}`}>
@@ -805,8 +812,8 @@ export default function ImpulseTracker() {
                         </div>
                         <p className="text-xs text-slate-600 mt-0.5">{getCategoryName(item.categoryId)}</p>
                         <div className="flex gap-2 mt-3">
-                          <Button size="sm" variant="secondary" onClick={() => item.id && unarchiveImpulse(item.id)}>Unarchive</Button>
-                          <Button size="sm" variant="danger" onClick={() => item.id && deleteImpulse(item.id)}>Delete</Button>
+                          <Button size="sm" variant="secondary" onClick={() => item.id && unarchiveImpulse(item.id)}>Przywróć z archiwum</Button>
+                          <Button size="sm" variant="danger" onClick={() => item.id && deleteImpulse(item.id)}>Usuń</Button>
                         </div>
                       </div>
                     </div>

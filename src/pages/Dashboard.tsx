@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { format, startOfMonth, endOfMonth, subMonths, addMonths } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { Card } from '../components/ui/Card'
 import { InfoTip } from '../components/ui/InfoTip'
 import { HealthBar } from '../components/dashboard/HealthBar'
@@ -25,9 +26,9 @@ import { getCategoryIconClassName, GROUP_COLORS, GROUP_LABELS } from '../utils/c
 import { Icon } from '../components/ui/Icon'
 
 const CONFIDENCE_TIPS: Record<string, string> = {
-  low: 'Less than 10 days of data this month. Estimate relies heavily on past months and may shift significantly.',
-  medium: '10–19 days of data. Estimate blends your current pace with historical trends.',
-  high: '20+ days of data. Estimate is based primarily on this month\'s actual spending pace.',
+  low: 'Mniej niż 10 dni danych w tym miesiącu. Szacunek opiera się głównie na poprzednich miesiącach i może się znacznie zmienić.',
+  medium: '10–19 dni danych. Szacunek łączy bieżące tempo z trendami historycznymi.',
+  high: '20+ dni danych. Szacunek opiera się głównie na rzeczywistym tempie wydatków w tym miesiącu.',
 }
 
 export default function Dashboard() {
@@ -80,17 +81,17 @@ export default function Dashboard() {
       {/* Header with date navigation */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">Pulpit</h1>
           <div className="flex items-center gap-2 mt-0.5">
             <button onClick={() => setViewDate((d) => subMonths(d, 1))}
               className="text-slate-500 hover:text-slate-300 text-sm">←</button>
-            <p className="text-sm text-slate-400">{format(viewDate, 'MMMM yyyy')}</p>
+            <p className="text-sm text-slate-400">{format(viewDate, 'LLLL yyyy', { locale: pl })}</p>
             <button onClick={() => setViewDate((d) => addMonths(d, 1))}
               className="text-slate-500 hover:text-slate-300 text-sm"
               disabled={isCurrentMonth}>→</button>
             {!isCurrentMonth && (
               <button onClick={() => setViewDate(new Date())}
-                className="text-xs text-green-400 hover:text-green-300 ml-1">Today</button>
+                className="text-xs text-green-400 hover:text-green-300 ml-1">Dziś</button>
             )}
           </div>
         </div>
@@ -121,13 +122,13 @@ export default function Dashboard() {
       {/* Recent transactions */}
       <Card>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-slate-400">Recent Transactions</h3>
-          <Link to="/transactions" className="text-xs text-green-400 hover:text-green-300">View all</Link>
+          <h3 className="text-sm font-medium text-slate-400">Ostatnie transakcje</h3>
+          <Link to="/transactions" className="text-xs text-green-400 hover:text-green-300">Zobacz wszystkie</Link>
         </div>
         {transactions.length === 0 ? (
           <p className="text-center text-sm text-slate-500 py-6">
-            No transactions yet.{' '}
-            <Link to="/add" className="text-green-400 hover:text-green-300">Add your first one</Link>
+            Brak transakcji.{' '}
+            <Link to="/add" className="text-green-400 hover:text-green-300">Dodaj pierwszą</Link>
           </p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
@@ -152,7 +153,7 @@ export default function Dashboard() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium leading-snug text-slate-200">
-                        {tx.description || cat?.name || 'Transaction'}
+                        {tx.description || cat?.name || 'Transakcja'}
                       </p>
                       {cat && (
                         <span
@@ -170,7 +171,7 @@ export default function Dashboard() {
                       <p className={`text-sm font-semibold tabular-nums ${tx.type === 'income' ? 'text-green-400' : 'text-slate-200'}`}>
                         {tx.type === 'income' ? '+' : '−'}{formatCurrency(tx.amount)}
                       </p>
-                      <p className="text-xs text-slate-500">{format(new Date(tx.date), 'MMM d')}</p>
+                      <p className="text-xs text-slate-500">{format(new Date(tx.date), 'd MMM', { locale: pl })}</p>
                     </div>
                   </Link>
                 </div>
@@ -188,9 +189,9 @@ export default function Dashboard() {
       {forecast && isCurrentMonth && (
         <Card>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-slate-400">Month-End Forecast</h3>
+            <h3 className="text-sm font-medium text-slate-400">Prognoza na koniec miesiąca</h3>
             <span className={`text-xs font-medium ${confidenceColors[forecast.confidence]} flex items-center gap-1`}>
-              {forecast.confidence === 'low' ? 'Low' : forecast.confidence === 'medium' ? 'Medium' : 'High'} Confidence
+              {forecast.confidence === 'low' ? 'Niska' : forecast.confidence === 'medium' ? 'Średnia' : 'Wysoka'} pewność
               <InfoTip>
                 <p className="text-xs text-slate-300 leading-relaxed">
                   {CONFIDENCE_TIPS[forecast.confidence]}
@@ -200,23 +201,23 @@ export default function Dashboard() {
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div>
-              <p className="text-xs text-slate-500">Projected Spend</p>
+              <p className="text-xs text-slate-500">Prognozowane wydatki</p>
               <p className={`text-lg font-bold ${forecast.onTrack ? 'text-slate-200' : 'text-red-400'}`}>
                 {formatCurrency(forecast.projectedExpenses)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Daily Burn</p>
+              <p className="text-xs text-slate-500">Dzienne tempo</p>
               <p className="text-lg font-bold text-slate-200">{formatCurrency(forecast.dailyBurnRate)}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Days Left</p>
+              <p className="text-xs text-slate-500">Pozostało dni</p>
               <p className="text-lg font-bold text-slate-200">{forecast.daysLeft}</p>
             </div>
           </div>
           {!forecast.onTrack && (
             <p className="mt-2 text-xs text-red-400">
-              ⚠ On pace to exceed your {formatCurrency(forecast.effectiveBudget)} spending budget
+              ⚠ W tym tempie przekroczysz budżet wydatków {formatCurrency(forecast.effectiveBudget)}
             </p>
           )}
         </Card>

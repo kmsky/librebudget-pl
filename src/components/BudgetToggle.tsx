@@ -1,8 +1,8 @@
 export function BudgetToggle({
   value,
   onChange,
-  label = "Count as this month's savings contribution",
-  hint = "Turn off if this money already existed and you're just recording it.",
+  label = "Zalicz jako tegomiesięczną wpłatę na oszczędności",
+  hint = "Wyłącz, jeśli te pieniądze już wcześniej istniały i tylko je tu zapisujesz.",
 }: {
   value: boolean
   onChange: (v: boolean) => void

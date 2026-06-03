@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { Menu, X, ChevronRight } from 'lucide-react'
 import { navGroups, navItems } from './navItems'
 import { useCloudBackup } from '../../hooks/useCloudBackup'
@@ -143,14 +144,14 @@ export function BottomNav() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[11px] font-semibold leading-tight text-slate-200">
-                        {isBacking ? 'Backing up…' : !passphraseSet ? 'Set Encryption Key' : backupCooldown > 0 ? `Wait ${backupCooldown}s` : 'Back Up Now'}
+                        {isBacking ? 'Tworzenie kopii…' : !passphraseSet ? 'Ustaw klucz szyfrowania' : backupCooldown > 0 ? `Poczekaj ${backupCooldown}s` : 'Utwórz kopię teraz'}
                       </p>
                       <p className={`mt-0.5 text-[10px] leading-tight truncate ${isStale ? 'text-amber-400/80' : 'text-slate-500'}`}>
                         {!passphraseSet
-                          ? 'Encryption key required'
+                          ? 'Wymagany klucz szyfrowania'
                           : lastBackupAt
-                            ? formatDistanceToNow(new Date(lastBackupAt), { addSuffix: true }).replace('about ', '')
-                            : 'No backup yet'}
+                            ? formatDistanceToNow(new Date(lastBackupAt), { locale: pl, addSuffix: true })
+                            : 'Brak kopii'}
                       </p>
                     </div>
                     {!isBacking && passphraseSet && backupCooldown === 0 && (
@@ -162,11 +163,11 @@ export function BottomNav() {
                   <button
                     onClick={() => { setOpen(false); setSyncOpen(true) }}
                     disabled={!passphraseSet}
-                    title="Sync (restore) from cloud backup"
+                    title="Synchronizuj (przywróć) z kopii w chmurze"
                     className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 px-5 py-2.5 transition-colors active:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Icon name="CloudDownload" size={17} className="text-blue-400" />
-                    <span className="text-[9px] font-medium text-slate-400 whitespace-nowrap">Sync</span>
+                    <span className="text-[9px] font-medium text-slate-400 whitespace-nowrap">Synchronizacja</span>
                   </button>
                 </div>
               </>

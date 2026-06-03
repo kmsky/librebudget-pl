@@ -19,9 +19,9 @@ import type { SavingsGoal } from '../db/database'
 type TabType = 'expense' | 'income' | 'savings'
 
 const SAVINGS_TYPE_LABELS: Record<string, string> = {
-  emergency_fund: 'Emergency Fund',
-  savings_account: 'Savings Account',
-  goal: 'Goal',
+  emergency_fund: 'Fundusz awaryjny',
+  savings_account: 'Konto oszczędnościowe',
+  goal: 'Cel',
 }
 
 export default function AddTransaction() {
@@ -48,16 +48,16 @@ export default function AddTransaction() {
   const catName = selectedCategory?.name ?? ''
 
   // Debt linking
-  const isDebtPayoff = catName === 'Debt Payoff'
-  const isTransportation = catName === 'Transportation'
+  const isDebtPayoff = catName === 'Spłata długów'
+  const isTransportation = catName === 'Transport'
   const showDebtSelector = isDebtPayoff || isTransportation
   const activeDebts = debts.filter((d) => d.balance > 0 && (!isTransportation || d.icon === 'Car'))
 
   // Savings linking
-  const SAVINGS_CATEGORIES = new Set(['Savings', 'Retirement', 'Stocks', 'Emergency Fund'])
+  const SAVINGS_CATEGORIES = new Set(['Oszczędności', 'Emerytura', 'Akcje', 'Fundusz awaryjny'])
   const isSavingsCategory = SAVINGS_CATEGORIES.has(catName)
   const linkableGoals = goals.filter((g) => {
-    if (catName === 'Emergency Fund') return g.type === 'emergency_fund'
+    if (catName === 'Fundusz awaryjny') return g.type === 'emergency_fund'
     return true
   })
 
@@ -163,7 +163,7 @@ export default function AddTransaction() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Add Transaction</h1>
+      <h1 className="text-2xl font-bold">Dodaj transakcję</h1>
 
       <Card>
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -178,7 +178,7 @@ export default function AddTransaction() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Expense
+              Wydatek
             </button>
             <button
               type="button"
@@ -189,7 +189,7 @@ export default function AddTransaction() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Income
+              Przychód
             </button>
             <button
               type="button"
@@ -200,14 +200,14 @@ export default function AddTransaction() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Savings
+              Oszczędności
             </button>
           </div>
 
           {/* Amount */}
           <div>
             <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-              Amount
+              Kwota
             </label>
             <div className="relative">
               <input
@@ -228,18 +228,18 @@ export default function AddTransaction() {
           {type === 'savings' ? (
             <div>
               <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-                Savings account / goal
+                Konto / cel oszczędnościowy
               </label>
               {savingsGoalsAvailable.length === 0 ? (
                 <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4 text-center">
                   <p className="text-sm text-slate-400 mb-2">
-                    No savings accounts yet. Add one in Savings first.
+                    Brak kont oszczędnościowych. Najpierw dodaj jedno w Oszczędnościach.
                   </p>
                   <Link
                     to="/savings"
                     className="text-blue-400 hover:text-blue-300 text-sm font-medium"
                   >
-                    Go to Savings →
+                    Przejdź do Oszczędności →
                   </Link>
                 </div>
               ) : (
@@ -279,7 +279,7 @@ export default function AddTransaction() {
           ) : (
             <div>
               <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-                Category
+                Kategoria
               </label>
               <div className="space-y-3">
                 {activeGroups.map((group) => {
@@ -324,7 +324,7 @@ export default function AddTransaction() {
                           className="flex items-center gap-1 rounded-lg border border-dashed border-slate-600 px-3 py-1.5 text-sm text-slate-500 hover:border-slate-400 hover:text-slate-300 transition-colors"
                         >
                           <Icon name="Plus" size={14} />
-                          New
+                          Nowa
                         </button>
                       </div>
                     </div>
@@ -338,7 +338,7 @@ export default function AddTransaction() {
           {showDebtSelector && activeDebts.length > 0 && (
             <div>
               <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-                Apply to Debt
+                Zalicz na dług
               </label>
               <div className="flex flex-wrap gap-2">
                 {activeDebts.map((debt) => {
@@ -370,7 +370,7 @@ export default function AddTransaction() {
                 })}
               </div>
               <p className="mt-1 text-xs text-slate-500">
-                Payment will reduce the selected debt's balance.
+                Wpłata pomniejszy saldo wybranego długu.
               </p>
             </div>
           )}
@@ -379,7 +379,7 @@ export default function AddTransaction() {
           {isSavingsCategory && linkableGoals.length > 0 && (
             <div>
               <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-                Add to Savings Goal
+                Dodaj do celu oszczędnościowego
               </label>
               <div className="flex flex-wrap gap-2">
                 {linkableGoals.map((goal) => {
@@ -414,7 +414,7 @@ export default function AddTransaction() {
                 })}
               </div>
               <p className="mt-1 text-xs text-slate-500">
-                Funds will be added to the selected savings goal.
+                Środki zostaną dodane do wybranego celu oszczędnościowego.
               </p>
             </div>
           )}
@@ -422,13 +422,13 @@ export default function AddTransaction() {
           {/* Description */}
           <div>
             <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-              Description
+              Opis
             </label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What was this for?"
+              placeholder="Na co to było?"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
             />
           </div>
@@ -436,12 +436,12 @@ export default function AddTransaction() {
           {/* Note */}
           <div>
             <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-              Note <span className="text-slate-600 font-normal">(optional)</span>
+              Notatka <span className="text-slate-600 font-normal">(opcjonalnie)</span>
             </label>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Additional details, receipt info, etc."
+              placeholder="Dodatkowe szczegóły, dane z paragonu itp."
               rows={2}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
             />
@@ -450,7 +450,7 @@ export default function AddTransaction() {
           {/* Date */}
           <div>
             <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-slate-400">
-              Date
+              Data
             </label>
             <input
               type="date"
@@ -468,7 +468,7 @@ export default function AddTransaction() {
           {/* Duplicate warning (Expense/Income only) */}
           {type !== 'savings' && duplicateWarning && (
             <div className="rounded-xl border border-yellow-700 bg-yellow-900/20 p-3 text-sm text-yellow-300">
-              <Icon name="AlertTriangle" size={18} className="inline mr-1 align-middle" /> A similar transaction already exists on this date. Submit again to confirm.
+              <Icon name="AlertTriangle" size={18} className="inline mr-1 align-middle" /> Podobna transakcja już istnieje w tym dniu. Zatwierdź ponownie, aby potwierdzić.
             </div>
           )}
 
@@ -483,12 +483,12 @@ export default function AddTransaction() {
             }
           >
             {saving
-              ? 'Saving...'
+              ? 'Zapisywanie...'
               : type === 'savings'
-                ? 'Add to Savings'
+                ? 'Dodaj do oszczędności'
                 : duplicateWarning
-                  ? 'Add Anyway'
-                  : `Add ${type === 'income' ? 'Income' : 'Expense'}`}
+                  ? 'Dodaj mimo to'
+                  : `Dodaj ${type === 'income' ? 'przychód' : 'wydatek'}`}
           </Button>
         </form>
       </Card>
@@ -497,22 +497,22 @@ export default function AddTransaction() {
       <Modal
         open={!!newCatGroup}
         onClose={() => setNewCatGroup(null)}
-        title={`New ${newCatGroup ? GROUP_LABELS[newCatGroup] : ''} Category`}
+        title={`Nowa kategoria${newCatGroup ? ` · ${GROUP_LABELS[newCatGroup]}` : ''}`}
       >
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Name</label>
+            <label className="mb-1 block text-sm text-slate-400">Nazwa</label>
             <input
               type="text"
               value={newCatName}
               onChange={(e) => setNewCatName(e.target.value)}
-              placeholder="e.g. Pet Care"
+              placeholder="np. Opieka nad zwierzętami"
               autoFocus
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm text-slate-400">Icon</label>
+            <label className="mb-2 block text-sm text-slate-400">Ikona</label>
             <div className="grid grid-cols-8 gap-1">
               {CATEGORY_ICONS.map((ic) => (
                 <button
@@ -535,7 +535,7 @@ export default function AddTransaction() {
             className="w-full"
             disabled={!newCatName.trim() || savingCat}
           >
-            {savingCat ? 'Creating...' : 'Create Category'}
+            {savingCat ? 'Tworzenie...' : 'Utwórz kategorię'}
           </Button>
         </div>
       </Modal>

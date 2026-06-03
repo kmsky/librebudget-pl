@@ -212,6 +212,46 @@ export class LibreBudgetDB extends Dexie {
     this.version(6).stores({
       impulseItems: '++id, status, cooldownEndsAt',
     })
+
+    // v7: translate preset category names from English to Polish (PL fork).
+    // Existing users' categories live in IndexedDB; renaming the seed alone only
+    // affects fresh installs, so rename in-place here. Custom (non-preset)
+    // categories are left untouched.
+    this.version(7).stores({}).upgrade((tx) => {
+      const RENAME_MAP: Record<string, string> = {
+        Housing: 'Mieszkanie',
+        Utilities: 'Media',
+        Groceries: 'Żywność',
+        Transportation: 'Transport',
+        Insurance: 'Ubezpieczenia',
+        Healthcare: 'Zdrowie',
+        'Dining Out': 'Jedzenie na mieście',
+        Entertainment: 'Rozrywka',
+        Shopping: 'Zakupy',
+        Subscriptions: 'Subskrypcje',
+        Travel: 'Podróże',
+        Hobbies: 'Hobby',
+        Savings: 'Oszczędności',
+        Retirement: 'Emerytura',
+        Stocks: 'Akcje',
+        'Emergency Fund': 'Fundusz awaryjny',
+        Education: 'Edukacja',
+        'Debt Payoff': 'Spłata długów',
+        Fees: 'Opłaty',
+        Salary: 'Wynagrodzenie',
+        Freelance: 'Freelancing',
+        'Side Hustle': 'Dodatkowy zarobek',
+        Dividends: 'Dywidendy',
+        Interest: 'Odsetki',
+        Gifts: 'Prezenty',
+        'Other Income': 'Inne przychody',
+      }
+      return tx.table('categories').toCollection().modify((cat: { name: string; isPreset?: boolean }) => {
+        if (cat.isPreset && RENAME_MAP[cat.name]) {
+          cat.name = RENAME_MAP[cat.name]
+        }
+      })
+    })
   }
 }
 

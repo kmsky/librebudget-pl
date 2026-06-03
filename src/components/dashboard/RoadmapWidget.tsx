@@ -13,30 +13,30 @@ export function RoadmapWidget() {
   return (
     <Card>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-slate-400">Financial Roadmap</h3>
+        <h3 className="text-sm font-medium text-slate-400">Mapa finansowa</h3>
         <Link to="/roadmap" className="text-xs text-green-400 hover:text-green-300">
-          View all
+          Zobacz wszystkie
         </Link>
       </div>
 
       {steps.length === 0 ? (
         <div className="py-4 text-center text-sm text-slate-500">
-          Loading roadmap...
+          Ładowanie mapy...
         </div>
       ) : allComplete ? (
         <div className="py-4 text-center">
           <div className="text-4xl mb-2">🎉</div>
-          <p className="text-slate-200 font-medium">All steps complete!</p>
-          <p className="text-xs text-slate-500">You've mastered your financial order of operations.</p>
+          <p className="text-slate-200 font-medium">Wszystkie kroki ukończone!</p>
+          <p className="text-xs text-slate-500">Opanowałeś kolejność działań w swoich finansach.</p>
         </div>
       ) : currentStep ? (
         <div className="space-y-3">
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-slate-500 uppercase tracking-wider">Current Step {currentStepIndex + 1} of {steps.length}</span>
+              <span className="text-xs text-slate-500 uppercase tracking-wider">Bieżący krok {currentStepIndex + 1} z {steps.length}</span>
               {currentStep.isAutomated && (
                 <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">
-                  Automated
+                  Automatyczny
                 </span>
               )}
             </div>
@@ -65,12 +65,12 @@ export function RoadmapWidget() {
             to="/roadmap"
             className="block w-full rounded-lg bg-slate-800 py-2 text-center text-sm font-medium text-slate-200 hover:bg-slate-700 transition-colors"
           >
-            {currentStep.actionLabel || 'Manage Step'}
+            {currentStep.actionLabel || 'Zarządzaj krokiem'}
           </Link>
         </div>
       ) : (
         <div className="py-4 text-center text-sm text-slate-500">
-          No steps found.
+          Nie znaleziono kroków.
         </div>
       )}
     </Card>

@@ -5,9 +5,9 @@ export default function Terms() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold">Terms of Use</h1>
+        <h1 className="text-2xl font-bold">Regulamin</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Last updated: {new Date().toLocaleDateString('pl-PL', { month: 'long', day: 'numeric', year: 'numeric' })}
+          Ostatnia aktualizacja: {new Date().toLocaleDateString('pl-PL', { month: 'long', day: 'numeric', year: 'numeric' })}
         </p>
       </div>
 
@@ -15,196 +15,214 @@ export default function Terms() {
         <div className="prose-content">
 
           <p>
-            Please read these Terms of Use (&quot;Terms&quot;) carefully before using
-            LibreBudget (&quot;the Application&quot;, &quot;the Service&quot;). By accessing or
-            using the Application, you agree to be bound by these Terms. If you
-            do not agree, do not use the Application.
+            Prosimy o uważne zapoznanie się z niniejszym Regulaminem
+            (&quot;Regulamin&quot;) przed rozpoczęciem korzystania z
+            LibreBudget (&quot;Aplikacja&quot;, &quot;Usługa&quot;). Uzyskując dostęp do
+            Aplikacji lub korzystając z niej, akceptujesz postanowienia niniejszego
+            Regulaminu. Jeśli się z nimi nie zgadzasz, nie korzystaj z Aplikacji.
           </p>
 
-          <h2>1. Acceptance of Terms</h2>
+          <h2>1. Akceptacja Regulaminu</h2>
           <p>
-            By using LibreBudget, you acknowledge that you have read, understood,
-            and agree to these Terms and our{' '}
+            Korzystając z LibreBudget, potwierdzasz, że przeczytałeś, zrozumiałeś
+            i akceptujesz niniejszy Regulamin oraz naszą{' '}
             <Link to="/privacy" className="text-green-400 hover:text-green-300">
-              Privacy Policy
+              Politykę prywatności
             </Link>
-            , which is incorporated by reference.
+            , która stanowi jego integralną część.
           </p>
 
-          <h2>2. Description of Service</h2>
+          <h2>2. Opis Usługi</h2>
           <p>
-            LibreBudget is a free, open-source personal budget tracking
-            application with a <strong>zero-knowledge architecture</strong>. It
-            provides tools to track income, expenses, budget goals, debts,
-            savings goals, recurring transactions, spending trends, and financial
-            roadmap progress. Data is stored locally in your browser by default.
-            Optional cloud backup uses a vault (recovery phrase) and
-            encrypts data in your browser before upload; we cannot read your
-            data. The Application is provided as a Progressive Web App (PWA)
-            that works offline.
+            LibreBudget to bezpłatna aplikacja typu open source do zarządzania
+            budżetem osobistym, oparta na <strong>architekturze zero-knowledge
+            (bez wiedzy serwera)</strong>. Udostępnia narzędzia do śledzenia
+            przychodów, wydatków, celów budżetowych, długów, celów oszczędnościowych,
+            transakcji cyklicznych, trendów wydatków oraz postępów w realizacji
+            planu finansowego. Domyślnie dane są przechowywane lokalnie w Twojej
+            przeglądarce. Opcjonalna kopia zapasowa w chmurze korzysta z sejfu
+            (frazy odzyskiwania) i szyfruje dane w Twojej przeglądarce przed
+            wysłaniem; nie jesteśmy w stanie odczytać Twoich danych. Aplikacja
+            jest dostarczana jako progresywna aplikacja webowa (PWA), która działa
+            w trybie offline.
           </p>
 
-          <h2>3. Zero-Knowledge and Data Control</h2>
+          <h2>3. Zero-knowledge i kontrola nad danymi</h2>
           <p>
-            LibreBudget uses end-to-end encryption for optional cloud backup.
-            Your data is encrypted with keys derived from your recovery phrase.
-            We cannot decrypt, access, or recover your financial data. If you
-            lose your recovery phrase, we cannot restore encrypted backups. You
-            are solely responsible for safeguarding your recovery phrase and
-            maintaining your own backups (via export). Store your phrase in
-            multiple secure locations. See our{' '}
+            LibreBudget stosuje szyfrowanie od końca do końca dla opcjonalnej kopii
+            zapasowej w chmurze. Twoje dane są szyfrowane kluczami pochodzącymi z
+            Twojej frazy odzyskiwania. Nie jesteśmy w stanie odszyfrować, uzyskać
+            dostępu ani odzyskać Twoich danych finansowych. Jeśli utracisz frazę
+            odzyskiwania, nie będziemy mogli przywrócić zaszyfrowanych kopii
+            zapasowych. Ponosisz wyłączną odpowiedzialność za ochronę swojej frazy
+            odzyskiwania oraz utrzymywanie własnych kopii zapasowych (poprzez
+            eksport). Przechowuj frazę w kilku bezpiecznych miejscach. Szczegóły
+            znajdziesz w naszym{' '}
             <Link to="/privacy-manifesto" className="text-green-400 hover:text-green-300">
-              Privacy Manifesto
-            </Link>{' '}
-            for details.
+              Manifeście prywatności
+            </Link>
+            .
           </p>
 
-          <h2>4. NOT Financial Advice</h2>
+          <h2>4. To NIE jest doradztwo finansowe</h2>
           <p>
             <strong>
-              The Application is a record-keeping and visualization tool only.
-              Nothing in LibreBudget constitutes financial advice, investment
-              advice, tax advice, legal advice, or any other form of
-              professional advice.
+              Aplikacja jest wyłącznie narzędziem do prowadzenia ewidencji i
+              wizualizacji danych. Żadne treści w LibreBudget nie stanowią
+              doradztwa finansowego, inwestycyjnego, podatkowego, prawnego ani
+              jakiejkolwiek innej formy profesjonalnego doradztwa.
             </strong>{' '}
-            Categories (&quot;needs&quot;, &quot;wants&quot;, &quot;savings&quot;) and the financial
-            roadmap are general-purpose classifications for convenience. Consult
-            a qualified financial advisor for decisions about your finances.
+            Kategorie (&quot;potrzeby&quot;, &quot;zachcianki&quot;, &quot;oszczędności&quot;) oraz plan
+            finansowy są ogólnymi klasyfikacjami stworzonymi dla wygody. W sprawach
+            dotyczących Twoich finansów skonsultuj się z wykwalifikowanym doradcą
+            finansowym.
           </p>
 
-          <h2>5. User Responsibilities</h2>
+          <h2>5. Obowiązki użytkownika</h2>
           <ul>
             <li>
-              <strong>Data accuracy:</strong> You are responsible for the
-              accuracy and completeness of data you enter. We do not verify it.
+              <strong>Dokładność danych:</strong> Ponosisz odpowiedzialność za
+              dokładność i kompletność wprowadzanych danych. Nie weryfikujemy ich.
             </li>
             <li>
-              <strong>Recovery phrase security:</strong> Maintain the
-              confidentiality of your recovery phrase. Store it in
-              multiple secure locations; do not rely on a single copy (e.g.,
-              clipboard or one password manager).
+              <strong>Bezpieczeństwo frazy odzyskiwania:</strong> Zachowaj poufność
+              swojej frazy odzyskiwania. Przechowuj ją w kilku bezpiecznych
+              miejscach; nie polegaj na pojedynczej kopii (np. w schowku lub w
+              jednym menedżerze haseł).
             </li>
             <li>
-              <strong>Vault lock:</strong> Locking your vault clears local
-              data. Your recovery phrase is the only way to restore. We cannot
-              recover lost phrases.
+              <strong>Blokada sejfu:</strong> Zablokowanie sejfu usuwa dane lokalne.
+              Twoja fraza odzyskiwania to jedyny sposób na przywrócenie danych. Nie
+              możemy odzyskać utraconych fraz.
             </li>
             <li>
-              <strong>Lawful use:</strong> Use the Application only for lawful
-              purposes in compliance with applicable laws.
+              <strong>Zgodne z prawem korzystanie:</strong> Korzystaj z Aplikacji
+              wyłącznie w celach zgodnych z prawem i obowiązującymi przepisami.
             </li>
             <li>
-              <strong>Backup responsibility:</strong> Regularly export your data.
-              We provide export and optional cloud backup; you are responsible
-              for your own backup strategy.
+              <strong>Odpowiedzialność za kopie zapasowe:</strong> Regularnie
+              eksportuj swoje dane. Udostępniamy eksport oraz opcjonalną kopię
+              zapasową w chmurze; to Ty odpowiadasz za własną strategię tworzenia
+              kopii zapasowych.
             </li>
           </ul>
 
-          <h2>6. Disclaimer of Warranties</h2>
+          <h2>6. Wyłączenie gwarancji</h2>
           <p>
             <strong>
-              THE APPLICATION IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT
-              WARRANTIES OF ANY KIND, EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE,
-              INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-              NON-INFRINGEMENT, ACCURACY, OR UNINTERRUPTED AVAILABILITY.
+              APLIKACJA JEST DOSTARCZANA &quot;W STANIE, W JAKIM SIĘ ZNAJDUJE&quot; ORAZ
+              &quot;W MIARĘ DOSTĘPNOŚCI&quot;, BEZ JAKICHKOLWIEK GWARANCJI, WYRAŹNYCH,
+              DOROZUMIANYCH, USTAWOWYCH CZY INNYCH, W TYM GWARANCJI PRZYDATNOŚCI
+              HANDLOWEJ, PRZYDATNOŚCI DO OKREŚLONEGO CELU, NIENARUSZALNOŚCI PRAW,
+              DOKŁADNOŚCI ANI NIEPRZERWANEJ DOSTĘPNOŚCI.
             </strong>
           </p>
-          <p>We do not warrant that:</p>
+          <p>Nie gwarantujemy, że:</p>
           <ul>
-            <li>The Application will meet your requirements.</li>
-            <li>The Application will be available at all times or error-free.</li>
-            <li>Calculations, summaries, or visualizations are error-free.</li>
-            <li>Defects will be corrected or the Application is free of harmful components.</li>
+            <li>Aplikacja spełni Twoje wymagania.</li>
+            <li>Aplikacja będzie dostępna przez cały czas lub wolna od błędów.</li>
+            <li>Obliczenia, podsumowania lub wizualizacje będą wolne od błędów.</li>
+            <li>Wady zostaną usunięte lub że Aplikacja jest wolna od szkodliwych komponentów.</li>
           </ul>
 
-          <h2>7. Limitation of Liability</h2>
+          <h2>7. Ograniczenie odpowiedzialności</h2>
           <p>
             <strong>
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE ARE NOT LIABLE FOR ANY
-              INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR
-              EXEMPLARY DAMAGES, INCLUDING LOSS OF PROFITS, GOODWILL, DATA, OR
-              OTHER INTANGIBLE LOSSES.
+              W MAKSYMALNYM ZAKRESIE DOZWOLONYM PRZEZ PRAWO NIE PONOSIMY
+              ODPOWIEDZIALNOŚCI ZA JAKIEKOLWIEK SZKODY POŚREDNIE, UBOCZNE,
+              SPECJALNE, WYNIKOWE, ODSZKODOWANIA O CHARAKTERZE KARNYM LUB
+              ODSTRASZAJĄCYM, W TYM ZA UTRATĘ ZYSKÓW, RENOMY, DANYCH LUB INNE
+              STRATY NIEMATERIALNE.
             </strong>
           </p>
           <p>
             <strong>
-              OUR TOTAL AGGREGATE LIABILITY SHALL NOT EXCEED THE AMOUNT YOU PAID
-              US IN THE TWELVE MONTHS PRECEDING THE CLAIM, OR ZERO DOLLARS ($0.00)
-              IF YOU HAVE NOT PAID US ANYTHING (AS IS THE CASE FOR THIS FREE APPLICATION).
+              NASZA CAŁKOWITA ŁĄCZNA ODPOWIEDZIALNOŚĆ NIE PRZEKROCZY KWOTY, KTÓRĄ
+              ZAPŁACIŁEŚ NAM W CIĄGU DWUNASTU MIESIĘCY POPRZEDZAJĄCYCH ROSZCZENIE,
+              LUB ZERA (0,00 ZŁ), JEŚLI NIC NAM NIE ZAPŁACIŁEŚ (CO MA MIEJSCE W
+              PRZYPADKU TEJ BEZPŁATNEJ APLIKACJI).
             </strong>
           </p>
 
-          <h2>8. Data Loss Disclaimer</h2>
+          <h2>8. Wyłączenie odpowiedzialności za utratę danych</h2>
           <p>
             <strong>
-              We are not responsible for any loss of data, regardless of cause.
+              Nie ponosimy odpowiedzialności za jakąkolwiek utratę danych,
+              niezależnie od jej przyczyny.
             </strong>{' '}
-            This includes data loss from clearing browser data, device failure,
-            cloud service outages, bugs, or unauthorized access. You are
-            encouraged to regularly export your data and safeguard your recovery
-            phrase in multiple secure locations.
+            Dotyczy to utraty danych spowodowanej wyczyszczeniem danych
+            przeglądarki, awarią urządzenia, przerwami w działaniu usług
+            chmurowych, błędami oprogramowania lub nieautoryzowanym dostępem.
+            Zachęcamy do regularnego eksportowania danych oraz przechowywania frazy
+            odzyskiwania w kilku bezpiecznych miejscach.
           </p>
 
-          <h2>9. Indemnification</h2>
+          <h2>9. Zwolnienie z odpowiedzialności</h2>
           <p>
-            You agree to indemnify and hold harmless the developers, contributors,
-            and operators of LibreBudget from claims, damages, losses, and
-            expenses arising from your use of the Application, violation of these
-            Terms, or any financial decisions based on information displayed by
-            the Application.
+            Zobowiązujesz się zwolnić z odpowiedzialności oraz chronić deweloperów,
+            współtwórców i operatorów LibreBudget przed wszelkimi roszczeniami,
+            szkodami, stratami i wydatkami wynikającymi z korzystania przez Ciebie z
+            Aplikacji, naruszenia niniejszego Regulaminu lub z jakichkolwiek decyzji
+            finansowych podjętych na podstawie informacji wyświetlanych przez
+            Aplikację.
           </p>
 
-          <h2>10. Open-Source License</h2>
+          <h2>10. Licencja open source</h2>
           <p>
-            LibreBudget&apos;s source code is released under the MIT License. These
-            Terms apply to your use of the hosted Application and its services
-            (including cloud backup) and are in addition to the MIT License terms.
+            Kod źródłowy LibreBudget jest udostępniany na licencji MIT. Niniejszy
+            Regulamin dotyczy korzystania z hostowanej Aplikacji oraz jej usług
+            (w tym kopii zapasowej w chmurze) i obowiązuje dodatkowo, obok warunków
+            licencji MIT.
           </p>
 
-          <h2>11. Cloud Backup and Termination</h2>
+          <h2>11. Kopia zapasowa w chmurze i jej zakończenie</h2>
           <p>
-            Cloud backup access may be suspended or terminated at any time.
-            You may delete your cloud backup at any time from Account. Upon
-            deletion, encrypted backup data is permanently removed. Locally
-            stored data is unaffected. Locking your vault clears local data
-            but does not delete cloud backup; use the delete function for that.
+            Dostęp do kopii zapasowej w chmurze może zostać w dowolnym momencie
+            zawieszony lub zakończony. W każdej chwili możesz usunąć swoją kopię
+            zapasową w chmurze z poziomu Konta. Po usunięciu zaszyfrowane dane
+            kopii zapasowej są trwale usuwane. Nie ma to wpływu na dane
+            przechowywane lokalnie. Zablokowanie sejfu usuwa dane lokalne, ale nie
+            usuwa kopii zapasowej w chmurze; w tym celu skorzystaj z funkcji
+            usuwania.
           </p>
 
-          <h2>12. Service Availability</h2>
+          <h2>12. Dostępność Usługi</h2>
           <p>
-            We make no guarantees regarding cloud backup availability. Local
-            features function independently of any server and work offline.
+            Nie udzielamy żadnych gwarancji co do dostępności kopii zapasowej w
+            chmurze. Funkcje lokalne działają niezależnie od jakiegokolwiek serwera
+            i są dostępne w trybie offline.
           </p>
 
-          <h2>13. Modifications to Terms</h2>
+          <h2>13. Zmiany w Regulaminie</h2>
           <p>
-            We may modify these Terms at any time. Changes will be posted with an
-            updated &quot;Last updated&quot; date. Continued use constitutes acceptance.
+            Możemy w dowolnym momencie zmienić niniejszy Regulamin. Zmiany zostaną
+            opublikowane wraz ze zaktualizowaną datą &quot;Ostatnia aktualizacja&quot;.
+            Dalsze korzystanie z Aplikacji oznacza akceptację zmian.
           </p>
 
-          <h2>14. Severability and Entire Agreement</h2>
+          <h2>14. Rozdzielność postanowień i całość porozumienia</h2>
           <p>
-            If any provision is invalid or unenforceable, the rest remains in
-            effect. These Terms and the Privacy Policy constitute the entire
-            agreement between you and LibreBudget.
+            Jeśli którekolwiek z postanowień okaże się nieważne lub niewykonalne,
+            pozostałe pozostają w mocy. Niniejszy Regulamin oraz Polityka
+            prywatności stanowią całość porozumienia między Tobą a LibreBudget.
           </p>
 
-          <h2>15. Governing Law and Contact</h2>
+          <h2>15. Prawo właściwe i kontakt</h2>
           <p>
-            These Terms shall be governed by the laws of the jurisdiction in
-            which the Application operator resides. For questions, open an issue
-            on the project repository or contact the maintainer.
+            Niniejszy Regulamin podlega prawu jurysdykcji, w której znajduje się
+            operator Aplikacji. W razie pytań utwórz zgłoszenie w repozytorium
+            projektu lub skontaktuj się z osobą odpowiedzialną za jego utrzymanie.
           </p>
 
         </div>
       </Card>
 
       <p className="text-center text-xs text-slate-500">
-        <Link to="/privacy" className="text-green-400 hover:text-green-300">Privacy Policy</Link>
+        <Link to="/privacy" className="text-green-400 hover:text-green-300">Polityka prywatności</Link>
         {' · '}
-        <Link to="/privacy-manifesto" className="text-green-400 hover:text-green-300">Privacy Manifesto</Link>
+        <Link to="/privacy-manifesto" className="text-green-400 hover:text-green-300">Manifest prywatności</Link>
         {' · '}
-        <Link to="/settings" className="text-green-400 hover:text-green-300">Back to Settings</Link>
+        <Link to="/settings" className="text-green-400 hover:text-green-300">Powrót do ustawień</Link>
       </p>
     </div>
   )

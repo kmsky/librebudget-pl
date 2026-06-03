@@ -322,7 +322,7 @@ export function GuidedTour({ steps, active, onFinish }: GuidedTourProps) {
             onClick={onFinish}
             className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
           >
-            Skip tour
+            Pomiń samouczek
           </button>
           <div className="flex items-center gap-2">
             {stepIdx > 0 && (
@@ -331,7 +331,7 @@ export function GuidedTour({ steps, active, onFinish }: GuidedTourProps) {
                 onClick={goBack}
                 className="rounded-lg px-3 py-1.5 text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors"
               >
-                Back
+                Wstecz
               </button>
             )}
             <button
@@ -339,7 +339,7 @@ export function GuidedTour({ steps, active, onFinish }: GuidedTourProps) {
               onClick={advance}
               className="rounded-lg bg-green-500 px-4 py-1.5 text-xs font-semibold text-white hover:bg-green-400 transition-colors"
             >
-              {stepIdx >= steps.length - 1 ? 'Finish' : 'Next'}
+              {stepIdx >= steps.length - 1 ? 'Zakończ' : 'Dalej'}
             </button>
           </div>
         </div>

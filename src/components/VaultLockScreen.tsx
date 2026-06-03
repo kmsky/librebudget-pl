@@ -44,8 +44,8 @@ export function VaultLockScreen() {
           const remaining = PIN_MAX_ATTEMPTS - next.failCount
           setError(
             remaining <= 3
-              ? `Incorrect PIN — ${remaining} attempt${remaining === 1 ? '' : 's'} remaining before lockout`
-              : 'Incorrect PIN'
+              ? `Nieprawidłowy PIN — ${remaining === 1 ? 'pozostała 1 próba' : `pozostały ${remaining} ${remaining < 5 ? 'próby' : 'prób'}`} przed zablokowaniem`
+              : 'Nieprawidłowy PIN'
           )
         }
       }
@@ -54,9 +54,20 @@ export function VaultLockScreen() {
     }
   }, [pin, unlockWithPin])
 
+  const plural = (n: number, one: string, few: string, many: string) => {
+    const mod10 = n % 10
+    const mod100 = n % 100
+    if (n === 1) return one
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few
+    return many
+  }
+
   const formatCountdown = (secs: number) => {
-    if (secs >= 60) return `${Math.ceil(secs / 60)} minute${Math.ceil(secs / 60) === 1 ? '' : 's'}`
-    return `${secs} second${secs === 1 ? '' : 's'}`
+    if (secs >= 60) {
+      const mins = Math.ceil(secs / 60)
+      return `${mins} ${plural(mins, 'minuta', 'minuty', 'minut')}`
+    }
+    return `${secs} ${plural(secs, 'sekunda', 'sekundy', 'sekund')}`
   }
 
   return (
@@ -71,9 +82,9 @@ export function VaultLockScreen() {
               className={lockout.isPermanent ? 'text-red-400' : 'text-green-400'}
             />
           </div>
-          <h2 className="text-xl font-bold text-slate-100 mb-1">Unlock Vault</h2>
+          <h2 className="text-xl font-bold text-slate-100 mb-1">Odblokuj sejf</h2>
           <p className="text-sm text-slate-400">
-            Enter your PIN to enable cloud backup on this device
+            Wprowadź PIN, aby włączyć kopię zapasową w chmurze na tym urządzeniu
           </p>
         </div>
 
@@ -81,9 +92,9 @@ export function VaultLockScreen() {
         {lockout.isPermanent ? (
           <div className="space-y-4">
             <div className="rounded-xl bg-red-900/20 border border-red-800/50 p-4 text-center">
-              <p className="text-sm font-medium text-red-300 mb-1">Vault locked permanently</p>
+              <p className="text-sm font-medium text-red-300 mb-1">Sejf zablokowany na stałe</p>
               <p className="text-xs text-red-400/80">
-                Too many failed PIN attempts ({PIN_MAX_ATTEMPTS}). Use your recovery phrase to restore access.
+                Zbyt wiele nieudanych prób wprowadzenia PIN-u ({PIN_MAX_ATTEMPTS}). Użyj frazy odzyskiwania, aby przywrócić dostęp.
               </p>
             </div>
             <Button
@@ -92,7 +103,7 @@ export function VaultLockScreen() {
               size="lg"
               onClick={() => { forgetPersistedVault(); navigate('/restore-wallet') }}
             >
-              Restore with Recovery Phrase
+              Przywróć za pomocą frazy odzyskiwania
             </Button>
           </div>
         ) : (
@@ -100,9 +111,9 @@ export function VaultLockScreen() {
             {/* Timed lockout banner */}
             {lockout.isLockedOut && (
               <div className="rounded-xl bg-amber-900/20 border border-amber-800/40 p-3 text-center">
-                <p className="text-sm font-medium text-amber-300">Too many failed attempts</p>
+                <p className="text-sm font-medium text-amber-300">Zbyt wiele nieudanych prób</p>
                 <p className="text-xs text-amber-400/80 mt-0.5">
-                  Try again in <span className="font-semibold tabular-nums">{formatCountdown(lockout.secondsRemaining)}</span>
+                  Spróbuj ponownie za <span className="font-semibold tabular-nums">{formatCountdown(lockout.secondsRemaining)}</span>
                 </p>
               </div>
             )}
@@ -116,7 +127,7 @@ export function VaultLockScreen() {
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleUnlock()}
-                placeholder="Enter your PIN"
+                placeholder="Wprowadź swój PIN"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 disabled:opacity-50"
                 disabled={loading || lockout.isLockedOut}
               />
@@ -130,20 +141,20 @@ export function VaultLockScreen() {
               onClick={handleUnlock}
               disabled={!pin.trim() || loading || lockout.isLockedOut}
             >
-              {loading ? 'Unlocking…' : lockout.isLockedOut ? `Locked — ${formatCountdown(lockout.secondsRemaining)}` : 'Unlock'}
+              {loading ? 'Odblokowywanie…' : lockout.isLockedOut ? `Zablokowano — ${formatCountdown(lockout.secondsRemaining)}` : 'Odblokuj'}
             </Button>
           </div>
         )}
 
         {!lockout.isPermanent && (
           <p className="mt-6 text-center text-sm text-slate-500">
-            Forgot PIN?{' '}
+            Nie pamiętasz PIN-u?{' '}
             <button
               type="button"
               onClick={() => { forgetPersistedVault(); navigate('/restore-wallet') }}
               className="text-green-400 hover:text-green-300"
             >
-              Use recovery phrase to restore
+              Przywróć za pomocą frazy odzyskiwania
             </button>
           </p>
         )}

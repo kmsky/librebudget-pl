@@ -70,26 +70,26 @@ export function HouseAffordabilityCalculator() {
             <Home size={20} className="text-emerald-400" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-semibold text-slate-200">Income & Loan</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">28% front-end DTI rule for housing costs</p>
+            <h2 className="text-base font-semibold text-slate-200">Dochód i kredyt</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">Reguła DTI front-end 28% dla kosztów mieszkaniowych</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Annual net income (zł)</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Roczny dochód netto (zł)</label>
             <input inputMode="decimal" value={state.agi}
               onChange={(e) => updateState({ agi: e.target.value })}
               onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.agi) updateState({ agi: String(CAPS.agi) }) }}
               placeholder={budgetForPrefill > 0 ? String(Math.round(budgetForPrefill * 12)) : '96000'}
               className={INPUT} />
             {budgetForPrefill > 0 && (
-              <p className="text-xs text-slate-600 mt-1">~{formatCurrency(budgetForPrefill * 12)}/year from monthly budget</p>
+              <p className="text-xs text-slate-600 mt-1">~{formatCurrency(budgetForPrefill * 12)}/rok z miesięcznego budżetu</p>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Down payment</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Wkład własny</label>
             <div className="flex gap-2 rounded-xl bg-slate-800 p-1 mb-2">
               {(['percent', 'dollar'] as const).map((m) => (
                 <button key={m} type="button" onClick={() => updateState({ downPaymentMode: m })}
@@ -112,14 +112,14 @@ export function HouseAffordabilityCalculator() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Interest rate (%)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Oprocentowanie (%)</label>
               <input inputMode="decimal" value={state.interestRate}
                 onChange={(e) => updateState({ interestRate: e.target.value })}
                 onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.interestRatePercent) updateState({ interestRate: String(CAPS.interestRatePercent) }) }}
                 placeholder="7,5" className={INPUT} />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Loan term (years)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Okres kredytu (lata)</label>
               <input type="number" step="1" min="1" max={CAPS.loanTermYears} value={state.loanTermYears}
                 onChange={(e) => updateState({ loanTermYears: e.target.value })}
                 onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v)) { if (v > CAPS.loanTermYears) updateState({ loanTermYears: String(CAPS.loanTermYears) }); else if (v < 1) updateState({ loanTermYears: '1' }) } }}
@@ -136,23 +136,23 @@ export function HouseAffordabilityCalculator() {
             <Percent size={20} className="text-amber-400" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-semibold text-slate-200">Recurring Costs</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">Insurance and HOA</p>
+            <h2 className="text-base font-semibold text-slate-200">Koszty stałe</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">Ubezpieczenie i czynsz administracyjny</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Home insurance (%/year)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Ubezpieczenie nieruchomości (%/rok)</label>
               <input inputMode="decimal" value={state.homeInsuranceRate}
                 onChange={(e) => updateState({ homeInsuranceRate: e.target.value })}
                 onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.homeInsurancePercent) updateState({ homeInsuranceRate: String(CAPS.homeInsurancePercent) }) }}
                 placeholder="0,08" className={INPUT} />
-              <p className="text-xs text-slate-600 mt-1">Typical: 0.05–0.15%</p>
+              <p className="text-xs text-slate-600 mt-1">Typowo: 0,05–0,15%</p>
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">HOA dues (zł/mo)</label>
+              <label className="mb-1.5 block text-sm text-slate-400">Czynsz administracyjny (zł/mies.)</label>
               <input inputMode="decimal" value={state.hoaDues}
                 onChange={(e) => updateState({ hoaDues: e.target.value })}
                 onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.hoaDues) updateState({ hoaDues: String(CAPS.hoaDues) }) }}
@@ -170,8 +170,8 @@ export function HouseAffordabilityCalculator() {
               <Building2 size={20} className="text-green-400" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base font-semibold text-slate-200">Affordability Result</h2>
-              <p className="text-xs text-slate-500 leading-relaxed">Based on 28% DTI front-end rule</p>
+              <h2 className="text-base font-semibold text-slate-200">Wynik zdolności zakupu</h2>
+              <p className="text-xs text-slate-500 leading-relaxed">Na podstawie reguły DTI front-end 28%</p>
             </div>
           </div>
 
@@ -179,12 +179,12 @@ export function HouseAffordabilityCalculator() {
           <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-5 mb-5">
             <div className="flex items-center gap-2 mb-1.5">
               <DollarSign size={14} className="text-green-400" />
-              <p className="text-xs text-slate-400">Max affordable home price</p>
+              <p className="text-xs text-slate-400">Maksymalna cena nieruchomości w zasięgu</p>
             </div>
             <p className="text-3xl font-bold text-green-400">{formatCurrency(result.maxAffordablePrice)}</p>
             <div className="flex gap-4 mt-2 text-xs text-slate-500">
-              <span>Down: {formatCurrency(result.downPaymentAmount)}</span>
-              <span>Loan: {formatCurrency(result.loanAmount)}</span>
+              <span>Wkład własny: {formatCurrency(result.downPaymentAmount)}</span>
+              <span>Kredyt: {formatCurrency(result.loanAmount)}</span>
             </div>
           </div>
 
@@ -192,13 +192,13 @@ export function HouseAffordabilityCalculator() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Percent size={14} className="text-slate-500" />
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Monthly Breakdown</p>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Miesięczny podział</p>
             </div>
             <div className="space-y-2">
               {[
-                { label: 'Principal & Interest', value: result.monthlyPrincipalInterest, color: 'text-slate-300' },
-                { label: 'Insurance', value: result.monthlyInsurance, color: 'text-slate-300' },
-                { label: 'HOA', value: result.monthlyHOA, color: 'text-slate-300' },
+                { label: 'Kapitał i odsetki', value: result.monthlyPrincipalInterest, color: 'text-slate-300' },
+                { label: 'Ubezpieczenie', value: result.monthlyInsurance, color: 'text-slate-300' },
+                { label: 'Czynsz administracyjny', value: result.monthlyHOA, color: 'text-slate-300' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="flex items-center justify-between rounded-lg px-3 py-2 bg-slate-800/30">
                   <span className="text-xs text-slate-500">{label}</span>
@@ -206,11 +206,11 @@ export function HouseAffordabilityCalculator() {
                 </div>
               ))}
               <div className="flex items-center justify-between rounded-xl px-4 py-3 border border-slate-700/50 bg-slate-800/50">
-                <span className="text-sm font-medium text-slate-300">Total Housing</span>
+                <span className="text-sm font-medium text-slate-300">Łączne koszty mieszkaniowe</span>
                 <div className="text-right">
                   <span className="text-lg font-bold text-green-400 tabular-nums">{formatCurrency(result.totalMonthlyHousing)}</span>
-                  <span className="text-xs text-slate-500 ml-1.5">/mo</span>
-                  <p className="text-xs text-slate-500">{result.dtiPercent.toFixed(1)}% of net income</p>
+                  <span className="text-xs text-slate-500 ml-1.5">/mies.</span>
+                  <p className="text-xs text-slate-500">{result.dtiPercent.toFixed(1)}% dochodu netto</p>
                 </div>
               </div>
             </div>

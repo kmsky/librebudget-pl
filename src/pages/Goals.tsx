@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { format, subMonths, addMonths, startOfMonth } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Modal } from '../components/ui/Modal'
@@ -16,8 +17,8 @@ import { BUDGET_GROUPS, type CategoryGroup } from '../db/database'
 import { Icon } from '../components/ui/Icon'
 
 const BUDGET_BLUEPRINTS = [
-  { id: '50-30-20', name: '50/30/20', desc: 'Needs 50%, Wants 30%, Savings 20%', needs: 0.5, wants: 0.3, savings: 0.2 },
-  { id: '50-25-25', name: '50/25/25', desc: 'Needs 50%, Wants 25%, Savings 25%', needs: 0.5, wants: 0.25, savings: 0.25 },
+  { id: '50-30-20', name: '50/30/20', desc: 'Potrzeby 50%, Zachcianki 30%, Oszczędności 20%', needs: 0.5, wants: 0.3, savings: 0.2 },
+  { id: '50-25-25', name: '50/25/25', desc: 'Potrzeby 50%, Zachcianki 25%, Oszczędności 25%', needs: 0.5, wants: 0.25, savings: 0.25 },
 ] as const
 
 export default function Goals() {
@@ -30,7 +31,7 @@ export default function Goals() {
 
   const prevDate = subMonths(viewDate, 1)
   const prevMonth = format(prevDate, 'yyyy-MM')
-  const prevLabel = format(prevDate, 'MMMM')
+  const prevLabel = format(prevDate, 'LLLL', { locale: pl })
 
   const { goals, addGoal, deleteGoal, copyFromMonth } = useBudgetGoals(viewMonth)
   const { categories, categoriesByGroup } = useCategories()
@@ -157,14 +158,14 @@ export default function Goals() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">Budget</h1>
+            <h1 className="text-2xl font-bold">Budżet</h1>
           </div>
           <div className="flex items-center gap-2 mt-0.5">
             <button
               onClick={() => setViewDate((d) => subMonths(d, 1))}
               className="text-slate-500 hover:text-slate-300 text-sm"
             >←</button>
-            <p className="text-sm text-slate-400">{format(viewDate, 'MMMM yyyy')}</p>
+            <p className="text-sm text-slate-400">{format(viewDate, 'LLLL yyyy', { locale: pl })}</p>
             <button
               onClick={() => setViewDate((d) => addMonths(d, 1))}
               className="text-slate-500 hover:text-slate-300 text-sm"
@@ -174,11 +175,11 @@ export default function Goals() {
               <button
                 onClick={() => setViewDate(new Date())}
                 className="text-xs text-green-400 hover:text-green-300 ml-1"
-              >Today</button>
+              >Dziś</button>
             )}
           </div>
         </div>
-        <Button onClick={() => setShowModal(true)}>+ Add Goal</Button>
+        <Button onClick={() => setShowModal(true)}>+ Dodaj cel</Button>
       </div>
 
       {/* Budget — monthly + default combined */}
@@ -187,7 +188,7 @@ export default function Goals() {
         <div className="flex items-start justify-between gap-3 mb-1">
           <div>
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">
-              {format(viewDate, 'MMMM yyyy')}
+              {format(viewDate, 'LLLL yyyy', { locale: pl })}
             </p>
             {editBudget ? (
               <div className="flex gap-2 mt-1">
@@ -201,8 +202,8 @@ export default function Goals() {
                     className="w-40 rounded-xl border border-slate-700 bg-slate-800 py-2 pl-7 pr-4 text-xl font-bold text-slate-100 focus:border-green-500 focus:outline-none"
                   />
                 </div>
-                <Button size="sm" onClick={handleSaveBudget}>Save</Button>
-                <Button size="sm" variant="ghost" onClick={() => setEditBudget(false)}>Cancel</Button>
+                <Button size="sm" onClick={handleSaveBudget}>Zapisz</Button>
+                <Button size="sm" variant="ghost" onClick={() => setEditBudget(false)}>Anuluj</Button>
               </div>
             ) : (
               <div className="flex items-baseline gap-2 flex-wrap">
@@ -211,7 +212,7 @@ export default function Goals() {
                 </span>
                 {hasMonthOverride && (
                   <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">
-                    Custom
+                    Własny
                   </span>
                 )}
               </div>
@@ -222,7 +223,7 @@ export default function Goals() {
               onClick={() => setEditBudget(true)}
               className="shrink-0 mt-0.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
             >
-              Edit
+              Edytuj
             </button>
           )}
         </div>
@@ -232,7 +233,7 @@ export default function Goals() {
             onClick={() => clearMonthlyBudgetOverride(viewMonth)}
             className="text-xs text-slate-500 hover:text-slate-300 mt-1 transition-colors"
           >
-            ↩ Reset to default
+↩ Przywróć domyślny
           </button>
         )}
 
@@ -243,7 +244,7 @@ export default function Goals() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">
-              Default (all other months)
+              Domyślny (wszystkie pozostałe miesiące)
             </p>
             {editDefault ? (
               <div className="flex gap-2 mt-1">
@@ -257,8 +258,8 @@ export default function Goals() {
                     className="w-36 rounded-xl border border-slate-700 bg-slate-800 py-1.5 pl-7 pr-4 text-lg font-bold text-slate-100 focus:border-green-500 focus:outline-none"
                   />
                 </div>
-                <Button size="sm" onClick={handleSaveDefault}>Save</Button>
-                <Button size="sm" variant="ghost" onClick={() => setEditDefault(false)}>Cancel</Button>
+                <Button size="sm" onClick={handleSaveDefault}>Zapisz</Button>
+                <Button size="sm" variant="ghost" onClick={() => setEditDefault(false)}>Anuluj</Button>
               </div>
             ) : (
               <span className="text-2xl font-bold text-slate-400">
@@ -271,7 +272,7 @@ export default function Goals() {
               onClick={() => setEditDefault(true)}
               className="shrink-0 text-xs text-slate-500 hover:text-slate-300 transition-colors"
             >
-              Edit
+              Edytuj
             </button>
           )}
         </div>
@@ -280,13 +281,13 @@ export default function Goals() {
       {/* Budget Blueprint */}
       <Card>
         <div className="flex items-center justify-between mb-1">
-          <h3 className="text-sm font-medium text-slate-400">Budget Blueprint</h3>
+          <h3 className="text-sm font-medium text-slate-400">Schemat budżetu</h3>
           <span className="text-xs text-slate-500">
-            Based on {formatCurrency(monthlyBudget)}
+            Na podstawie {formatCurrency(monthlyBudget)}
           </span>
         </div>
         <p className="text-xs text-slate-500 mb-4">
-          Pick a split to instantly set your group limits for {format(viewDate, 'MMMM')}.
+          Wybierz podział, aby od razu ustawić limity grup na {format(viewDate, 'LLLL', { locale: pl })}.
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[...BUDGET_BLUEPRINTS, ...customBlueprints].map((bp) => {
@@ -305,7 +306,7 @@ export default function Goals() {
                     <span className="text-sm font-bold text-slate-100">{bp.name}</span>
                     {isCustom && (
                       <span className="text-[10px] font-medium text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded-full leading-none">
-                        Custom
+                        Własny
                       </span>
                     )}
                   </div>
@@ -322,7 +323,7 @@ export default function Goals() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: '#eab308' }} />
-                        <span className="text-xs text-slate-400">Needs</span>
+                        <span className="text-xs text-slate-400">Potrzeby</span>
                       </div>
                       <div className="text-right">
                         <span className="text-xs font-medium text-slate-200">{formatCurrency(needsAmt)}</span>
@@ -332,7 +333,7 @@ export default function Goals() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: '#f97316' }} />
-                        <span className="text-xs text-slate-400">Wants</span>
+                        <span className="text-xs text-slate-400">Zachcianki</span>
                       </div>
                       <div className="text-right">
                         <span className="text-xs font-medium text-slate-200">{formatCurrency(wantsAmt)}</span>
@@ -342,7 +343,7 @@ export default function Goals() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: '#3b82f6' }} />
-                        <span className="text-xs text-slate-400">Savings</span>
+                        <span className="text-xs text-slate-400">Oszczędności</span>
                       </div>
                       <div className="text-right">
                         <span className="text-xs font-medium text-slate-200">{formatCurrency(savingsAmt)}</span>
@@ -357,7 +358,7 @@ export default function Goals() {
                   <button
                     onClick={(e) => { e.stopPropagation(); deleteCustomBlueprint(bp.id) }}
                     className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-slate-700 text-slate-400 hover:bg-red-900/60 hover:text-red-400 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                    title="Remove"
+                    title="Usuń"
                   >
                     ×
                   </button>
@@ -372,26 +373,26 @@ export default function Goals() {
             className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-green-500/40 bg-green-500/5 p-3 text-green-400 hover:border-green-500/70 hover:bg-green-500/10 transition-colors min-h-[130px]"
           >
             <span className="text-2xl leading-none">+</span>
-            <span className="text-xs font-medium">Custom split</span>
+            <span className="text-xs font-medium">Własny podział</span>
           </button>
         </div>
       </Card>
 
       {/* Add Custom Blueprint Modal */}
-      <Modal open={showBlueprintModal} onClose={() => setShowBlueprintModal(false)} title="Add Custom Blueprint">
+      <Modal open={showBlueprintModal} onClose={() => setShowBlueprintModal(false)} title="Dodaj własny schemat">
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Name</label>
+            <label className="mb-1 block text-sm text-slate-400">Nazwa</label>
             <input
               type="text"
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
-              placeholder="e.g. Aggressive savings"
+              placeholder="np. Agresywne oszczędzanie"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-slate-400">Percentages (must total 100%)</label>
+            <label className="mb-1 block text-sm text-slate-400">Procenty (muszą sumować się do 100%)</label>
             <div className="grid grid-cols-3 gap-2">
               <div>
                 <input
@@ -401,10 +402,10 @@ export default function Goals() {
                   step="1"
                   value={customNeeds}
                   onChange={(e) => setCustomNeeds(e.target.value)}
-                  placeholder="Needs"
+                  placeholder="Potrzeby"
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 focus:border-green-500 focus:outline-none"
                 />
-                <p className="text-xs text-slate-500 mt-0.5">Needs %</p>
+                <p className="text-xs text-slate-500 mt-0.5">Potrzeby %</p>
               </div>
               <div>
                 <input
@@ -414,10 +415,10 @@ export default function Goals() {
                   step="1"
                   value={customWants}
                   onChange={(e) => setCustomWants(e.target.value)}
-                  placeholder="Wants"
+                  placeholder="Zachcianki"
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 focus:border-green-500 focus:outline-none"
                 />
-                <p className="text-xs text-slate-500 mt-0.5">Wants %</p>
+                <p className="text-xs text-slate-500 mt-0.5">Zachcianki %</p>
               </div>
               <div>
                 <input
@@ -427,14 +428,14 @@ export default function Goals() {
                   step="1"
                   value={customSavings}
                   onChange={(e) => setCustomSavings(e.target.value)}
-                  placeholder="Savings"
+                  placeholder="Oszczędności"
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 focus:border-green-500 focus:outline-none"
                 />
-                <p className="text-xs text-slate-500 mt-0.5">Savings %</p>
+                <p className="text-xs text-slate-500 mt-0.5">Oszczędności %</p>
               </div>
             </div>
             <p className={`text-xs mt-1 ${Math.abs(customBlueprintTotal() - 100) < 0.5 ? 'text-green-400' : 'text-slate-500'}`}>
-              Total: {customBlueprintTotal().toFixed(0)}%
+              Łącznie: {customBlueprintTotal().toFixed(0)}%
             </p>
           </div>
           <Button
@@ -442,7 +443,7 @@ export default function Goals() {
             className="w-full"
             disabled={!customName.trim() || Math.abs(customBlueprintTotal() - 100) > 0.5}
           >
-            Add Blueprint
+            Dodaj schemat
           </Button>
         </div>
       </Modal>
@@ -450,10 +451,10 @@ export default function Goals() {
       {/* Group-level goals */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">By Category Group</h2>
+          <h2 className="text-lg font-semibold">Według grup kategorii</h2>
           {goals.filter(g => g.group).length === 0 && (
             <Button size="sm" variant="ghost" onClick={() => copyFromMonth(prevMonth)}>
-              Copy from {prevLabel}
+              Kopiuj z: {prevLabel}
             </Button>
           )}
         </div>
@@ -497,9 +498,9 @@ export default function Goals() {
                         <button
                           onClick={(e) => { e.stopPropagation(); startEditGroup(group, limit) }}
                           className="text-xs text-green-400 hover:text-green-300 shrink-0"
-                          title="Edit limit"
+                          title="Edytuj limit"
                         >
-                          Edit
+                          Edytuj
                         </button>
                       )}
                     </div>
@@ -520,10 +521,10 @@ export default function Goals() {
                       />
                     </div>
                     <Button size="sm" onClick={() => saveGroupGoal(group)} disabled={!groupLimitInput}>
-                      Save
+                      Zapisz
                     </Button>
                     <Button size="sm" variant="ghost" onClick={cancelEditGroup}>
-                      Cancel
+                      Anuluj
                     </Button>
                   </div>
                 ) : limit > 0 ? (
@@ -539,7 +540,7 @@ export default function Goals() {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-6 gap-2 text-slate-500">
                     <Icon name="Pencil" size={28} className="text-slate-500" />
-                    <span className="text-xs font-medium">Set limit</span>
+                    <span className="text-xs font-medium">Ustaw limit</span>
                   </div>
                 )}
               </div>
@@ -570,7 +571,7 @@ export default function Goals() {
                   onClick={(e) => { e.stopPropagation(); goal.id && deleteGoal(goal.id) }}
                   className="mt-2 text-xs text-red-400 hover:text-red-300"
                 >
-                  Remove goal
+                  Usuń cel
                 </button>
               )}
             </Card>
@@ -581,7 +582,7 @@ export default function Goals() {
       {/* Per-category goals */}
       {goals.filter((g) => g.categoryId).length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Category Goals</h2>
+          <h2 className="text-lg font-semibold">Cele kategorii</h2>
           {goals
             .filter((g) => g.categoryId)
             .map((goal) => {
@@ -614,7 +615,7 @@ export default function Goals() {
                     onClick={() => goal.id && deleteGoal(goal.id)}
                     className="mt-2 text-xs text-red-400 hover:text-red-300"
                   >
-                    Remove goal
+                    Usuń cel
                   </button>
                 </Card>
               )
@@ -623,7 +624,7 @@ export default function Goals() {
       )}
 
       {/* Add Goal Modal */}
-      <Modal open={showModal} onClose={() => setShowModal(false)} title="Add Budget Goal">
+      <Modal open={showModal} onClose={() => setShowModal(false)} title="Dodaj cel budżetowy">
         <div className="space-y-4">
           <div className="flex gap-2 rounded-xl bg-slate-800 p-1">
             <button
@@ -632,7 +633,7 @@ export default function Goals() {
                 goalType === 'group' ? 'bg-slate-700 text-slate-100' : 'text-slate-400'
               }`}
             >
-              By Group
+              Według grupy
             </button>
             <button
               onClick={() => setGoalType('category')}
@@ -640,7 +641,7 @@ export default function Goals() {
                 goalType === 'category' ? 'bg-slate-700 text-slate-100' : 'text-slate-400'
               }`}
             >
-              By Category
+              Według kategorii
             </button>
           </div>
 
@@ -665,7 +666,7 @@ export default function Goals() {
               onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 focus:border-green-500 focus:outline-none"
             >
-              <option value="">Select category...</option>
+              <option value="">Wybierz kategorię...</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
@@ -674,7 +675,7 @@ export default function Goals() {
 
           <div>
             <label className="mb-1 block text-sm text-slate-400">
-              Monthly Limit
+              Limit miesięczny
             </label>
             <input
               type="number"
@@ -687,7 +688,7 @@ export default function Goals() {
           </div>
 
           <Button onClick={handleAddGoal} className="w-full" disabled={!limitAmount}>
-            Add Goal
+            Dodaj cel
           </Button>
         </div>
       </Modal>

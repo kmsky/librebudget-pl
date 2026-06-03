@@ -44,21 +44,21 @@ export function RentAffordabilityCalculator() {
             <Home size={20} className="text-violet-400" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-semibold text-slate-200">Rent Affordability</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">Rent should not exceed 30% of net monthly income</p>
+            <h2 className="text-base font-semibold text-slate-200">Zdolność wynajmu</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">Czynsz nie powinien przekraczać 30% miesięcznego dochodu netto</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Annual net income (zł)</label>
+            <label className="mb-1.5 block text-sm text-slate-400">Roczny dochód netto (zł)</label>
             <input inputMode="decimal" value={state.agi}
               onChange={(e) => updateState({ agi: e.target.value })}
               onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.agi) updateState({ agi: String(CAPS.agi) }) }}
               placeholder={budgetForPrefill > 0 ? String(Math.round(budgetForPrefill * 12)) : '96000'}
               className={INPUT} />
             {budgetForPrefill > 0 && (
-              <p className="text-xs text-slate-600 mt-1">~{formatCurrency(budgetForPrefill * 12)}/year from monthly budget</p>
+              <p className="text-xs text-slate-600 mt-1">~{formatCurrency(budgetForPrefill * 12)}/rok z miesięcznego budżetu</p>
             )}
           </div>
         </div>
@@ -71,19 +71,19 @@ export function RentAffordabilityCalculator() {
               <DollarSign size={20} className="text-green-400" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base font-semibold text-slate-200">Max Affordable Rent</h2>
-              <p className="text-xs text-slate-500 leading-relaxed">Based on the 30% DTI rule</p>
+              <h2 className="text-base font-semibold text-slate-200">Maksymalny czynsz w zasięgu</h2>
+              <p className="text-xs text-slate-500 leading-relaxed">Na podstawie reguły DTI 30%</p>
             </div>
           </div>
 
           <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-5">
             <div className="flex items-center gap-2 mb-1.5">
               <DollarSign size={14} className="text-green-400" />
-              <p className="text-xs text-slate-400">Maximum monthly rent</p>
+              <p className="text-xs text-slate-400">Maksymalny miesięczny czynsz</p>
             </div>
-            <p className="text-3xl font-bold text-green-400">{formatCurrency(result.maxMonthlyRent)}<span className="text-lg font-normal text-slate-500 ml-1">/mo</span></p>
+            <p className="text-3xl font-bold text-green-400">{formatCurrency(result.maxMonthlyRent)}<span className="text-lg font-normal text-slate-500 ml-1">/mies.</span></p>
             <p className="text-xs text-slate-500 mt-2">
-              {result.dtiPercent}% of {formatCurrency(result.monthlyGrossIncome)}/mo net income
+              {result.dtiPercent}% z {formatCurrency(result.monthlyGrossIncome)}/mies. dochodu netto
             </p>
           </div>
         </Card>

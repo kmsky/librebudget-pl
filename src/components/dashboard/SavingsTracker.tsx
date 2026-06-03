@@ -21,9 +21,9 @@ export function SavingsTracker({ saved, budget, income }: SavingsTrackerProps) {
   return (
     <Card>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-slate-400">Saved This Month</h3>
+        <h3 className="text-sm font-medium text-slate-400">Zaoszczędzono w tym miesiącu</h3>
         <span className={`text-xs font-medium ${meetsGoal ? 'text-green-400' : 'text-slate-500'}`}>
-          Goal: {GOAL_PCT}%+ of income
+          Cel: {GOAL_PCT}%+ przychodu
         </span>
       </div>
 
@@ -34,14 +34,14 @@ export function SavingsTracker({ saved, budget, income }: SavingsTrackerProps) {
           </p>
           {income > 0 && (
             <p className="text-xs text-slate-500 mt-0.5">
-              {percentOfIncome.toFixed(1)}% of income
+              {percentOfIncome.toFixed(1)}% przychodu
             </p>
           )}
         </div>
         {budget > 0 && saved > 0 && (
           <div className="text-right">
             <p className="text-sm font-medium text-slate-300">{formatCurrency(spendingBudget)}</p>
-            <p className="text-xs text-slate-500">spending left</p>
+            <p className="text-xs text-slate-500">pozostało na wydatki</p>
           </div>
         )}
       </div>
@@ -57,10 +57,10 @@ export function SavingsTracker({ saved, budget, income }: SavingsTrackerProps) {
           <div className="flex justify-between text-xs">
             <span className="text-slate-600">0%</span>
             {meetsGoal ? (
-              <span className="text-green-400 font-medium">Goal reached!</span>
+              <span className="text-green-400 font-medium">Cel osiągnięty!</span>
             ) : (
               <span className="text-slate-500">
-                {formatCurrency(shortfall)} more to reach {GOAL_PCT}%
+                jeszcze {formatCurrency(shortfall)} do {GOAL_PCT}%
               </span>
             )}
             <span className="text-slate-600">{GOAL_PCT}%</span>

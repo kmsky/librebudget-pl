@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { format, parseISO } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import { Search, SlidersHorizontal, ChevronDown, Trash2, X } from 'lucide-react'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
@@ -96,8 +97,8 @@ export default function Transactions() {
   const handleDelete = async (tx: Transaction) => {
     if (!tx.id) return
     await deleteTransaction(tx.id)
-    showToast('Transaction deleted', {
-      label: 'Undo',
+    showToast('Transakcja usunięta', {
+      label: 'Cofnij',
       onClick: async () => {
         const { id: _id, ...rest } = tx
         await addTransaction(rest)
@@ -121,15 +122,15 @@ export default function Transactions() {
     <div className="space-y-5">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">Transactions</h1>
+        <h1 className="text-2xl font-bold">Transakcje</h1>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-400">{filtered.length} entries</span>
+          <span className="text-sm text-slate-400">{filtered.length} pozycji</span>
           <Link
             to="/add"
             className="inline-flex items-center gap-1.5 rounded-xl bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
           >
             <Icon name="Plus" size={16} />
-            Add
+            Dodaj
           </Link>
         </div>
       </div>
@@ -139,7 +140,7 @@ export default function Transactions() {
         <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" strokeWidth={1.75} />
         <input
           type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search description, notes, category…"
+          placeholder="Szukaj w opisie, notatkach, kategorii…"
           className="w-full rounded-xl border border-slate-800 bg-slate-900 py-2.5 pl-10 pr-10 text-sm text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
         />
         {search && (
@@ -154,8 +155,8 @@ export default function Transactions() {
         {(['all', 'expense', 'income'] as const).map((f) => (
           <button
             key={f} onClick={() => setFilter(f)}
-            className={`flex-1 rounded-lg py-1.5 text-sm font-medium capitalize transition-colors ${filter === f ? 'bg-slate-800 text-slate-100' : 'text-slate-500 hover:text-slate-300'}`}
-          >{f}</button>
+            className={`flex-1 rounded-lg py-1.5 text-sm font-medium transition-colors ${filter === f ? 'bg-slate-800 text-slate-100' : 'text-slate-500 hover:text-slate-300'}`}
+          >{f === 'all' ? 'Wszystkie' : f === 'expense' ? 'Wydatki' : 'Przychody'}</button>
         ))}
       </div>
 
@@ -165,8 +166,8 @@ export default function Transactions() {
         className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-300 transition-colors"
       >
         <SlidersHorizontal size={14} strokeWidth={1.75} />
-        <span>Filters</span>
-        {hasActiveFilters && <span className="rounded-full bg-green-500/20 px-1.5 py-px text-xs font-medium text-green-400">active</span>}
+        <span>Filtry</span>
+        {hasActiveFilters && <span className="rounded-full bg-green-500/20 px-1.5 py-px text-xs font-medium text-green-400">aktywne</span>}
         {hasActiveFilters && (
           <button
             onClick={(e) => { e.stopPropagation(); clearFilters() }}
@@ -181,33 +182,33 @@ export default function Transactions() {
         <Card className="space-y-3 !p-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-1 block text-xs text-slate-500">From</label>
+              <label className="mb-1 block text-xs text-slate-500">Od</label>
               <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
                 className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-slate-500">To</label>
+              <label className="mb-1 block text-xs text-slate-500">Do</label>
               <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}
                 className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-1 block text-xs text-slate-500">Min Amount</label>
+              <label className="mb-1 block text-xs text-slate-500">Kwota min.</label>
               <input inputMode="decimal" value={amountMin} onChange={(e) => setAmountMin(e.target.value)}
-                placeholder="$0" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-600 focus:border-green-500 focus:outline-none" />
+                placeholder="0 zł" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-600 focus:border-green-500 focus:outline-none" />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-slate-500">Max Amount</label>
+              <label className="mb-1 block text-xs text-slate-500">Kwota maks.</label>
               <input inputMode="decimal" value={amountMax} onChange={(e) => setAmountMax(e.target.value)}
-                placeholder="$∞" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-600 focus:border-green-500 focus:outline-none" />
+                placeholder="∞ zł" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-600 focus:border-green-500 focus:outline-none" />
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-xs text-slate-500">Category</label>
+            <label className="mb-1 block text-xs text-slate-500">Kategoria</label>
             <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
               className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none">
-              <option value="all">All categories</option>
+              <option value="all">Wszystkie kategorie</option>
               {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
@@ -218,7 +219,7 @@ export default function Transactions() {
       {sortedDates.length === 0 && (
         <Card className="py-10 text-center">
           <p className="text-slate-400">
-            {hasActiveFilters ? 'No matching transactions.' : 'No transactions yet. Start by adding one!'}
+            {hasActiveFilters ? 'Brak pasujących transakcji.' : 'Brak transakcji. Zacznij od dodania pierwszej!'}
           </p>
         </Card>
       )}
@@ -230,7 +231,7 @@ export default function Transactions() {
           {/* Date header */}
           <div className="flex items-center gap-2 px-1">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {format(parseISO(date), 'EEE, MMM d, yyyy')}
+              {format(parseISO(date), 'EEE, d MMM yyyy', { locale: pl })}
             </h3>
             <span className="text-xs text-slate-700">·</span>
             <span className="text-xs text-slate-600">{grouped[date].length}</span>
@@ -267,7 +268,7 @@ export default function Transactions() {
                     {/* Description + category chip */}
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium leading-snug text-slate-200">
-                        {tx.description || cat?.name || 'Transaction'}
+                        {tx.description || cat?.name || 'Transakcja'}
                       </p>
                       {cat && (
                         <span
@@ -310,14 +311,14 @@ export default function Transactions() {
                           className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-700 py-2 text-sm font-medium text-slate-200 transition-colors active:bg-slate-600"
                         >
                           <Icon name="Pencil" size={14} />
-                          Edit
+                          Edytuj
                         </button>
                         <button
                           onClick={() => handleDelete(tx)}
                           className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-700 py-2 text-sm font-medium text-red-400 transition-colors active:bg-slate-600"
                         >
                           <Trash2 size={14} strokeWidth={1.75} />
-                          Delete
+                          Usuń
                         </button>
                       </div>
                     </div>
@@ -331,10 +332,10 @@ export default function Transactions() {
       </div>
 
       {/* Edit modal */}
-      <Modal open={!!editingTx} onClose={() => setEditingTx(null)} title="Edit Transaction">
+      <Modal open={!!editingTx} onClose={() => setEditingTx(null)} title="Edytuj transakcję">
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-400">Category</label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-400">Kategoria</label>
             <select
               value={editCategoryId ?? ''}
               onChange={(e) => setEditCategoryId(e.target.value ? Number(e.target.value) : null)}
@@ -374,26 +375,26 @@ export default function Transactions() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-400">Amount</label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-400">Kwota</label>
             <input inputMode="decimal" value={editAmount} onChange={(e) => setEditAmount(e.target.value)}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-400">Description</label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-400">Opis</label>
             <input type="text" value={editDescription} onChange={(e) => setEditDescription(e.target.value)}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-400">Note</label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-400">Notatka</label>
             <textarea value={editNote} onChange={(e) => setEditNote(e.target.value)} rows={2}
               className="w-full resize-none rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
           </div>
 
           <div className="flex gap-3">
-            <Button variant="secondary" onClick={() => setEditingTx(null)} className="flex-1">Cancel</Button>
-            <Button onClick={saveEdit} className="flex-1" disabled={editCategoryId == null}>Save</Button>
+            <Button variant="secondary" onClick={() => setEditingTx(null)} className="flex-1">Anuluj</Button>
+            <Button onClick={saveEdit} className="flex-1" disabled={editCategoryId == null}>Zapisz</Button>
           </div>
         </div>
       </Modal>

@@ -31,9 +31,9 @@ export function CategoryDonut({ breakdown }: CategoryDonutProps) {
   if (total === 0) {
     return (
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-slate-400">Spending Breakdown</h3>
+        <h3 className="text-sm font-medium text-slate-400">Podział wydatków</h3>
         <div className="flex h-40 items-center justify-center text-sm text-slate-500">
-          No expenses yet this period
+          Brak wydatków w tym okresie
         </div>
       </div>
     )

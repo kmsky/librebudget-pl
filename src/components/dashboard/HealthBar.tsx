@@ -17,26 +17,26 @@ export function HealthBar({ spent, budget, saved = 0 }: HealthBarProps) {
 
   const label =
     ratio <= 0.5
-      ? 'Looking great!'
+      ? 'Świetnie ci idzie!'
       : ratio <= 0.75
-        ? 'On track'
+        ? 'Na dobrej drodze'
         : ratio <= 0.9
-          ? 'Getting close...'
+          ? 'Robi się ciasno...'
           : ratio <= 1
-            ? 'Almost at limit!'
-            : 'Over budget!'
+            ? 'Prawie na limicie!'
+            : 'Przekroczony budżet!'
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium text-slate-400">Budget Health</h3>
+          <h3 className="text-sm font-medium text-slate-400">Kondycja budżetu</h3>
           <p className="text-lg font-bold" style={{ color }}>
             {label}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-slate-400">Remaining</p>
+          <p className="text-sm text-slate-400">Pozostało</p>
           <p className="text-lg font-bold text-slate-100">
             {formatCurrency(remaining)}
           </p>
@@ -61,13 +61,13 @@ export function HealthBar({ spent, budget, saved = 0 }: HealthBarProps) {
       </div>
 
       <div className="flex justify-between text-xs text-slate-500">
-        <span>{Math.round(percentage)}% used</span>
-        <span>{Math.round(100 - Math.min(percentage, 100))}% left</span>
+        <span>{Math.round(percentage)}% wykorzystano</span>
+        <span>{Math.round(100 - Math.min(percentage, 100))}% pozostało</span>
       </div>
 
       {saved > 0 && (
         <p className="text-xs text-blue-400 text-center">
-          {formatCurrency(saved)} saved off budget · spending budget adjusted to {formatCurrency(budget)}
+          {formatCurrency(saved)} odłożone poza budżetem · budżet wydatków skorygowany do {formatCurrency(budget)}
         </p>
       )}
     </div>

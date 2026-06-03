@@ -18,9 +18,9 @@ export function TopOffenders({ categorySpending }: TopOffendersProps) {
   if (sorted.length === 0) {
     return (
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-slate-400">Top Expenses</h3>
+        <h3 className="text-sm font-medium text-slate-400">Największe wydatki</h3>
         <p className="text-sm text-slate-500 py-4 text-center">
-          No expense data yet
+          Brak danych o wydatkach
         </p>
       </div>
     )

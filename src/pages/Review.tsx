@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
+import { pl } from 'date-fns/locale'
 import {
   BarChart,
   Bar,
@@ -25,6 +26,15 @@ interface MonthData {
   income: number
   expenses: number
   groupBreakdown: Record<CategoryGroup, number>
+}
+
+// Polish plural form for "zmiana na plus" (poprawa)
+function pluralizePoprawy(n: number): string {
+  if (n === 1) return 'poprawę'
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return 'poprawy'
+  return 'poprawek'
 }
 
 export default function Review() {
@@ -54,7 +64,7 @@ export default function Review() {
 
       data.push({
         month: monthStr,
-        label: format(date, 'MMM'),
+        label: format(date, 'LLL', { locale: pl }),
         income: sumByType(txs, 'income'),
         expenses: sumByType(txs, 'expense'),
         groupBreakdown: breakdown,
@@ -75,12 +85,12 @@ export default function Review() {
 
     if (expenseChange < 0) {
       improvements.push({
-        text: `You spent ${Math.abs(expenseChange).toFixed(0)}% less this month compared to last month!`,
+        text: `Wydałeś o ${Math.abs(expenseChange).toFixed(0)}% mniej niż w zeszłym miesiącu!`,
         positive: true,
       })
     } else if (expenseChange > 0) {
       improvements.push({
-        text: `Spending increased by ${expenseChange.toFixed(0)}% compared to last month.`,
+        text: `Wydatki wzrosły o ${expenseChange.toFixed(0)}% względem zeszłego miesiąca.`,
         positive: false,
       })
     }
@@ -92,7 +102,7 @@ export default function Review() {
       if (prevAmount > 0 && currAmount < prevAmount) {
         const pct = (((prevAmount - currAmount) / prevAmount) * 100).toFixed(0)
         improvements.push({
-          text: `${GROUP_LABELS[group]} spending dropped by ${pct}%`,
+          text: `Wydatki w grupie „${GROUP_LABELS[group]}” spadły o ${pct}%`,
           positive: true,
         })
       }
@@ -100,7 +110,7 @@ export default function Review() {
 
     if (current.income > previous.income && previous.income > 0) {
       improvements.push({
-        text: `Income grew by ${(((current.income - previous.income) / previous.income) * 100).toFixed(0)}%`,
+        text: `Przychód wzrósł o ${(((current.income - previous.income) / previous.income) * 100).toFixed(0)}%`,
         positive: true,
       })
     }
@@ -112,7 +122,7 @@ export default function Review() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-slate-400">Loading review data...</p>
+        <p className="text-slate-400">Ładowanie danych przeglądu...</p>
       </div>
     )
   }
@@ -120,9 +130,9 @@ export default function Review() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Monthly Review</h1>
+        <h1 className="text-2xl font-bold">Przegląd miesiąca</h1>
         <p className="text-sm text-slate-400">
-          {format(new Date(), 'MMMM yyyy')} — Last 6 months
+          {format(new Date(), 'LLLL yyyy', { locale: pl })} — ostatnie 6 miesięcy
         </p>
       </div>
 
@@ -130,10 +140,10 @@ export default function Review() {
       {positiveCount >= 2 && (
         <div className="rounded-2xl border border-green-800 bg-green-900/20 p-5">
           <h3 className="mb-1 text-lg font-bold text-green-400">
-            Great progress!
+            Świetne postępy!
           </h3>
           <p className="text-sm text-green-300/80">
-            You have {positiveCount} improvements this month. Keep up the good work!
+            W tym miesiącu masz {positiveCount} {pluralizePoprawy(positiveCount)} na plus. Tak trzymaj!
           </p>
         </div>
       )}
@@ -141,7 +151,7 @@ export default function Review() {
       {/* Income vs Expenses chart */}
       <Card>
         <h3 className="mb-4 text-sm font-medium text-slate-400">
-          Income vs Expenses
+          Przychody vs wydatki
         </h3>
         {months.some((m) => m.income > 0 || m.expenses > 0) ? (
           <div className="h-64">
@@ -156,7 +166,7 @@ export default function Review() {
                 <YAxis
                   tick={{ fill: '#94a3b8', fontSize: 12 }}
                   axisLine={{ stroke: '#334155' }}
-                  tickFormatter={(v) => `$${v}`}
+                  tickFormatter={(v) => `${v} zł`}
                 />
                 <Tooltip
                   contentStyle={{
@@ -167,14 +177,14 @@ export default function Review() {
                   }}
                   formatter={(value) => formatCurrency(value as number)}
                 />
-                <Bar dataKey="income" fill="#22c55e" radius={[4, 4, 0, 0]} name="Income" />
-                <Bar dataKey="expenses" fill="#f97316" radius={[4, 4, 0, 0]} name="Expenses" />
+                <Bar dataKey="income" fill="#22c55e" radius={[4, 4, 0, 0]} name="Przychód" />
+                <Bar dataKey="expenses" fill="#f97316" radius={[4, 4, 0, 0]} name="Wydatki" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
           <p className="text-center text-sm text-slate-500 py-8">
-            Add some transactions to see your trends
+            Dodaj transakcje, aby zobaczyć swoje trendy
           </p>
         )}
       </Card>
@@ -182,7 +192,7 @@ export default function Review() {
       {/* Group breakdown over time */}
       <Card>
         <h3 className="mb-4 text-sm font-medium text-slate-400">
-          Spending by Group
+          Wydatki według grup
         </h3>
         {months.some((m) => m.expenses > 0) ? (
           <div className="h-64">
@@ -197,7 +207,7 @@ export default function Review() {
                 <YAxis
                   tick={{ fill: '#94a3b8', fontSize: 12 }}
                   axisLine={{ stroke: '#334155' }}
-                  tickFormatter={(v) => `$${v}`}
+                  tickFormatter={(v) => `${v} zł`}
                 />
                 <Tooltip
                   contentStyle={{
@@ -212,21 +222,21 @@ export default function Review() {
                   dataKey="groupBreakdown.needs"
                   stackId="a"
                   fill={GROUP_COLORS.needs}
-                  name="Needs"
+                  name="Potrzeby"
                   radius={[0, 0, 0, 0]}
                 />
                 <Bar
                   dataKey="groupBreakdown.wants"
                   stackId="a"
                   fill={GROUP_COLORS.wants}
-                  name="Wants"
+                  name="Zachcianki"
                   radius={[0, 0, 0, 0]}
                 />
                 <Bar
                   dataKey="groupBreakdown.savings"
                   stackId="a"
                   fill={GROUP_COLORS.savings}
-                  name="Savings"
+                  name="Oszczędności"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -234,7 +244,7 @@ export default function Review() {
           </div>
         ) : (
           <p className="text-center text-sm text-slate-500 py-8">
-            No expense data to show yet
+            Brak danych o wydatkach
           </p>
         )}
       </Card>
@@ -242,7 +252,7 @@ export default function Review() {
       {/* On track */}
       <Card>
         <h3 className="mb-3 text-sm font-medium text-slate-400">
-          This Month at a Glance
+          Ten miesiąc w skrócie
         </h3>
         {current ? (
           <div className="space-y-3">
@@ -256,17 +266,17 @@ export default function Review() {
               </div>
               <div>
                 <p className="font-medium text-slate-200">
-                  {onTrack ? "You're on track!" : 'Spending exceeds income'}
+                  {onTrack ? 'Jesteś na dobrej drodze!' : 'Wydatki przewyższają przychody'}
                 </p>
                 <p className="text-sm text-slate-400">
-                  Income: {formatCurrency(current.income)} · Expenses:{' '}
+                  Przychód: {formatCurrency(current.income)} · Wydatki:{' '}
                   {formatCurrency(current.expenses)}
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No data for this month yet</p>
+          <p className="text-sm text-slate-500">Brak danych za ten miesiąc</p>
         )}
       </Card>
 
@@ -274,7 +284,7 @@ export default function Review() {
       {improvements.length > 0 && (
         <Card>
           <h3 className="mb-3 text-sm font-medium text-slate-400">
-            Highlights
+            Najważniejsze
           </h3>
           <div className="space-y-2">
             {improvements.map((item, i) => (

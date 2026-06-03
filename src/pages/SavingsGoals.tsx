@@ -39,7 +39,7 @@ function SavingsCard({
           <div>
             <h3 className="font-medium text-slate-200">{item.name}</h3>
             <p className="text-xs text-slate-500">
-              {item.type === 'emergency_fund' ? 'Emergency Fund' : item.type === 'savings_account' ? 'Savings Account' : 'Savings Goal'}
+              {item.type === 'emergency_fund' ? 'Fundusz awaryjny' : item.type === 'savings_account' ? 'Konto oszczędnościowe' : 'Cel oszczędnościowy'}
             </p>
           </div>
         </div>
@@ -66,8 +66,8 @@ function SavingsCard({
       )}
 
       <div className="flex gap-2">
-        <Button size="sm" onClick={onAddFunds} className="flex-1">+ Add Funds</Button>
-        <Button size="sm" variant="danger" onClick={onDelete}>Delete</Button>
+        <Button size="sm" onClick={onAddFunds} className="flex-1">+ Wpłać środki</Button>
+        <Button size="sm" variant="danger" onClick={onDelete}>Usuń</Button>
       </div>
     </Card>
   )
@@ -138,19 +138,19 @@ export default function SavingsGoals() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">Savings</h1>
+            <h1 className="text-2xl font-bold">Oszczędności</h1>
           </div>
-          <p className="text-sm text-slate-400">Accounts, goals & emergency funds</p>
+          <p className="text-sm text-slate-400">Konta, cele i fundusz awaryjny</p>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="secondary" onClick={() => { setShowModal('emergency_fund'); setIcon('Shield'); resetForm() }}>
-            + Emergency Fund
+            + Fundusz awaryjny
           </Button>
           <Button size="sm" variant="secondary" onClick={() => { setShowModal('savings_account'); setIcon('Building2'); resetForm() }}>
-            + Account
+            + Konto
           </Button>
           <Button onClick={() => { setShowModal('goal'); setIcon('Target'); resetForm() }}>
-            + Goal
+            + Cel
           </Button>
         </div>
       </div>
@@ -158,13 +158,13 @@ export default function SavingsGoals() {
       {/* Total savings summary */}
       {hasAny && (
         <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4">
-          <p className="text-xs text-slate-400 mb-1">Total Saved</p>
+          <p className="text-xs text-slate-400 mb-1">Łącznie zaoszczędzone</p>
           <p className="text-3xl font-bold text-blue-400">{formatCurrency(grandTotal)}</p>
           {(totalEmergency > 0 || totalSavingsAccounts > 0 || totalGoals > 0) && (
             <div className="flex gap-4 mt-2 text-xs text-slate-500">
-              {totalEmergency > 0 && <span>Emergency: <span className="text-slate-300">{formatCurrency(totalEmergency)}</span></span>}
-              {totalSavingsAccounts > 0 && <span>Accounts: <span className="text-slate-300">{formatCurrency(totalSavingsAccounts)}</span></span>}
-              {totalGoals > 0 && <span>Goals: <span className="text-slate-300">{formatCurrency(totalGoals)}</span></span>}
+              {totalEmergency > 0 && <span>Fundusz awaryjny: <span className="text-slate-300">{formatCurrency(totalEmergency)}</span></span>}
+              {totalSavingsAccounts > 0 && <span>Konta: <span className="text-slate-300">{formatCurrency(totalSavingsAccounts)}</span></span>}
+              {totalGoals > 0 && <span>Cele: <span className="text-slate-300">{formatCurrency(totalGoals)}</span></span>}
             </div>
           )}
         </div>
@@ -173,7 +173,7 @@ export default function SavingsGoals() {
       {!hasAny && (
         <Card>
           <p className="text-center text-slate-400 py-8">
-            Add savings accounts, goals, or an emergency fund to get started.
+            Dodaj konta oszczędnościowe, cele lub fundusz awaryjny, aby zacząć.
           </p>
         </Card>
       )}
@@ -182,7 +182,7 @@ export default function SavingsGoals() {
       {emergencyFunds.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-slate-300">Emergency Funds</h2>
+            <h2 className="text-sm font-semibold text-slate-300">Fundusz awaryjny</h2>
             <span className="text-xs text-blue-400">{formatCurrency(totalEmergency)}</span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -201,7 +201,7 @@ export default function SavingsGoals() {
       {savingsAccounts.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-slate-300">Savings Accounts</h2>
+            <h2 className="text-sm font-semibold text-slate-300">Konta oszczędnościowe</h2>
             <span className="text-xs text-blue-400">{formatCurrency(totalSavingsAccounts)}</span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -220,7 +220,7 @@ export default function SavingsGoals() {
       {goalsOnly.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-slate-300">Savings Goals</h2>
+            <h2 className="text-sm font-semibold text-slate-300">Cele oszczędnościowe</h2>
             <span className="text-xs text-blue-400">{formatCurrency(totalGoals)}</span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -238,7 +238,7 @@ export default function SavingsGoals() {
                       <div>
                         <h3 className="font-medium text-slate-200">{goal.name}</h3>
                         <p className="text-xs text-slate-500">
-                          {completed ? 'Goal reached! 🎉' : daysLeft > 0 ? `${daysLeft} days left` : 'Past deadline'}
+                          {completed ? 'Cel osiągnięty! 🎉' : daysLeft > 0 ? `${daysLeft} dni do terminu` : 'Po terminie'}
                         </p>
                       </div>
                     </div>
@@ -263,10 +263,10 @@ export default function SavingsGoals() {
                   <div className="flex gap-2">
                     {!completed && (
                       <Button size="sm" onClick={() => { setShowFundModal(goal.id!); setFundAmount(''); setAffectsBudgetFund(true) }} className="flex-1">
-                        + Add Funds
+                        + Wpłać środki
                       </Button>
                     )}
-                    <Button size="sm" variant="danger" onClick={() => goal.id && deleteGoal(goal.id)}>Delete</Button>
+                    <Button size="sm" variant="danger" onClick={() => goal.id && deleteGoal(goal.id)}>Usuń</Button>
                   </div>
                 </Card>
               )
@@ -276,10 +276,10 @@ export default function SavingsGoals() {
       )}
 
       {/* Add Funds Modal */}
-      <Modal open={!!showFundModal} onClose={() => setShowFundModal(null)} title="Add Funds">
+      <Modal open={!!showFundModal} onClose={() => setShowFundModal(null)} title="Wpłać środki">
         <div className="space-y-4">
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Amount</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Kwota</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
               <input
@@ -293,18 +293,18 @@ export default function SavingsGoals() {
           <BudgetToggle
             value={affectsBudgetFund}
             onChange={setAffectsBudgetFund}
-            label="Count as this month's savings contribution"
-            hint="Turn off if this money already existed and you're just recording it."
+            label="Zalicz jako tegomiesięczną wpłatę na oszczędności"
+            hint="Wyłącz, jeśli te pieniądze już wcześniej istniały i tylko je tu zapisujesz."
           />
-          <Button onClick={handleFund} className="w-full" disabled={!fundAmount}>Add Funds</Button>
+          <Button onClick={handleFund} className="w-full" disabled={!fundAmount}>Wpłać środki</Button>
         </div>
       </Modal>
 
       {/* New Savings Goal Modal */}
-      <Modal open={showModal === 'goal'} onClose={() => setShowModal(null)} title="New Savings Goal">
+      <Modal open={showModal === 'goal'} onClose={() => setShowModal(null)} title="Nowy cel oszczędnościowy">
         <div className="space-y-4">
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Icon</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Ikona</label>
             <div className="flex flex-wrap gap-1.5">
               {GOAL_ICONS.map((i) => (
                 <button key={i} onClick={() => setIcon(i)}
@@ -315,13 +315,13 @@ export default function SavingsGoals() {
             </div>
           </div>
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Name</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Nazwa</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Vacation Fund"
+              placeholder="np. Na wakacje"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
           </div>
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Target Amount</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Kwota docelowa</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
               <input inputMode="decimal" value={target} onChange={(e) => setTarget(e.target.value)}
@@ -330,21 +330,21 @@ export default function SavingsGoals() {
             </div>
           </div>
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Target Date</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Data docelowa</label>
             <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 focus:border-green-500 focus:outline-none" />
           </div>
           <Button onClick={handleAddGoal} className="w-full" disabled={!name.trim() || !target}>
-            Create Goal
+            Utwórz cel
           </Button>
         </div>
       </Modal>
 
       {/* Add Savings Account Modal */}
-      <Modal open={showModal === 'savings_account'} onClose={() => setShowModal(null)} title="Add Savings Account">
+      <Modal open={showModal === 'savings_account'} onClose={() => setShowModal(null)} title="Dodaj konto oszczędnościowe">
         <div className="space-y-4">
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Icon</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Ikona</label>
             <div className="flex flex-wrap gap-1.5">
               {ACCOUNT_ICONS.map((i) => (
                 <button key={i} onClick={() => setIcon(i)}
@@ -355,13 +355,13 @@ export default function SavingsGoals() {
             </div>
           </div>
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Name</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Nazwa</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Chase Savings"
+              placeholder="np. Konto oszczędnościowe mBank"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
           </div>
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Current Balance</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Obecne saldo</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
               <input inputMode="decimal" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)}
@@ -372,20 +372,20 @@ export default function SavingsGoals() {
           <BudgetToggle
             value={affectsBudgetCreate}
             onChange={setAffectsBudgetCreate}
-            label="Count initial balance as this month's savings"
-            hint="Turn off if this account already existed — the balance won't be added to this month's savings tracker."
+            label="Zalicz saldo początkowe do tegomiesięcznych oszczędności"
+            hint="Wyłącz, jeśli to konto już wcześniej istniało — saldo nie zostanie dodane do tegomiesięcznego śledzenia oszczędności."
           />
           <Button onClick={() => handleAddSavings('savings_account')} className="w-full" disabled={!name.trim() || !currentAmount}>
-            Add Account
+            Dodaj konto
           </Button>
         </div>
       </Modal>
 
       {/* Add Emergency Fund Modal */}
-      <Modal open={showModal === 'emergency_fund'} onClose={() => setShowModal(null)} title="Add Emergency Fund">
+      <Modal open={showModal === 'emergency_fund'} onClose={() => setShowModal(null)} title="Dodaj fundusz awaryjny">
         <div className="space-y-4">
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Icon</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Ikona</label>
             <div className="flex flex-wrap gap-1.5">
               {ACCOUNT_ICONS.map((i) => (
                 <button key={i} onClick={() => setIcon(i)}
@@ -396,13 +396,13 @@ export default function SavingsGoals() {
             </div>
           </div>
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Name</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Nazwa</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Emergency Fund"
+              placeholder="np. Fundusz awaryjny"
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
           </div>
           <div>
-            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Current Balance</label>
+            <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Obecne saldo</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
               <input inputMode="decimal" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)}
@@ -413,11 +413,11 @@ export default function SavingsGoals() {
           <BudgetToggle
             value={affectsBudgetCreate}
             onChange={setAffectsBudgetCreate}
-            label="Count initial balance as this month's savings"
-            hint="Turn off if this fund already existed — the balance won't be added to this month's savings tracker."
+            label="Zalicz saldo początkowe do tegomiesięcznych oszczędności"
+            hint="Wyłącz, jeśli ten fundusz już wcześniej istniał — saldo nie zostanie dodane do tegomiesięcznego śledzenia oszczędności."
           />
           <Button onClick={() => handleAddSavings('emergency_fund')} className="w-full" disabled={!name.trim() || !currentAmount}>
-            Add Emergency Fund
+            Dodaj fundusz awaryjny
           </Button>
         </div>
       </Modal>

@@ -1,6 +1,6 @@
 /**
  * Rent affordability using the 30% rule.
- * Max rent should not exceed 30% of gross monthly income.
+ * Max rent should not exceed 30% of net monthly income.
  */
 
 export interface RentAffordabilityInputs {

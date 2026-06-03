@@ -192,7 +192,7 @@ export default function Goals() {
             {editBudget ? (
               <div className="flex gap-2 mt-1">
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">zł</span>
                   <input
                     type="number"
                     value={budgetInput}
@@ -248,7 +248,7 @@ export default function Goals() {
             {editDefault ? (
               <div className="flex gap-2 mt-1">
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">zł</span>
                   <input
                     type="number"
                     value={defaultInput}
@@ -508,7 +508,7 @@ export default function Goals() {
                 {isEditing ? (
                   <div className="flex gap-2 mt-2" onClick={(e) => e.stopPropagation()}>
                     <div className="relative flex-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">zł</span>
                       <input
                         type="number"
                         step="0.01"

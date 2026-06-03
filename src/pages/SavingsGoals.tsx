@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button'
 import { Modal } from '../components/ui/Modal'
 import { useSavingsGoals } from '../hooks/useSavingsGoals'
 import { formatCurrency } from '../utils/calculations'
+import { parseLocaleAmount } from '../utils/sanitize'
 import type { SavingsGoal } from '../db/database'
 import { Icon, GOAL_ICONS, ACCOUNT_ICONS } from '../components/ui/Icon'
 import { BudgetToggle } from '../components/BudgetToggle'
@@ -103,7 +104,7 @@ export default function SavingsGoals() {
     if (!name.trim() || !target) return
     await addGoal({
       name: name.trim(), icon, type: 'goal',
-      targetAmount: parseFloat(target), currentAmount: 0,
+      targetAmount: parseLocaleAmount(target), currentAmount: 0,
       deadline: deadline || format(new Date(Date.now() + 365 * 86400000), 'yyyy-MM-dd'),
     })
     setShowModal(null); resetForm()
@@ -113,14 +114,14 @@ export default function SavingsGoals() {
     if (!name.trim() || !currentAmount) return
     await addSavings(type, {
       name: name.trim(), icon,
-      currentAmount: parseFloat(currentAmount),
+      currentAmount: parseLocaleAmount(currentAmount),
     }, affectsBudgetCreate)
     setShowModal(null); resetForm()
   }
 
   const handleFund = async () => {
     if (!fundAmount || !showFundModal) return
-    await addFunds(showFundModal, parseFloat(fundAmount), affectsBudgetFund)
+    await addFunds(showFundModal, parseLocaleAmount(fundAmount), affectsBudgetFund)
     setShowFundModal(null); setFundAmount(''); setAffectsBudgetFund(true)
   }
 
@@ -280,9 +281,9 @@ export default function SavingsGoals() {
           <div>
             <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Amount</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
               <input
-                type="number" step="0.01" value={fundAmount}
+                inputMode="decimal" value={fundAmount}
                 onChange={(e) => setFundAmount(e.target.value)}
                 placeholder="0.00" autoFocus
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
@@ -322,8 +323,8 @@ export default function SavingsGoals() {
           <div>
             <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Target Amount</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-              <input type="number" step="0.01" value={target} onChange={(e) => setTarget(e.target.value)}
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
+              <input inputMode="decimal" value={target} onChange={(e) => setTarget(e.target.value)}
                 placeholder="5000"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
             </div>
@@ -362,8 +363,8 @@ export default function SavingsGoals() {
           <div>
             <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Current Balance</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-              <input type="number" step="0.01" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)}
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
+              <input inputMode="decimal" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)}
                 placeholder="0.00"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
             </div>
@@ -403,8 +404,8 @@ export default function SavingsGoals() {
           <div>
             <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Current Balance</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-              <input type="number" step="0.01" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)}
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
+              <input inputMode="decimal" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)}
                 placeholder="0.00"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
             </div>

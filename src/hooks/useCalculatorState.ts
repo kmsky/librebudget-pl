@@ -42,10 +42,10 @@ const DEFAULT_STATE: CalculatorState = {
   currentAge: '',
   targetRetirementAge: 65,
   contributionAnnualIncrease: '0',
-  // Monte Carlo defaults
+  // Monte Carlo defaults (inflation tuned to Polish realities — higher and more volatile than the US)
   returnStdDev: '15',
-  inflationMean: '3',
-  inflationStdDev: '1',
+  inflationMean: '3.5',
+  inflationStdDev: '3',
   annualFee: '0.5',
   endAge: '90',
   numTrials: '10000',

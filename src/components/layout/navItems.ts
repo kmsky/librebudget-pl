@@ -32,7 +32,6 @@ export const navGroups: NavGroup[] = [
     items: [
       { path: '/savings', icon: 'Building2', label: 'Savings' },
       { path: '/calculator', icon: 'BarChart3', label: 'Calculators' },
-      { path: '/credit-score', icon: 'CreditCard', label: 'Credit Score' },
       { path: '/roadmap', icon: 'Map', label: 'Roadmap' },
     ],
   },

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { Card } from '../ui/Card'
 import { formatCurrency } from '../../utils/calculations'
+import { parseLocaleAmount } from '../../utils/sanitize'
 import { maxAffordableHomePrice } from '../../utils/houseAffordability'
 import { useHouseCalculatorState } from '../../hooks/useHouseCalculatorState'
-import { getPropertyTaxRateFromZip } from '../../data/propertyTaxRates'
 import { useSettings } from '../../hooks/useSettings'
 import { Home, DollarSign, Percent, Building2 } from 'lucide-react'
 
@@ -14,8 +14,7 @@ const CAPS = {
   agi: 10_000_000,
   downPaymentDollars: 5_000_000,
   interestRatePercent: 30,
-  loanTermYears: 30,
-  propertyTaxPercent: 5,
+  loanTermYears: 35,
   homeInsurancePercent: 2,
   hoaDues: 10_000,
 } as const
@@ -41,19 +40,14 @@ export function HouseAffordabilityCalculator() {
     }
   }, [budgetForPrefill, state.agi, updateState])
 
-  const agiNum = clamp(parseFloat(state.agi) || 0, CAPS.agi)
-  const downPaymentDollarsNum = clamp(parseFloat(state.downPaymentDollars) || 0, CAPS.downPaymentDollars)
-  const downPaymentPercentNum = Math.max(0, Math.min(100, parseFloat(state.downPaymentPercent) || 0))
-  const interestRateNum = clamp(parseFloat(state.interestRate) || 0, CAPS.interestRatePercent)
+  const agiNum = clamp(parseLocaleAmount(state.agi) || 0, CAPS.agi)
+  const downPaymentDollarsNum = clamp(parseLocaleAmount(state.downPaymentDollars) || 0, CAPS.downPaymentDollars)
+  const downPaymentPercentNum = Math.max(0, Math.min(100, parseLocaleAmount(state.downPaymentPercent) || 0))
+  const interestRateNum = clamp(parseLocaleAmount(state.interestRate) || 0, CAPS.interestRatePercent)
   const loanTermYearsNum = Math.max(1, Math.min(CAPS.loanTermYears, Math.round(parseFloat(state.loanTermYears) || 0)))
-  const propertyTaxManualNum = clamp(parseFloat(state.propertyTaxManual) || 0, CAPS.propertyTaxPercent)
-  const homeInsuranceRateNum = clamp(parseFloat(state.homeInsuranceRate) || 0, CAPS.homeInsurancePercent)
-  const hoaDuesNum = clamp(parseFloat(state.hoaDues) || 0, CAPS.hoaDues)
+  const homeInsuranceRateNum = clamp(parseLocaleAmount(state.homeInsuranceRate) || 0, CAPS.homeInsurancePercent)
+  const hoaDuesNum = clamp(parseLocaleAmount(state.hoaDues) || 0, CAPS.hoaDues)
 
-  const propertyTaxRate =
-    state.propertyTaxSource === 'zip'
-      ? getPropertyTaxRateFromZip(state.zipCode)
-      : propertyTaxManualNum / 100
   const homeInsuranceRate = homeInsuranceRateNum / 100
 
   const result =
@@ -62,7 +56,7 @@ export function HouseAffordabilityCalculator() {
           agiAnnual: agiNum, downPaymentDollars: downPaymentDollarsNum,
           downPaymentPercent: downPaymentPercentNum, downPaymentMode: state.downPaymentMode,
           interestRatePercent: interestRateNum, loanTermYears: loanTermYearsNum,
-          propertyTaxRateAnnual: propertyTaxRate, homeInsuranceRateAnnual: homeInsuranceRate,
+          homeInsuranceRateAnnual: homeInsuranceRate,
           hoaMonthly: hoaDuesNum, dtiPercent: 28,
         })
       : null
@@ -83,11 +77,11 @@ export function HouseAffordabilityCalculator() {
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Annual gross income ($)</label>
-            <input type="number" step="1000" min="0" max={CAPS.agi} value={state.agi}
+            <label className="mb-1.5 block text-sm text-slate-400">Annual net income (zł)</label>
+            <input inputMode="decimal" value={state.agi}
               onChange={(e) => updateState({ agi: e.target.value })}
-              onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.agi) updateState({ agi: String(CAPS.agi) }) }}
-              placeholder={budgetForPrefill > 0 ? String(Math.round(budgetForPrefill * 12)) : '120000'}
+              onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.agi) updateState({ agi: String(CAPS.agi) }) }}
+              placeholder={budgetForPrefill > 0 ? String(Math.round(budgetForPrefill * 12)) : '96000'}
               className={INPUT} />
             {budgetForPrefill > 0 && (
               <p className="text-xs text-slate-600 mt-1">~{formatCurrency(budgetForPrefill * 12)}/year from monthly budget</p>
@@ -100,29 +94,29 @@ export function HouseAffordabilityCalculator() {
               {(['percent', 'dollar'] as const).map((m) => (
                 <button key={m} type="button" onClick={() => updateState({ downPaymentMode: m })}
                   className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${state.downPaymentMode === m ? 'bg-slate-600 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
-                  {m === 'percent' ? '%' : '$'}
+                  {m === 'percent' ? '%' : 'zł'}
                 </button>
               ))}
             </div>
             {state.downPaymentMode === 'percent' ? (
-              <input type="number" step="0.5" min="0" max="100" value={state.downPaymentPercent}
+              <input inputMode="decimal" value={state.downPaymentPercent}
                 onChange={(e) => updateState({ downPaymentPercent: e.target.value })}
                 placeholder="20" className={INPUT} />
             ) : (
-              <input type="number" step="1000" min="0" max={CAPS.downPaymentDollars} value={state.downPaymentDollars}
+              <input inputMode="decimal" value={state.downPaymentDollars}
                 onChange={(e) => updateState({ downPaymentDollars: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.downPaymentDollars) updateState({ downPaymentDollars: String(CAPS.downPaymentDollars) }) }}
-                placeholder="50000" className={INPUT} />
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.downPaymentDollars) updateState({ downPaymentDollars: String(CAPS.downPaymentDollars) }) }}
+                placeholder="120000" className={INPUT} />
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm text-slate-400">Interest rate (%)</label>
-              <input type="number" step="0.1" min="0" max={CAPS.interestRatePercent} value={state.interestRate}
+              <input inputMode="decimal" value={state.interestRate}
                 onChange={(e) => updateState({ interestRate: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.interestRatePercent) updateState({ interestRate: String(CAPS.interestRatePercent) }) }}
-                placeholder="7" className={INPUT} />
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.interestRatePercent) updateState({ interestRate: String(CAPS.interestRatePercent) }) }}
+                placeholder="7,5" className={INPUT} />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-slate-400">Loan term (years)</label>
@@ -143,54 +137,25 @@ export function HouseAffordabilityCalculator() {
           </div>
           <div className="min-w-0">
             <h2 className="text-base font-semibold text-slate-200">Recurring Costs</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">Property tax, insurance, and HOA</p>
+            <p className="text-xs text-slate-500 leading-relaxed">Insurance and HOA</p>
           </div>
         </div>
 
         <div className="space-y-4">
-          {/* Property tax */}
-          <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Property tax</label>
-            <div className="flex gap-2 rounded-xl bg-slate-800 p-1 mb-2">
-              {(['zip', 'manual'] as const).map((m) => (
-                <button key={m} type="button" onClick={() => updateState({ propertyTaxSource: m })}
-                  className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${state.propertyTaxSource === m ? 'bg-slate-600 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
-                  {m === 'zip' ? 'Estimate from ZIP' : 'Manual %'}
-                </button>
-              ))}
-            </div>
-            {state.propertyTaxSource === 'zip' ? (
-              <>
-                <input type="text" inputMode="numeric" maxLength={5} value={state.zipCode}
-                  onChange={(e) => updateState({ zipCode: e.target.value.replace(/\D/g, '').slice(0, 5) })}
-                  placeholder="12345" className={INPUT} />
-                {state.zipCode.length >= 3 && (
-                  <p className="text-xs text-slate-500 mt-1">Est. rate: {(propertyTaxRate * 100).toFixed(2)}%/year</p>
-                )}
-                <p className="text-xs text-slate-600 mt-1">Based on first 3 digits. Use Manual % for more accuracy.</p>
-              </>
-            ) : (
-              <input type="number" step="0.1" min="0" max={CAPS.propertyTaxPercent} value={state.propertyTaxManual}
-                onChange={(e) => updateState({ propertyTaxManual: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.propertyTaxPercent) updateState({ propertyTaxManual: String(CAPS.propertyTaxPercent) }) }}
-                placeholder="1.2" className={INPUT} />
-            )}
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm text-slate-400">Home insurance (%/year)</label>
-              <input type="number" step="0.05" min="0" max={CAPS.homeInsurancePercent} value={state.homeInsuranceRate}
+              <input inputMode="decimal" value={state.homeInsuranceRate}
                 onChange={(e) => updateState({ homeInsuranceRate: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.homeInsurancePercent) updateState({ homeInsuranceRate: String(CAPS.homeInsurancePercent) }) }}
-                placeholder="0.35" className={INPUT} />
-              <p className="text-xs text-slate-600 mt-1">Typical: 0.2-0.5%</p>
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.homeInsurancePercent) updateState({ homeInsuranceRate: String(CAPS.homeInsurancePercent) }) }}
+                placeholder="0,08" className={INPUT} />
+              <p className="text-xs text-slate-600 mt-1">Typical: 0.05–0.15%</p>
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">HOA dues ($/mo)</label>
-              <input type="number" step="10" min="0" max={CAPS.hoaDues} value={state.hoaDues}
+              <label className="mb-1.5 block text-sm text-slate-400">HOA dues (zł/mo)</label>
+              <input inputMode="decimal" value={state.hoaDues}
                 onChange={(e) => updateState({ hoaDues: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.hoaDues) updateState({ hoaDues: String(CAPS.hoaDues) }) }}
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.hoaDues) updateState({ hoaDues: String(CAPS.hoaDues) }) }}
                 placeholder="0" className={INPUT} />
             </div>
           </div>
@@ -232,7 +197,6 @@ export function HouseAffordabilityCalculator() {
             <div className="space-y-2">
               {[
                 { label: 'Principal & Interest', value: result.monthlyPrincipalInterest, color: 'text-slate-300' },
-                { label: 'Property Tax', value: result.monthlyPropertyTax, color: 'text-slate-300' },
                 { label: 'Insurance', value: result.monthlyInsurance, color: 'text-slate-300' },
                 { label: 'HOA', value: result.monthlyHOA, color: 'text-slate-300' },
               ].map(({ label, value, color }) => (
@@ -246,7 +210,7 @@ export function HouseAffordabilityCalculator() {
                 <div className="text-right">
                   <span className="text-lg font-bold text-green-400 tabular-nums">{formatCurrency(result.totalMonthlyHousing)}</span>
                   <span className="text-xs text-slate-500 ml-1.5">/mo</span>
-                  <p className="text-xs text-slate-500">{result.dtiPercent.toFixed(1)}% of gross income</p>
+                  <p className="text-xs text-slate-500">{result.dtiPercent.toFixed(1)}% of net income</p>
                 </div>
               </div>
             </div>

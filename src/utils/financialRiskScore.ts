@@ -297,7 +297,7 @@ export async function getFinancialRiskScore(): Promise<FinancialRiskResult> {
   ])
 
   const settingsMap = Object.fromEntries(settings.map((s) => [s.key, s.value]))
-  const monthlyBudget = parseFloat(settingsMap['monthlyBudget'] ?? '3000')
+  const monthlyBudget = parseFloat(settingsMap['monthlyBudget'] ?? '6000')
   const catMap = new Map(
     categories
       .filter((c): c is typeof c & { id: number } => c.id != null)

@@ -20,7 +20,6 @@ import {
   formatCurrency,
 } from '../utils/calculations'
 import { getMonthlyForecast, type Forecast } from '../utils/forecasting'
-import { useCreditScores } from '../hooks/useCreditScores'
 import type { CategoryGroup, Category } from '../db/database'
 import { getCategoryIconClassName, GROUP_COLORS, GROUP_LABELS } from '../utils/colors'
 import { Icon } from '../components/ui/Icon'
@@ -185,9 +184,6 @@ export default function Dashboard() {
 
       <RoadmapWidget />
 
-      {/* Credit Score */}
-      <CreditWidget />
-
       {/* Forecast (current month only) */}
       {forecast && isCurrentMonth && (
         <Card>
@@ -229,54 +225,3 @@ export default function Dashboard() {
   )
 }
 
-const SCORE_RANGES = [
-  { label: 'Exceptional', min: 800, max: 850, color: '#22c55e' },
-  { label: 'Very Good', min: 740, max: 799, color: '#84cc16' },
-  { label: 'Good', min: 670, max: 739, color: '#eab308' },
-  { label: 'Fair', min: 580, max: 669, color: '#f97316' },
-  { label: 'Poor', min: 300, max: 579, color: '#ef4444' },
-]
-
-function CreditWidget() {
-  const { latest, change } = useCreditScores()
-  const rating = latest
-    ? SCORE_RANGES.find((r) => latest.score >= r.min && latest.score <= r.max) ?? SCORE_RANGES[4]
-    : null
-
-  return (
-    <Card>
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium text-slate-400">Credit Score</h3>
-        <Link to="/credit-score" className="text-xs text-green-400 hover:text-green-300">
-          {latest ? 'Details' : 'Add score'}
-        </Link>
-      </div>
-      {latest ? (
-        <div className="flex items-center gap-4">
-          <p className="text-3xl font-bold" style={{ color: rating?.color }}>{latest.score}</p>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium" style={{ color: rating?.color }}>{rating?.label}</span>
-              {change !== null && change !== 0 && (
-                <span className={`text-xs ${change > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {change > 0 ? '↑' : '↓'} {Math.abs(change)} pts
-                </span>
-              )}
-            </div>
-            <div className="flex gap-0.5 h-1.5 rounded-full overflow-hidden mt-1.5">
-              {SCORE_RANGES.slice().reverse().map((r) => (
-                <div key={r.label} className="flex-1 rounded-sm"
-                  style={{ backgroundColor: r.color, opacity: latest.score >= r.min ? 1 : 0.15 }} />
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <p className="text-sm text-slate-500 py-2">
-          No score logged yet.{' '}
-          <Link to="/credit-score" className="text-green-400 hover:text-green-300">Track your credit</Link>
-        </p>
-      )}
-    </Card>
-  )
-}

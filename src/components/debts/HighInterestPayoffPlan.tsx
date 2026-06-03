@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Card } from '../ui/Card'
 import { Icon } from '../ui/Icon'
 import { formatCurrency } from '../../utils/calculations'
+import { parseLocaleAmount } from '../../utils/sanitize'
 import { buildHighInterestPayoffPlan } from '../../utils/debtPayoffPlan'
 import type { Debt } from '../../db/database'
 
@@ -19,8 +20,8 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
   const [strategy, setStrategy] = useState<'avalanche' | 'snowball'>('avalanche')
   const [expanded, setExpanded] = useState(true)
 
-  const thresholdNum = Math.max(0, Math.min(50, parseFloat(rateThreshold) || 0))
-  const extraNum = Math.max(0, parseFloat(extraMonthly) || 0)
+  const thresholdNum = Math.max(0, Math.min(50, parseLocaleAmount(rateThreshold) || 0))
+  const extraNum = Math.max(0, parseLocaleAmount(extraMonthly) || 0)
 
   const plan = buildHighInterestPayoffPlan(debts, {
     rateThreshold: thresholdNum,
@@ -55,10 +56,7 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
             <div>
               <label className="mb-1 block text-xs text-slate-500">Interest threshold (% APR)</label>
               <input
-                type="number"
-                min={0}
-                max={50}
-                step={0.5}
+                inputMode="decimal"
                 value={rateThreshold}
                 onChange={(e) => setRateThreshold(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
@@ -69,15 +67,13 @@ export function HighInterestPayoffPlan({ debts, getEffectivePayment }: HighInter
             <div>
               <label className="mb-1 block text-xs text-slate-500">Extra monthly payment</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
                 <input
-                  type="number"
-                  min={0}
-                  step={1}
+                  inputMode="decimal"
                   value={extraMonthly}
                   onChange={(e) => setExtraMonthly(e.target.value)}
                   onClick={(e) => e.stopPropagation()}
-                  className={`${INPUT_CLASS} pl-7`}
+                  className={`${INPUT_CLASS} pl-8`}
                   placeholder="100"
                 />
               </div>

@@ -5,6 +5,7 @@ import { futureValue } from '../utils/compoundInterest'
 import { runMonteCarloSimulation, type MonteCarloResult } from '../utils/monteCarlo'
 import { MonteCarloResults } from '../components/calculators/MonteCarloResults'
 import { useCalculatorState } from '../hooks/useCalculatorState'
+import { parseLocaleAmount } from '../utils/sanitize'
 import { useHomeHousingType } from '../hooks/useHomeHousingType'
 import { AutoLoanCalculator } from '../components/calculators/AutoLoanCalculator'
 import { HouseAffordabilityCalculator } from '../components/calculators/HouseAffordabilityCalculator'
@@ -89,17 +90,17 @@ const HOME_OWN_TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="home-income"]',
     title: 'Income & Loan',
-    content: 'Enter your annual gross income, down payment, mortgage interest rate, and loan term. The calculator uses the 28% front-end DTI rule to determine how much housing you can afford.',
+    content: 'Enter your annual net income, down payment, mortgage interest rate, and loan term. The calculator uses the 28% front-end DTI rule to determine how much housing you can afford.',
   },
   {
     target: '[data-tour="home-costs"]',
     title: 'Recurring Costs',
-    content: 'Add property tax (estimate from ZIP code or enter manually), homeowners insurance, and HOA dues. These reduce your borrowing capacity since they count toward the 28% housing limit.',
+    content: 'Add homeowners insurance and HOA dues. These reduce your borrowing capacity since they count toward the 28% housing limit.',
   },
   {
     target: '[data-tour="home-result"]',
     title: 'Affordability Result',
-    content: 'See the maximum home price you can afford, plus a full monthly breakdown of principal & interest, property tax, insurance, and HOA.',
+    content: 'See the maximum home price you can afford, plus a full monthly breakdown of principal & interest, insurance, and HOA.',
     optional: true,
   },
 ]
@@ -108,12 +109,12 @@ const HOME_RENT_TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="rent-input"]',
     title: 'Your Income',
-    content: 'Enter your annual gross income. It may be pre-filled from your monthly budget settings. The calculator applies the 30% DTI rule to determine your max affordable rent.',
+    content: 'Enter your annual net income. It may be pre-filled from your monthly budget settings. The calculator applies the 30% DTI rule to determine your max affordable rent.',
   },
   {
     target: '[data-tour="rent-result"]',
     title: 'Max Affordable Rent',
-    content: 'This shows the maximum monthly rent you should pay based on the 30% rule — meaning no more than 30% of your gross monthly income goes toward rent.',
+    content: 'This shows the maximum monthly rent you should pay based on the 30% rule — meaning no more than 30% of your net monthly income goes toward rent.',
     optional: true,
   },
 ]
@@ -182,18 +183,18 @@ export default function Calculator() {
     contributionFrequency === 'monthly' ? CAPS.contributionMonthly : CAPS.contributionYearly
 
   useEffect(() => {
-    const v = parseFloat(contribution)
+    const v = parseLocaleAmount(contribution)
     if (contribution !== '' && !isNaN(v) && v > contributionMax)
       updateState({ contribution: String(contributionMax) })
   }, [contributionFrequency, contribution, contributionMax, updateState])
 
-  const initialBalanceNum = clamp(parseFloat(initialBalance) || 0, CAPS.initialBalance)
-  const contributionNum = clamp(parseFloat(contribution) || 0, contributionMax)
-  const contributionIncreaseNum = clamp(parseFloat(contributionAnnualIncrease) || 0, 20)
+  const initialBalanceNum = clamp(parseLocaleAmount(initialBalance) || 0, CAPS.initialBalance)
+  const contributionNum = clamp(parseLocaleAmount(contribution) || 0, contributionMax)
+  const contributionIncreaseNum = clamp(parseLocaleAmount(contributionAnnualIncrease) || 0, 20)
   const yearsNum = clamp(parseFloat(years) || 0, CAPS.years)
-  const annualRateNum = clamp(parseFloat(annualRate) || 0, CAPS.annualRatePercent)
+  const annualRateNum = clamp(parseLocaleAmount(annualRate) || 0, CAPS.annualRatePercent)
   const currentAgeNum = clamp(parseFloat(currentAge) || 0, CAPS.currentAge)
-  const desiredIncomeNum = clamp(parseFloat(desiredAnnualIncome) || 0, 10_000_000)
+  const desiredIncomeNum = clamp(parseLocaleAmount(desiredAnnualIncome) || 0, 10_000_000)
 
   const yearsToGrow = mode === 'goalSeeker'
     ? targetRetirementAge - currentAgeNum
@@ -222,10 +223,10 @@ export default function Calculator() {
   ])
 
   // Monte Carlo
-  const returnStdDevNum = clamp(parseFloat(returnStdDev) || 0, 50)
-  const inflationMeanNum = clamp(parseFloat(inflationMean) || 0, 15)
-  const inflationStdDevNum = clamp(parseFloat(inflationStdDev) || 0, 10)
-  const annualFeeNum = clamp(parseFloat(annualFee) || 0, 5)
+  const returnStdDevNum = clamp(parseLocaleAmount(returnStdDev) || 0, 50)
+  const inflationMeanNum = clamp(parseLocaleAmount(inflationMean) || 0, 15)
+  const inflationStdDevNum = clamp(parseLocaleAmount(inflationStdDev) || 0, 10)
+  const annualFeeNum = clamp(parseLocaleAmount(annualFee) || 0, 5)
   const endAgeNum = clamp(parseFloat(endAge) || 90, 120)
   const numTrialsNum = Math.max(100, Math.min(CAPS.numTrials, parseInt(numTrials) || 1000))
   const annualContributionForMCS =
@@ -350,17 +351,17 @@ export default function Calculator() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Initial balance ($)</label>
-              <input type="number" step="0.01" min="0" max={CAPS.initialBalance} value={initialBalance}
+              <label className="mb-1.5 block text-sm text-slate-400">Initial balance (zł)</label>
+              <input inputMode="decimal" value={initialBalance}
                 onChange={(e) => updateState({ initialBalance: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.initialBalance) updateState({ initialBalance: String(CAPS.initialBalance) }) }}
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.initialBalance) updateState({ initialBalance: String(CAPS.initialBalance) }) }}
                 placeholder="0" className={INPUT} />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Contributions ($)</label>
-              <input type="number" step="0.01" min="0" max={contributionMax} value={contribution}
+              <label className="mb-1.5 block text-sm text-slate-400">Contributions (zł)</label>
+              <input inputMode="decimal" value={contribution}
                 onChange={(e) => updateState({ contribution: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > contributionMax) updateState({ contribution: String(contributionMax) }) }}
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > contributionMax) updateState({ contribution: String(contributionMax) }) }}
                 placeholder="0" className={INPUT} />
             </div>
             <div>
@@ -385,13 +386,13 @@ export default function Calculator() {
                     Annual increase to your contributions, modeling salary raises or increased savings over time.
                   </p>
                   <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                    At 2%, a $1,000/mo contribution becomes ~$1,020/mo next year. Average US wage growth is 3-4% nominal. Set to 0% if your contributions are fixed.
+                    At 2%, a 1 000 zł/mo contribution becomes ~1 020 zł/mo next year. Average wage growth is 3-4% nominal. Set to 0% if your contributions are fixed.
                   </p>
                 </InfoTip>
               </label>
-              <input type="number" step="0.5" min="0" max="20" value={contributionAnnualIncrease}
+              <input inputMode="decimal" value={contributionAnnualIncrease}
                 onChange={(e) => updateState({ contributionAnnualIncrease: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > 20) updateState({ contributionAnnualIncrease: '20' }) }}
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > 20) updateState({ contributionAnnualIncrease: '20' }) }}
                 placeholder="0" className={INPUT} />
             </div>
             <div>
@@ -408,9 +409,9 @@ export default function Calculator() {
                   </InfoTip>
                 )}
               </label>
-              <input type="number" step="0.1" min="0" max={CAPS.annualRatePercent} value={annualRate}
+              <input inputMode="decimal" value={annualRate}
                 onChange={(e) => updateState({ annualRate: e.target.value })}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.annualRatePercent) updateState({ annualRate: String(CAPS.annualRatePercent) }) }}
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.annualRatePercent) updateState({ annualRate: String(CAPS.annualRatePercent) }) }}
                 placeholder="7" className={INPUT} />
             </div>
             {mode === 'standard' && (
@@ -516,7 +517,7 @@ export default function Calculator() {
                 {(['rate', 'income'] as const).map((m) => (
                   <button key={m} type="button" onClick={() => updateState({ withdrawalMode: m })}
                     className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${withdrawalMode === m ? 'bg-slate-600 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
-                    {m === 'rate' ? 'By Rate (%)' : 'By Income ($)'}
+                    {m === 'rate' ? 'By Rate (%)' : 'By Income (zł)'}
                   </button>
                 ))}
               </div>
@@ -553,7 +554,7 @@ export default function Calculator() {
               </div>
               <div>
                 <label className="mb-1.5 flex items-center gap-2 text-sm text-slate-400">
-                  Desired annual income ($)
+                  Desired annual income (zł)
                   <InfoTip>
                     <p className="text-xs text-slate-300 leading-relaxed">
                       The annual income you want to withdraw starting at retirement. This exact amount is withdrawn in year one, then adjusted for inflation each subsequent year.
@@ -561,9 +562,9 @@ export default function Calculator() {
                   </InfoTip>
                 </label>
                 {withdrawalMode === 'income' ? (
-                  <input type="number" step="1000" min="0" max={10_000_000} value={desiredAnnualIncome}
+                  <input inputMode="decimal" value={desiredAnnualIncome}
                     onChange={(e) => updateState({ desiredAnnualIncome: e.target.value })}
-                    onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > 10_000_000) updateState({ desiredAnnualIncome: '10000000' }) }}
+                    onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > 10_000_000) updateState({ desiredAnnualIncome: '10000000' }) }}
                     placeholder="60000" className={INPUT} />
                 ) : (
                   <div className={`${INPUT} flex items-center opacity-40`}>
@@ -635,7 +636,7 @@ export default function Calculator() {
                         </p>
                       </InfoTip>
                     </label>
-                    <input type="number" step="0.5" min="0" max="50" value={returnStdDev}
+                    <input inputMode="decimal" value={returnStdDev}
                       onChange={(e) => updateState({ returnStdDev: e.target.value })}
                       placeholder="15" className={INPUT} />
                   </div>
@@ -651,9 +652,9 @@ export default function Calculator() {
                         </p>
                       </InfoTip>
                     </label>
-                    <input type="number" step="0.1" min="0" max="5" value={annualFee}
+                    <input inputMode="decimal" value={annualFee}
                       onChange={(e) => updateState({ annualFee: e.target.value })}
-                      placeholder="0.5" className={INPUT} />
+                      placeholder="0,5" className={INPUT} />
                   </div>
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
@@ -663,13 +664,13 @@ export default function Calculator() {
                           Expected average annual inflation rate. Your contributions grow with inflation during accumulation, and your withdrawals increase with inflation during retirement to maintain purchasing power.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          US historical average is about 3%. The Fed targets 2%. Use 3-4% for a conservative estimate.
+                          Poland's NBP targets 2.5%, but realized inflation has run higher and more volatile. Use 3.5-5% for a conservative estimate.
                         </p>
                       </InfoTip>
                     </label>
-                    <input type="number" step="0.5" min="0" max="15" value={inflationMean}
+                    <input inputMode="decimal" value={inflationMean}
                       onChange={(e) => updateState({ inflationMean: e.target.value })}
-                      placeholder="3" className={INPUT} />
+                      placeholder="3,5" className={INPUT} />
                   </div>
                   <div>
                     <label className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
@@ -679,15 +680,18 @@ export default function Calculator() {
                           How much inflation varies year-to-year. At 0%, inflation is fixed at the mean each year. Higher values model uncertainty in future inflation.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          US historical inflation standard deviation is about 1-2%. Floored at -2% per year to prevent unrealistic deflation spirals.
+                          Polish inflation has been more volatile than the US — swings of several percentage points. Floored at -2% per year to prevent unrealistic deflation spirals.
                         </p>
                       </InfoTip>
                     </label>
-                    <input type="number" step="0.5" min="0" max="10" value={inflationStdDev}
+                    <input inputMode="decimal" value={inflationStdDev}
                       onChange={(e) => updateState({ inflationStdDev: e.target.value })}
-                      placeholder="1" className={INPUT} />
+                      placeholder="3" className={INPUT} />
                   </div>
                 </div>
+                <p className="mt-3 text-xs text-slate-500 leading-relaxed">
+                  Note: this simulation does not model tax. In Poland, investment gains outside IKE/IKZE are subject to the 19% capital-gains (Belka) tax, so your real after-tax outcome in a regular brokerage account will be lower.
+                </p>
               </div>
 
               {/* Simulation config */}
@@ -705,7 +709,7 @@ export default function Calculator() {
                           The age your portfolio needs to last until. The simulation checks whether your money survives from retirement to this age.
                         </p>
                         <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
-                          Average US life expectancy is about 77, but planning to 90-95 provides a safety margin. If you enable variable longevity below, each simulation samples a realistic death age instead.
+                          Average Polish life expectancy is about 78, but planning to 90-95 provides a safety margin. If you enable variable longevity below, each simulation samples a realistic death age instead.
                         </p>
                       </InfoTip>
                     </label>

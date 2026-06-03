@@ -6,6 +6,7 @@ import { Modal } from '../components/ui/Modal'
 import { useRecurringTransactions } from '../hooks/useRecurringTransactions'
 import { useCategories } from '../hooks/useCategories'
 import { formatCurrency } from '../utils/calculations'
+import { parseLocaleAmount } from '../utils/sanitize'
 import { GROUP_COLORS, getCategoryIconClassName } from '../utils/colors'
 import { EXPENSE_GROUPS, type TransactionType, type CategoryGroup, type RecurrenceInterval } from '../db/database'
 import { Icon } from '../components/ui/Icon'
@@ -35,7 +36,7 @@ export default function Recurring() {
   const handleAdd = async () => {
     if (!amount || !categoryId) return
     await addRecurring({
-      amount: parseFloat(amount),
+      amount: parseLocaleAmount(amount),
       type,
       categoryId,
       description,
@@ -169,9 +170,9 @@ export default function Recurring() {
           <div>
             <label className="mb-1 block text-sm text-slate-400">Amount</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
               <input
-                type="number" step="0.01" min="0" value={amount}
+                inputMode="decimal" value={amount}
                 onChange={(e) => setAmount(e.target.value)} placeholder="0.00"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none"
               />

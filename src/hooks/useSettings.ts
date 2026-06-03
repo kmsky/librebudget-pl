@@ -20,11 +20,11 @@ export function useSettings() {
     return db.settings.add({ key, value })
   }
 
-  const monthlyBudget = parseFloat(settings['monthlyBudget'] ?? '3000')
+  const monthlyBudget = parseFloat(settings['monthlyBudget'] ?? '6000')
 
   /** Returns the budget for a specific month (YYYY-MM), falling back to the global default. */
   const getMonthlyBudget = (month: string): number =>
-    parseFloat(settings[`monthlyBudget-${month}`] ?? settings['monthlyBudget'] ?? '3000')
+    parseFloat(settings[`monthlyBudget-${month}`] ?? settings['monthlyBudget'] ?? '6000')
 
   /** Persists a budget for a specific month without touching the global default. */
   const setMonthlyBudget = (month: string, amount: number) =>

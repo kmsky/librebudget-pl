@@ -9,6 +9,7 @@ import { useToast } from '../components/ui/Toast'
 import { useTransactions } from '../hooks/useTransactions'
 import { useCategories } from '../hooks/useCategories'
 import { formatCurrency } from '../utils/calculations'
+import { parseLocaleAmount } from '../utils/sanitize'
 import { GROUP_COLORS, GROUP_LABELS, getCategoryIconClassName } from '../utils/colors'
 import { EXPENSE_GROUPS } from '../db/database'
 import type { Transaction } from '../db/database'
@@ -52,8 +53,8 @@ export default function Transactions() {
       if (categoryFilter !== 'all' && t.categoryId !== categoryFilter) return false
       if (dateFrom && t.date < dateFrom) return false
       if (dateTo && t.date > dateTo) return false
-      if (amountMin && t.amount < parseFloat(amountMin)) return false
-      if (amountMax && t.amount > parseFloat(amountMax)) return false
+      if (amountMin && t.amount < parseLocaleAmount(amountMin)) return false
+      if (amountMax && t.amount > parseLocaleAmount(amountMax)) return false
       if (search) {
         const q = search.toLowerCase()
         const cat = getCategoryById(t.categoryId)
@@ -84,7 +85,7 @@ export default function Transactions() {
   const saveEdit = async () => {
     if (!editingTx?.id || editCategoryId == null) return
     await updateTransaction(editingTx.id, {
-      amount: parseFloat(editAmount),
+      amount: parseLocaleAmount(editAmount),
       description: editDescription,
       note: editNote,
       categoryId: editCategoryId,
@@ -193,12 +194,12 @@ export default function Transactions() {
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="mb-1 block text-xs text-slate-500">Min Amount</label>
-              <input type="number" step="0.01" value={amountMin} onChange={(e) => setAmountMin(e.target.value)}
+              <input inputMode="decimal" value={amountMin} onChange={(e) => setAmountMin(e.target.value)}
                 placeholder="$0" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-600 focus:border-green-500 focus:outline-none" />
             </div>
             <div>
               <label className="mb-1 block text-xs text-slate-500">Max Amount</label>
-              <input type="number" step="0.01" value={amountMax} onChange={(e) => setAmountMax(e.target.value)}
+              <input inputMode="decimal" value={amountMax} onChange={(e) => setAmountMax(e.target.value)}
                 placeholder="$∞" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-600 focus:border-green-500 focus:outline-none" />
             </div>
           </div>
@@ -374,7 +375,7 @@ export default function Transactions() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-400">Amount</label>
-            <input type="number" step="0.01" value={editAmount} onChange={(e) => setEditAmount(e.target.value)}
+            <input inputMode="decimal" value={editAmount} onChange={(e) => setEditAmount(e.target.value)}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 focus:border-green-500 focus:outline-none" />
           </div>
 

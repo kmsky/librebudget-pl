@@ -24,3 +24,20 @@ export function sanitizeAmount(value: number): number {
   const rounded = Math.round(value * Math.pow(10, AMOUNT_DECIMALS)) / Math.pow(10, AMOUNT_DECIMALS)
   return Math.min(rounded, MAX_AMOUNT)
 }
+
+/**
+ * Parse a user-typed amount in Polish locale (e.g. "1 234,56" or "12,50 zł")
+ * into a number. Strips whitespace (incl. non-breaking spaces used as thousands
+ * separators) and the zł symbol, and treats comma as the decimal separator.
+ * Returns NaN for invalid input so callers can distinguish "empty/invalid" from
+ * 0 (pass the result through sanitizeAmount to coerce non-finite values to 0).
+ */
+export function parseLocaleAmount(value: string): number {
+  if (typeof value !== 'string') return NaN
+  const cleaned = value
+    .replace(/zł/gi, '')
+    .replace(/\s/g, '')
+    .replace(',', '.')
+  if (cleaned === '') return NaN
+  return parseFloat(cleaned)
+}

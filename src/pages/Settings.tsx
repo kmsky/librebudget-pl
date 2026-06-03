@@ -12,8 +12,6 @@ import { GROUP_COLORS, GROUP_LABELS, getCategoryIconClassName } from '../utils/c
 import { useWallet } from '../hooks/useWallet'
 import { useCloudBackup } from '../hooks/useCloudBackup'
 import { exportTransactionsCSV, downloadCSV, exportTransactionsPDF } from '../utils/csvExport'
-import { parseCSV, importCSVTransactions, detectDuplicates, type ParsedRow } from '../utils/csvImport'
-import { CSVImportModal } from '../components/CSVImportModal'
 import {
   requestNotificationPermission,
   getNotificationPermission,
@@ -51,9 +49,6 @@ export default function Settings() {
   const [devPasswordError, setDevPasswordError] = useState('')
   const developerSettingsEnabled = getSetting('developerSettingsEnabled') === 'true'
   const [csvStatus, setCsvStatus] = useState('')
-  const [showCSVModal, setShowCSVModal] = useState(false)
-  const [csvImportRows, setCsvImportRows] = useState<ParsedRow[]>([])
-  const [csvDuplicates, setCsvDuplicates] = useState<Set<number>>(new Set())
   const [permissionState, setPermissionState] = useState(
     getNotificationPermission(),
   )
@@ -179,37 +174,6 @@ export default function Settings() {
     try {
       await exportTransactionsPDF()
     } catch { setCsvStatus('PDF export failed') }
-  }
-
-  const handleCSVImport = () => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = '.csv'
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0]
-      if (!file) return
-      try {
-        const text = await file.text()
-        const rows = parseCSV(text)
-        if (rows.length === 0) { setCsvStatus('No valid rows found'); return }
-        const dupes = await detectDuplicates(rows)
-        setCsvImportRows(rows)
-        setCsvDuplicates(dupes)
-        setShowCSVModal(true)
-      } catch (err) { setCsvStatus(err instanceof Error ? err.message : 'Failed to parse CSV') }
-    }
-    input.click()
-  }
-
-  const handleCSVImportConfirm = async (rows: ParsedRow[]) => {
-    try {
-      const defaultCat = categories.find((c) => c.group === 'needs') ?? categories[0]
-      if (!defaultCat?.id) { setCsvStatus('No categories available'); return }
-      const count = await importCSVTransactions(rows, defaultCat.id)
-      setShowCSVModal(false)
-      setCsvStatus(`Imported ${count} transaction${count !== 1 ? 's' : ''}!`)
-      setTimeout(() => setCsvStatus(''), 3000)
-    } catch (err) { setCsvStatus(err instanceof Error ? err.message : 'Failed to import CSV') }
   }
 
   return (
@@ -384,15 +348,15 @@ export default function Settings() {
         </p>
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-              $
-            </span>
             <input
               type="number"
               value={monthlyBudget}
               onChange={(e) => setSetting('monthlyBudget', e.target.value)}
-              className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 focus:border-green-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-4 pr-10 text-slate-100 focus:border-green-500 focus:outline-none"
             />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+              zł
+            </span>
           </div>
         </div>
       </Card>
@@ -611,14 +575,9 @@ export default function Settings() {
               Import JSON
             </Button>
           </div>
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={handleCSVExport} className="flex-1">
-              Export CSV
-            </Button>
-            <Button variant="secondary" onClick={handleCSVImport} className="flex-1">
-              Import CSV
-            </Button>
-          </div>
+          <Button variant="secondary" onClick={handleCSVExport} className="w-full">
+            Export CSV
+          </Button>
           <Button variant="secondary" onClick={handlePDFExport} className="w-full">
             Print / PDF Report
           </Button>
@@ -726,16 +685,6 @@ export default function Settings() {
 
       <Onboarding open={showAppTour} onClose={() => setShowAppTour(false)} />
       <AccountOnboarding open={showAccountTour} onClose={() => setShowAccountTour(false)} />
-
-      <CSVImportModal
-        open={showCSVModal}
-        rows={csvImportRows}
-        duplicateIndices={csvDuplicates}
-        categories={categories}
-        defaultCategoryId={categories.find((c) => c.group === 'needs')?.id ?? categories[0]?.id ?? 0}
-        onConfirm={handleCSVImportConfirm}
-        onClose={() => setShowCSVModal(false)}
-      />
 
       <Modal
         open={showDevPasswordModal}

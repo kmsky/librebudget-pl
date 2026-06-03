@@ -18,7 +18,7 @@ const RESOURCES: Resource[] = [
       'Hosts Brian Preston and Bo Hanson break down complex financial topics into actionable advice. Known for the "Financial Order of Operations" — a step-by-step framework for building wealth the right way.',
     philosophy: [
       'Follow the Financial Order of Operations (FOO)',
-      'Invest 25% of gross income for financial independence',
+      'Invest 25% of net income for financial independence',
       'Build wealth steadily through index fund investing',
       'Avoid lifestyle inflation as income grows',
     ],

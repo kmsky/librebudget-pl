@@ -228,9 +228,9 @@ export function runMonteCarloSimulation(params: MonteCarloParams): MonteCarloRes
         annualReturn = Math.exp(logReturn) - 1
       }
 
-      // Sample inflation (floored at -2%, capped at 20%)
+      // Sample inflation (floored at -2%, capped at 25% — Polish inflation runs hotter than the US)
       let inflationThisYear = normalSample(inflationMean, inflationSD)
-      inflationThisYear = Math.max(-0.02, Math.min(0.20, inflationThisYear))
+      inflationThisYear = Math.max(-0.02, Math.min(0.25, inflationThisYear))
       inflationCumulative *= (1 + inflationThisYear)
 
       if (!isRetired) {

@@ -57,7 +57,7 @@ export async function seedDatabase() {
     await db.settings.bulkAdd([
       { key: 'notificationsEnabled', value: 'true' },
       { key: 'notificationTime', value: '20:00' },
-      { key: 'monthlyBudget', value: '3000' },
+      { key: 'monthlyBudget', value: '6000' },
     ])
   }
 }

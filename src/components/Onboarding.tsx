@@ -24,7 +24,7 @@ const STEPS = [
   {
     icon: 'BarChart3',
     title: 'Wealth Tools',
-    description: 'Savings goals, compound interest & retirement calculators, auto loan (20/3/8 rule), home affordability (own or rent). Plus credit score tracking.',
+    description: 'Savings goals, compound interest & retirement calculators, auto loan (20/3/8 rule), home affordability (own or rent).',
     tip: null,
   },
   {

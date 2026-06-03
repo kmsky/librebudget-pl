@@ -10,6 +10,7 @@ import { useSettings } from '../hooks/useSettings'
 import { useDebts } from '../hooks/useDebts'
 import { useRecurringTransactions } from '../hooks/useRecurringTransactions'
 import { formatCurrency } from '../utils/calculations'
+import { parseLocaleAmount } from '../utils/sanitize'
 import type { CooldownDuration, Debt, ImpulseItem, ImpulseInterrogationAnswers } from '../db/database'
 
 // ---------------------------------------------------------------------------
@@ -297,7 +298,7 @@ function AddImpulseModal({
   const [cooldown, setCooldown] = useState<CooldownDuration>('72h')
 
   const lateNight = isLateNight()
-  const parsedAmount = parseFloat(amount) || 0
+  const parsedAmount = parseLocaleAmount(amount) || 0
 
   const interrogationComplete = isReplacement !== '' && canBorrow !== '' && storageLocation.trim().length > 0
   const formComplete = description.trim() && amount && categoryId
@@ -424,10 +425,10 @@ function AddImpulseModal({
           <div>
             <label className="mb-1.5 block text-sm text-slate-400">Amount</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-              <input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-                className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
+              <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)}
+                placeholder="0,00"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-4 pr-10 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
             </div>
           </div>
 
@@ -690,7 +691,7 @@ export default function ImpulseTracker() {
             <p className="text-xs font-medium text-slate-400">Money Saved</p>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-green-400">
-            {animatedTotalSaved.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {animatedTotalSaved.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
           {saved.length > 0 && (
             <p className="text-xs text-slate-500 mt-1.5">{saved.length} impulse{saved.length !== 1 ? 's' : ''} resisted</p>

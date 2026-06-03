@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button'
 import { Modal } from '../components/ui/Modal'
 import { useDebts, calcRequiredPayment } from '../hooks/useDebts'
 import { formatCurrency } from '../utils/calculations'
+import { parseLocaleAmount } from '../utils/sanitize'
 import { db } from '../db/database'
 import type { Debt } from '../db/database'
 import { Icon, DEBT_ICONS } from '../components/ui/Icon'
@@ -70,14 +71,14 @@ export default function DebtTracker() {
     await addDebt({
       name: name.trim(),
       icon,
-      balance: parseFloat(balance),
-      interestRate: parseFloat(rate || '0'),
-      minimumPayment: parseFloat(minPayment),
+      balance: parseLocaleAmount(balance),
+      interestRate: parseLocaleAmount(rate || '0'),
+      minimumPayment: parseLocaleAmount(minPayment),
       targetPayoffDate: targetPayoffDate || undefined,
-      targetMonthlyPayment: targetMonthlyPayment ? parseFloat(targetMonthlyPayment) : undefined,
+      targetMonthlyPayment: targetMonthlyPayment ? parseLocaleAmount(targetMonthlyPayment) : undefined,
       dueDay: dueDay ? Math.min(31, Math.max(1, parseInt(dueDay, 10))) : undefined,
       notes: notes.trim() || undefined,
-      annualFee: icon === 'CreditCard' && annualFee ? parseFloat(annualFee) : undefined,
+      annualFee: icon === 'CreditCard' && annualFee ? parseLocaleAmount(annualFee) : undefined,
     })
     setShowModal(false)
     resetForm()
@@ -88,14 +89,14 @@ export default function DebtTracker() {
     await updateDebt(editingDebt.id, {
       name: name.trim(),
       icon,
-      balance: parseFloat(balance),
-      interestRate: parseFloat(rate || '0'),
-      minimumPayment: parseFloat(minPayment),
+      balance: parseLocaleAmount(balance),
+      interestRate: parseLocaleAmount(rate || '0'),
+      minimumPayment: parseLocaleAmount(minPayment),
       targetPayoffDate: targetPayoffDate || undefined,
-      targetMonthlyPayment: targetMonthlyPayment ? parseFloat(targetMonthlyPayment) : undefined,
+      targetMonthlyPayment: targetMonthlyPayment ? parseLocaleAmount(targetMonthlyPayment) : undefined,
       dueDay: dueDay ? Math.min(31, Math.max(1, parseInt(dueDay, 10))) : undefined,
       notes: notes.trim() || undefined,
-      annualFee: icon === 'CreditCard' && annualFee ? parseFloat(annualFee) : undefined,
+      annualFee: icon === 'CreditCard' && annualFee ? parseLocaleAmount(annualFee) : undefined,
     })
     setShowModal(false)
     resetForm()
@@ -105,7 +106,7 @@ export default function DebtTracker() {
     if (!paymentAmount || !showPayment) return
     const debt = debts.find((d) => d.id === showPayment)
     if (debt) {
-      const amount = parseFloat(paymentAmount)
+      const amount = parseLocaleAmount(paymentAmount)
       const newBalance = Math.max(0, debt.balance - amount)
       await updateDebt(showPayment, { balance: newBalance })
 
@@ -427,15 +428,15 @@ export default function DebtTracker() {
             <div>
               <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Balance</label>
               <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">$</span>
-                <input type="number" step="0.01" value={balance} onChange={(e) => setBalance(e.target.value)}
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
+                <input inputMode="decimal" value={balance} onChange={(e) => setBalance(e.target.value)}
                   placeholder="0.00" className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-7 pr-3 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
               </div>
             </div>
             <div>
               <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">APR</label>
               <div className="relative">
-                <input type="number" step="0.01" value={rate} onChange={(e) => setRate(e.target.value)}
+                <input inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)}
                   placeholder="0.00" className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-4 pr-7 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
                 <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">%</span>
               </div>
@@ -447,8 +448,8 @@ export default function DebtTracker() {
             <div>
               <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Min. Payment</label>
               <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">$</span>
-                <input type="number" step="0.01" value={minPayment} onChange={(e) => setMinPayment(e.target.value)}
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
+                <input inputMode="decimal" value={minPayment} onChange={(e) => setMinPayment(e.target.value)}
                   placeholder="0.00" className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-7 pr-3 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
               </div>
             </div>
@@ -464,8 +465,8 @@ export default function DebtTracker() {
             <div>
               <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Target Payment</label>
               <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">$</span>
-                <input type="number" step="0.01" value={targetMonthlyPayment} onChange={(e) => setTargetMonthlyPayment(e.target.value)}
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
+                <input inputMode="decimal" value={targetMonthlyPayment} onChange={(e) => setTargetMonthlyPayment(e.target.value)}
                   placeholder="0.00" className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-7 pr-3 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
               </div>
             </div>
@@ -481,8 +482,8 @@ export default function DebtTracker() {
             <div>
               <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Annual Fee</label>
               <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">$</span>
-                <input type="number" step="0.01" value={annualFee} onChange={(e) => setAnnualFee(e.target.value)}
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">zł</span>
+                <input inputMode="decimal" value={annualFee} onChange={(e) => setAnnualFee(e.target.value)}
                   placeholder="0.00" className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-7 pr-3 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
               </div>
             </div>
@@ -509,8 +510,8 @@ export default function DebtTracker() {
             <label className="mb-1 flex items-center gap-2 text-sm text-slate-400">Amount</label>
           </div>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-            <input type="number" step="0.01" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)}
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">zł</span>
+            <input inputMode="decimal" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)}
               placeholder="0.00" autoFocus className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-8 pr-4 text-slate-100 placeholder-slate-500 focus:border-green-500 focus:outline-none" />
           </div>
           <Button onClick={handlePayment} className="w-full" disabled={!paymentAmount}>Apply Payment</Button>

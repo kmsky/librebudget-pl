@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Card } from '../ui/Card'
 import { formatCurrency } from '../../utils/calculations'
 import { maxAffordableRent } from '../../utils/rentAffordability'
+import { parseLocaleAmount } from '../../utils/sanitize'
 import { useRentCalculatorState } from '../../hooks/useRentCalculatorState'
 import { useSettings } from '../../hooks/useSettings'
 import { Home, DollarSign } from 'lucide-react'
@@ -32,7 +33,7 @@ export function RentAffordabilityCalculator() {
     }
   }, [budgetForPrefill, state.agi, updateState])
 
-  const agiNum = clamp(parseFloat(state.agi) || 0, CAPS.agi)
+  const agiNum = clamp(parseLocaleAmount(state.agi) || 0, CAPS.agi)
   const result = agiNum > 0 ? maxAffordableRent({ agiAnnual: agiNum, dtiPercent: 30 }) : null
 
   return (
@@ -44,17 +45,17 @@ export function RentAffordabilityCalculator() {
           </div>
           <div className="min-w-0">
             <h2 className="text-base font-semibold text-slate-200">Rent Affordability</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">Rent should not exceed 30% of gross monthly income</p>
+            <p className="text-xs text-slate-500 leading-relaxed">Rent should not exceed 30% of net monthly income</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm text-slate-400">Annual gross income ($)</label>
-            <input type="number" step="1000" min="0" max={CAPS.agi} value={state.agi}
+            <label className="mb-1.5 block text-sm text-slate-400">Annual net income (zł)</label>
+            <input inputMode="decimal" value={state.agi}
               onChange={(e) => updateState({ agi: e.target.value })}
-              onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.agi) updateState({ agi: String(CAPS.agi) }) }}
-              placeholder={budgetForPrefill > 0 ? String(Math.round(budgetForPrefill * 12)) : '120000'}
+              onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.agi) updateState({ agi: String(CAPS.agi) }) }}
+              placeholder={budgetForPrefill > 0 ? String(Math.round(budgetForPrefill * 12)) : '96000'}
               className={INPUT} />
             {budgetForPrefill > 0 && (
               <p className="text-xs text-slate-600 mt-1">~{formatCurrency(budgetForPrefill * 12)}/year from monthly budget</p>
@@ -82,7 +83,7 @@ export function RentAffordabilityCalculator() {
             </div>
             <p className="text-3xl font-bold text-green-400">{formatCurrency(result.maxMonthlyRent)}<span className="text-lg font-normal text-slate-500 ml-1">/mo</span></p>
             <p className="text-xs text-slate-500 mt-2">
-              {result.dtiPercent}% of {formatCurrency(result.monthlyGrossIncome)}/mo gross income
+              {result.dtiPercent}% of {formatCurrency(result.monthlyGrossIncome)}/mo net income
             </p>
           </div>
         </Card>

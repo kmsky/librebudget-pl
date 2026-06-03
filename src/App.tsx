@@ -20,7 +20,6 @@ import SavingsGoals from './pages/SavingsGoals'
 import DebtTracker from './pages/DebtTracker'
 import Trends from './pages/Trends'
 import YearReview from './pages/YearReview'
-import CreditScore from './pages/CreditScore'
 
 import FinancialOrder from './pages/FinancialOrder'
 import Calculator from './pages/Calculator'
@@ -48,7 +47,6 @@ export default function App() {
           <Route path="/trends" element={<Trends />} />
           <Route path="/review" element={<Review />} />
           <Route path="/year-review" element={<YearReview />} />
-          <Route path="/credit-score" element={<CreditScore />} />
           <Route path="/calculator" element={<Calculator />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/settings" element={<Settings />} />

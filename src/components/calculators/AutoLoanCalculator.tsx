@@ -7,6 +7,7 @@ import {
   maxPrincipalForPayment,
   type DownPaymentMode,
 } from '../../utils/autoLoan'
+import { parseLocaleAmount } from '../../utils/sanitize'
 import { useSettings } from '../../hooks/useSettings'
 import { Check, X, Car, DollarSign, Percent, TableProperties } from 'lucide-react'
 
@@ -49,12 +50,12 @@ export function AutoLoanCalculator() {
     }
   }, [budgetForPrefill, monthlyIncome])
 
-  const carPriceNum = clamp(parseFloat(carPrice) || 0, CAPS.carPrice)
-  const downPaymentDollarsNum = clamp(parseFloat(downPaymentDollars) || 0, CAPS.downPaymentDollars)
-  const downPaymentPercentNum = Math.max(0, Math.min(100, parseFloat(downPaymentPercent) || 0))
-  const interestRateNum = clamp(parseFloat(interestRate) || 0, CAPS.interestRatePercent)
+  const carPriceNum = clamp(parseLocaleAmount(carPrice) || 0, CAPS.carPrice)
+  const downPaymentDollarsNum = clamp(parseLocaleAmount(downPaymentDollars) || 0, CAPS.downPaymentDollars)
+  const downPaymentPercentNum = Math.max(0, Math.min(100, parseLocaleAmount(downPaymentPercent) || 0))
+  const interestRateNum = clamp(parseLocaleAmount(interestRate) || 0, CAPS.interestRatePercent)
   const loanTermNum = Math.max(1, Math.min(CAPS.loanTermMonths, Math.round(parseFloat(loanTermMonths) || 0)))
-  const monthlyIncomeNum = clamp(parseFloat(monthlyIncome) || 0, CAPS.monthlyIncome)
+  const monthlyIncomeNum = clamp(parseLocaleAmount(monthlyIncome) || 0, CAPS.monthlyIncome)
 
   const result =
     carPriceNum > 0 && loanTermNum > 0
@@ -91,23 +92,23 @@ export function AutoLoanCalculator() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm text-slate-400">Car price ($)</label>
-              <input type="number" step="0.01" min="0" max={CAPS.carPrice} value={carPrice}
+              <label className="mb-1.5 block text-sm text-slate-400">Car price (zł)</label>
+              <input inputMode="decimal" value={carPrice}
                 onChange={(e) => setCarPrice(e.target.value)}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.carPrice) setCarPrice(String(CAPS.carPrice)) }}
-                placeholder="35000" className={INPUT} />
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.carPrice) setCarPrice(String(CAPS.carPrice)) }}
+                placeholder="80000" className={INPUT} />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-slate-400">
-                Monthly income ($)
-                {budgetForPrefill > 0 && Math.abs((parseFloat(monthlyIncome) || 0) - budgetForPrefill) < 1 && (
+                Monthly net income (zł)
+                {budgetForPrefill > 0 && Math.abs((parseLocaleAmount(monthlyIncome) || 0) - budgetForPrefill) < 1 && (
                   <span className="ml-1.5 text-xs text-slate-600">(from budget)</span>
                 )}
               </label>
-              <input type="number" step="0.01" min="0" max={CAPS.monthlyIncome} value={monthlyIncome}
+              <input inputMode="decimal" value={monthlyIncome}
                 onChange={(e) => setMonthlyIncome(e.target.value)}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.monthlyIncome) setMonthlyIncome(String(CAPS.monthlyIncome)) }}
-                placeholder="5000" className={INPUT} />
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.monthlyIncome) setMonthlyIncome(String(CAPS.monthlyIncome)) }}
+                placeholder="8000" className={INPUT} />
             </div>
           </div>
 
@@ -118,19 +119,19 @@ export function AutoLoanCalculator() {
               {(['percent', 'dollar'] as const).map((m) => (
                 <button key={m} type="button" onClick={() => setDownPaymentMode(m)}
                   className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${downPaymentMode === m ? 'bg-slate-600 text-slate-100' : 'text-slate-400 hover:text-slate-200'}`}>
-                  {m === 'percent' ? '%' : '$'}
+                  {m === 'percent' ? '%' : 'zł'}
                 </button>
               ))}
             </div>
             {downPaymentMode === 'percent' ? (
-              <input type="number" step="0.5" min="0" max="100" value={downPaymentPercent}
+              <input inputMode="decimal" value={downPaymentPercent}
                 onChange={(e) => setDownPaymentPercent(e.target.value)}
                 placeholder="20" className={INPUT} />
             ) : (
-              <input type="number" step="0.01" min="0" max={CAPS.downPaymentDollars} value={downPaymentDollars}
+              <input inputMode="decimal" value={downPaymentDollars}
                 onChange={(e) => setDownPaymentDollars(e.target.value)}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.downPaymentDollars) setDownPaymentDollars(String(CAPS.downPaymentDollars)) }}
-                placeholder="7000" className={INPUT} />
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.downPaymentDollars) setDownPaymentDollars(String(CAPS.downPaymentDollars)) }}
+                placeholder="16000" className={INPUT} />
             )}
             {carPriceNum > 0 && (
               <p className="text-xs text-slate-500 mt-1">= {formatCurrency(downPaymentAmount)} down</p>
@@ -140,10 +141,10 @@ export function AutoLoanCalculator() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm text-slate-400">Interest rate (%)</label>
-              <input type="number" step="0.1" min="0" max={CAPS.interestRatePercent} value={interestRate}
+              <input inputMode="decimal" value={interestRate}
                 onChange={(e) => setInterestRate(e.target.value)}
-                onBlur={(e) => { const v = parseFloat(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.interestRatePercent) setInterestRate(String(CAPS.interestRatePercent)) }}
-                placeholder="7.5" className={INPUT} />
+                onBlur={(e) => { const v = parseLocaleAmount(e.target.value); if (e.target.value !== '' && !isNaN(v) && v > CAPS.interestRatePercent) setInterestRate(String(CAPS.interestRatePercent)) }}
+                placeholder="7,5" className={INPUT} />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-slate-400">Loan term (months)</label>

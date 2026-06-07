@@ -41,7 +41,6 @@ export const navGroups: NavGroup[] = [
       { path: '/trends', icon: 'TrendingUp', label: 'Trendy' },
       { path: '/review', icon: 'Calendar', label: 'Przegląd miesiąca' },
       { path: '/year-review', icon: 'Trophy', label: 'Podsumowanie roku' },
-      { path: '/resources', icon: 'BookOpen', label: 'Materiały' },
     ],
   },
   {

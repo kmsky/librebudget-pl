@@ -23,7 +23,6 @@ import YearReview from './pages/YearReview'
 
 import FinancialOrder from './pages/FinancialOrder'
 import Calculator from './pages/Calculator'
-import Resources from './pages/Resources'
 import ImpulseTracker from './pages/ImpulseTracker'
 
 export default function App() {
@@ -48,7 +47,6 @@ export default function App() {
           <Route path="/review" element={<Review />} />
           <Route path="/year-review" element={<YearReview />} />
           <Route path="/calculator" element={<Calculator />} />
-          <Route path="/resources" element={<Resources />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/account" element={<Account />} />
           <Route path="/generate-wallet" element={<GenerateWallet />} />
